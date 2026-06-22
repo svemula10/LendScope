@@ -6,6 +6,24 @@ __pycache__/
 # C extensions
 *.so
 
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+
+# ML/data
+data/
+*.csv
+*.joblib
+*.pkl
+
+# Frontend
+node_modules/
+dist/
+build/
+
 # Distribution / packaging
 .Python
 build/
