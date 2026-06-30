@@ -50,6 +50,8 @@ class LoanSimulationInput(BaseModel):
 
 
 class PredictionResponse(BaseModel):
+    raw_model_approval_probability: float
+    raw_model_prediction: float
     approval_probability: float
     statistical_pd: float
     risk_tier: str

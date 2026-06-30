@@ -70,9 +70,6 @@ class ModelService:
         elif loan_percent_income >= 0.4:
             flags.append("Requested loan amount is at least 40% of annual income.")
 
-        if data.loan_int_rate >= 15:
-            flags.append("Interest rate is high, which increases repayment risk.")
-
         if data.person_income < 35000:
             flags.append("Annual income is relatively low for this requested loan amount.")
 
