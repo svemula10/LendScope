@@ -1,4 +1,5 @@
 from pathlib import Path
+from sys import flags
 import joblib
 import pandas as pd
 import shap
@@ -75,6 +76,11 @@ class ModelService:
         if data.person_income < 35000:
             flags.append("Annual income is relatively low for this requested loan amount.")
 
+        if data.loan_int_rate >= 18:
+            flags.append("Interest rate is very high and may make repayment difficult.")
+        elif data.loan_int_rate >= 15:
+            flags.append("Interest rate is high, which increases repayment burden.")
+
         return flags
 
     def _apply_underwriting_rules(
@@ -141,7 +147,13 @@ class ModelService:
             for name, weight in zip(feature_names, local_weights)
         }
 
+        #For debugging purposes
+        raw_model_approval_probability = float(self.pipeline.predict_proba(raw_df)[0][1])  
+        raw_model_prediction = int(self.pipeline.predict(raw_df)[0])
+
         return {
+            "raw_model_approval_probability": raw_model_approval_probability,
+            "raw_model_prediction": raw_model_prediction,
             "approval_probability": adjusted_approval_probability,
             "statistical_pd": statistical_pd,
             "risk_tier": self._get_risk_tier(adjusted_approval_probability),

@@ -115,9 +115,20 @@ def main():
         return
 
     # 2. Identify target and features
-    target = 'loan_status'
-    X = df.drop(columns=[target])
+    #target = 'loan_status'
+    #X = df.drop(columns=[target])
+    #y = df[target]
+
+    target = "loan_status"
+
+    approval_model_excluded_cols = [
+        target,
+        "loan_int_rate",
+    ]
+
+    X = df.drop(columns=approval_model_excluded_cols)
     y = df[target]
+
 
     # Explicitly separate column types
     categorical_cols = X.select_dtypes(include=['str', 'object', 'category']).columns.tolist()
