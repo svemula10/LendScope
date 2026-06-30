@@ -27,5 +27,7 @@ def evaluate_loan_baseline(payload: LoanSimulationInput):
 @app.post("/api/simulate", response_model=PredictionResponse)
 def evaluate_loan_simulation(payload: LoanSimulationInput):
     """High-speed structural routing optimized natively for interactive client slider updates."""
-    # For V1, the performance layout shares the predictive engine footprint seamlessly
-    return model_service.predict_and_explain(payload)
+    # V1 shares the predictive engine layout footprint. 
+    # Having this separate routing enables easy performance optimization hooks in V2.
+    results = model_service.predict_and_explain(payload)
+    return results
