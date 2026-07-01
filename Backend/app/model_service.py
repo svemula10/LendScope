@@ -8,22 +8,27 @@ import numpy as np
 
 class ModelService:
     def __init__(self):
+        #Get absolute path to backend folder
         base_dir = Path(__file__).resolve().parent.parent
 
+        #All possible locations where the model might be stored
         model_candidates = [
             base_dir / "models" / "xgboost_model.joblib",
             base_dir / "app" / "models" / "xgboost_model.joblib",
             base_dir.parent / "ml" / "artifacts" / "xgboost_model.joblib",
         ]
 
+        #Find the first existing model path from the candidates
         model_path = next((path for path in model_candidates if path.exists()), None)
 
+        #If no model is found, raise an error with the checked paths
         if model_path is None:
             raise FileNotFoundError(
                 "Could not find the trained model. Checked: "
                 + ", ".join(str(path) for path in model_candidates)
             )
 
+        #Load the model and its components
         self.pipeline = joblib.load(model_path)
         self.preprocessor = self.pipeline.named_steps["preprocessor"]
         self.classifier = self.pipeline.named_steps["classifier"]
@@ -40,7 +45,7 @@ class ModelService:
         # Dataset uses this engineered feature.
         raw_df["loan_percent_income"] = raw_df["loan_amnt"] / raw_df["person_income"]
 
-        # Avoid extreme values outside the model's likely training range.
+        # Avoid extreme values outside the model's likely training range. The np.clip is the range of values allowed
         raw_df["loan_amnt"] = np.clip(raw_df["loan_amnt"], 500, 100000)
         raw_df["loan_percent_income"] = np.clip(raw_df["loan_percent_income"], 0.0, 2.0)
         raw_df["person_income"] = np.clip(raw_df["person_income"], 1000, 500000)
@@ -123,8 +128,8 @@ class ModelService:
     def predict_and_explain(self, data: LoanSimulationInput) -> dict:
         raw_df = self._prepare_input(data)
 
-        # Assumption: class 1 means loan default / bad loan.
-        # If your dataset uses class 1 as approval instead, flip this.
+        # Calculate the model's approval probability and statistical probability of default
+        #[[default prob, approval prob]]
         model_approval_probability = float(self.pipeline.predict_proba(raw_df)[0][1])
         statistical_pd = 1.0 - model_approval_probability
 
@@ -136,6 +141,9 @@ class ModelService:
         transformed_features = self.preprocessor.transform(raw_df)
         feature_names = self.preprocessor.get_feature_names_out()
 
+        #SHAP values are used to explain the model's predictions by attributing the contribution 
+        #of each feature to the final prediction. 
+        #The explainer computes these values based on the transformed features.
         shap_res = self.explainer.shap_values(transformed_features)
         local_weights = shap_res[0] if not isinstance(shap_res, list) else shap_res[0]
 

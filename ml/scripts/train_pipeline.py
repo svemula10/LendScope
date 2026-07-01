@@ -14,21 +14,12 @@ def load_and_clean_data(data_path: str) -> pd.DataFrame:
     print("Loading dataset...")
     df = pd.read_csv(data_path)
     
-    # Address the data issue mentioned in the briefing
     # Remove ridiculous age outliers (e.g., > 100) and impossible employment lengths
     initial_count = len(df)
     df = df[df['person_age'] < 100]
     df = df[df['person_emp_exp'] < 60]  # No one works for 60+ years if max age is under 100
     
     df["loan_percent_income"] = df["loan_amnt"] / df["person_income"]
-
-    #df["previous_default_flag"] = df["previous_loan_defaults_on_file"].map({
-    #    "No": 0,
-     #   "Yes": 1,
-    #})
-
-    #df = df.drop(columns=["previous_loan_defaults_on_file"])
-
 
     print(f"Cleaned outliers. Removed {initial_count - len(df)} anomalous rows.")
     return df
@@ -98,7 +89,7 @@ def build_pipeline(categorical_cols, numeric_cols): #, monotone_constraints
 
 
 def main():
-    # Define paths
+    # Define paths, this should be the absolute path to ml foldler
     script_dir = Path(__file__).resolve().parent
 
     DATA_PATH = script_dir.parent / "data" / "loan_data.csv"
