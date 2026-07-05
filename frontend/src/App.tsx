@@ -137,7 +137,7 @@ function App() {
           <div className="user-dot">JD</div>
           <div>
             <strong>Demo User</strong>
-            <span>Underwriter</span>
+            <span>Borrower</span>
           </div>
         </div>
       </aside>
@@ -215,6 +215,7 @@ function App() {
                 Employment Experience
                 <input
                   type="number"
+                  min = "0"
                   value={formData.person_emp_exp}
                   onChange={(event) => updateField("person_emp_exp", event.target.value)}
                 />
