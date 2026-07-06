@@ -24,18 +24,18 @@ type PredictionResult = {
 };
 
 const initialForm: LoanForm = {
-  person_age: 25,
-  person_income: 75000,
-  person_emp_exp: 3,
-  person_education: "Bachelor",
-  person_gender: "Male",
-  person_home_ownership: "Rent",
-  loan_amnt: 18000,
-  loan_int_rate: 12.5,
-  loan_intent: "personal",
-  credit_score: 680,
-  cb_person_cred_hist_length: 4,
-  previous_loan_defaults_on_file: "No",
+  "person_age": 30,
+  "person_gender": "Male",
+  "person_education": "Bachelor",
+  "person_income": 58000,
+  "person_emp_exp": 5,
+  "person_home_ownership": "Rent",
+  "loan_amnt": 12000,
+  "loan_intent": "personal",
+  "loan_int_rate": 11.8,
+  "cb_person_cred_hist_length": 6,
+  "credit_score": 665,
+  "previous_loan_defaults_on_file": "No",
 };
 
 function formatPercent(value: number) {
