@@ -89,51 +89,237 @@ class ModelService:
         self,
         approval_probability: float,
         data: LoanSimulationInput,
-    ) -> float:
-        loan_percent_income = data.loan_amnt / data.person_income
-        adjusted_probability = approval_probability
+    ) -> tuple[float, dict]:
+        """
+        Applies business underwriting rules on top of the raw model approval probability.
 
-        # Hard caps. These keep obviously risky borrowers from being labeled excellent.
-        if data.previous_loan_defaults_on_file == "Yes":
-            adjusted_probability = min(adjusted_probability, 0.55)
+        Strategy:
+        - Hard caps for severe risk signals.
+        - Combination caps for risky feature interactions.
+        - Soft penalties for moderate risk signals.
+        - Returns both adjusted probability and rule details for debugging/frontend display.
+        """
+    
+        # Defensive guards
+        income = max(float(data.person_income), 1.0)
+        loan_amnt = max(float(data.loan_amnt), 0.0)
+        loan_percent_income = loan_amnt / income
 
-        if data.credit_score < 580:
-            adjusted_probability = min(adjusted_probability, 0.40)
-        elif data.credit_score < 670:
-            adjusted_probability = min(adjusted_probability, 0.70)
+        credit_score = int(data.credit_score)
+        previous_default = (
+            str(data.previous_loan_defaults_on_file).strip().lower() == "yes"
+        )
+        home_ownership = str(data.person_home_ownership).strip().lower()
+        loan_intent = str(data.loan_intent).strip().lower()
 
-        if loan_percent_income >= 0.6:
-            adjusted_probability = min(adjusted_probability, 0.25)
-        elif loan_percent_income >= 0.4:
-            adjusted_probability = min(adjusted_probability, 0.45)
-        elif loan_percent_income >= 0.3:
-            adjusted_probability = min(adjusted_probability, 0.70)
+        adjusted_probability = float(approval_probability)
 
-        if data.loan_int_rate >= 18:
-            adjusted_probability = min(adjusted_probability, 0.45)
+        caps: list[tuple[str, float]] = []
+        penalties: list[tuple[str, float]] = []
+
+
+        
+        # -------------------------------------------------
+        # 1. Hard caps: severe standalone risk signals
+        # -------------------------------------------------
+
+        if previous_default:
+            caps.append(("previous_default_on_file", 0.55))
+
+        if credit_score < 520:
+            caps.append(("credit_score_below_520", 0.25))
+        elif credit_score < 580:
+            caps.append(("credit_score_below_580", 0.45))
+        elif credit_score < 620:
+            caps.append(("credit_score_below_620", 0.65))
+
+        if loan_percent_income >= 0.80:
+            caps.append(("loan_amount_at_least_80_percent_of_income", 0.20))
+        elif loan_percent_income >= 0.60:
+            caps.append(("loan_amount_at_least_60_percent_of_income", 0.35))
+
+        # -------------------------------------------------
+        # 2. Combination caps: riskier together than alone
+        # -------------------------------------------------
+
+        if previous_default and credit_score < 670:
+            caps.append(("previous_default_and_credit_below_670", 0.35))
+
+        if previous_default and loan_percent_income >= 0.40:
+            caps.append(("previous_default_and_high_loan_to_income", 0.30))
+
+        if previous_default and loan_percent_income >= 0.60:
+            caps.append(("previous_default_and_very_high_loan_to_income", 0.20))
+
+        if loan_percent_income >= 0.40 and credit_score < 580:
+            caps.append(("high_loan_to_income_and_subprime_credit", 0.30))
+        elif loan_percent_income >= 0.40 and credit_score < 670:
+            caps.append(("high_loan_to_income_and_fair_credit", 0.45))
+        elif loan_percent_income >= 0.40 and credit_score < 720:
+            caps.append(("high_loan_to_income_and_good_credit", 0.60))
+
+        if loan_percent_income >= 0.30 and credit_score < 620:
+            caps.append(("moderate_loan_to_income_and_weak_credit", 0.50))
+
+        if data.person_emp_exp < 1 and credit_score < 670:
+            caps.append(("no_employment_experience_and_credit_below_670", 0.45))
+
+        if data.cb_person_cred_hist_length < 2 and credit_score < 670:
+            caps.append(("thin_credit_file_and_credit_below_670", 0.45))
+
+
+        # -------------------------------------------------
+        # 3. Soft penalties: moderate risk nudges
+        # -------------------------------------------------
+
+        if 670 <= credit_score < 700:
+            penalties.append(("credit_score_near_prime", 0.03))
+        elif 620 <= credit_score < 670:
+            penalties.append(("fair_credit_score", 0.06))
+        elif 580 <= credit_score < 620:
+            penalties.append(("weak_credit_score", 0.09))
+
+        if 0.50 <= loan_percent_income < 0.60:
+            penalties.append(("loan_to_income_between_50_and_60_percent", 0.12))
+        elif 0.40 <= loan_percent_income < 0.50:
+            penalties.append(("loan_to_income_between_40_and_50_percent", 0.08))
+        elif 0.30 <= loan_percent_income < 0.40:
+            penalties.append(("loan_to_income_between_30_and_40_percent", 0.04))
+        elif 0.20 <= loan_percent_income < 0.30:
+            penalties.append(("loan_to_income_between_20_and_30_percent", 0.02))
+
+        if data.person_income < 30000:
+            penalties.append(("income_below_30000", 0.08))
+        elif data.person_income < 40000:
+            penalties.append(("income_below_40000", 0.05))
+        elif data.person_income < 50000:
+            penalties.append(("income_below_50000", 0.02))
+
+        if data.person_emp_exp < 1:
+            penalties.append(("less_than_1_year_employment_experience", 0.05))
+        elif data.person_emp_exp < 2:
+            penalties.append(("less_than_2_years_employment_experience", 0.03))
+        elif data.person_emp_exp < 4:
+            penalties.append(("less_than_4_years_employment_experience", 0.015))
+
+        if data.cb_person_cred_hist_length < 2:
+            penalties.append(("credit_history_less_than_2_years", 0.05))
+        elif data.cb_person_cred_hist_length < 4:
+            penalties.append(("credit_history_less_than_4_years", 0.03))
+        elif data.cb_person_cred_hist_length < 6:
+            penalties.append(("credit_history_less_than_6_years", 0.015))
+
+        if home_ownership == "rent":
+            penalties.append(("renter", 0.02))
+        elif home_ownership == "other":
+            penalties.append(("other_home_ownership", 0.03))
+
+        if loan_intent in {"personal", "medical"}:
+            penalties.append(("higher_risk_loan_intent", 0.02))
+        elif loan_intent == "venture":
+            penalties.append(("venture_loan_intent", 0.03))
+
+        # Interest-rate penalty should be light if loan_int_rate is excluded from model training.
+        # It still matters as affordability/business logic.
+        if data.loan_int_rate >= 20:
+            penalties.append(("interest_rate_at_least_20_percent", 0.10))
+        elif data.loan_int_rate >= 18:
+            penalties.append(("interest_rate_at_least_18_percent", 0.08))
         elif data.loan_int_rate >= 15:
-            adjusted_probability = min(adjusted_probability, 0.65)
+            penalties.append(("interest_rate_at_least_15_percent", 0.05))
 
-        return max(0.0, min(1.0, adjusted_probability))
+
+        # -------------------------------------------------
+        # 4. Apply caps and penalties
+        # -------------------------------------------------
+
+        if caps:
+            strictest_cap = min(cap_value for _, cap_value in caps)
+            adjusted_probability = min(adjusted_probability, strictest_cap)
+
+        total_penalty = sum(value for _, value in penalties)
+        adjusted_probability -= total_penalty
+
+        # -------------------------------------------------
+        # 5. Give back small credit for genuinely strong compensating factors
+        # -------------------------------------------------
+        # This keeps decent applicants from being over-punished by one moderate weakness.
+        # No boost is given if there are severe red flags.
+
+        has_severe_red_flag = (
+            previous_default
+            or credit_score < 580
+            or loan_percent_income >= 0.60
+        )
+
+        boosts: list[tuple[str, float]] = []
+
+        if not has_severe_red_flag:
+            if credit_score >= 740:
+                boosts.append(("strong_credit_score", 0.04))
+            elif credit_score >= 700:
+                boosts.append(("good_credit_score", 0.025))
+
+            if loan_percent_income < 0.15:
+                boosts.append(("low_loan_to_income", 0.04))
+            elif loan_percent_income < 0.25:
+                boosts.append(("manageable_loan_to_income", 0.02))
+
+            if data.person_income >= 100000:
+                boosts.append(("high_income", 0.03))
+            elif data.person_income >= 75000:
+                boosts.append(("solid_income", 0.015))
+
+            if data.person_emp_exp >= 8:
+                boosts.append(("long_employment_experience", 0.02))
+
+            if data.cb_person_cred_hist_length >= 8:
+                boosts.append(("long_credit_history", 0.02))
+
+            if home_ownership in {"own", "mortgage"}:
+                boosts.append(("stable_home_ownership", 0.015))
+
+        total_boost = sum(value for _, value in boosts)
+        adjusted_probability += total_boost
+
+        # Final clamp
+        adjusted_probability = max(0.0, min(1.0, adjusted_probability))
+
+        policy_details = {
+            "loan_percent_income": loan_percent_income,
+            "caps_applied": caps,
+            "penalties_applied": penalties,
+            "boosts_applied": boosts,
+            "total_penalty": total_penalty,
+            "total_boost": total_boost,
+            "raw_model_approval_probability": float(approval_probability),
+            "policy_adjusted_approval_probability": adjusted_probability,
+        }
+
+        return adjusted_probability, policy_details
+
 
     def _get_risk_tier(self, approval_probability: float) -> str:
         if approval_probability >= 0.85:
-            return "Tier 1 (Excellent Choice)"
+            return "Tier 1 (Strong Approval)"
         if approval_probability >= 0.65:
-            return "Tier 2 (Moderate Risk)"
-        if approval_probability >= 0.40:
-            return "Tier 3 (High Risk)"
-        return "Tier 4 (Likely Denial)"
+            return "Tier 2 (Likely Approval)"
+        if approval_probability >= 0.45:
+            return "Tier 3 (Manual Review)"
+        if approval_probability >= 0.25:
+            return "Tier 4 (High Risk)"
+        return "Tier 5 (Likely Denial)"
+
 
     def predict_and_explain(self, data: LoanSimulationInput) -> dict:
         raw_df = self._prepare_input(data)
 
         # Calculate the model's approval probability and statistical probability of default
         #[[default prob, approval prob]]
-        model_approval_probability = float(self.pipeline.predict_proba(raw_df)[0][1])
-        statistical_pd = 1.0 - model_approval_probability
+        statistical_pd = float(self.pipeline.predict_proba(raw_df)[0][1])
+        model_approval_probability = 1.0 - statistical_pd
 
-        adjusted_approval_probability = self._apply_underwriting_rules(
+        adjusted_approval_probability, policy_details = self._apply_underwriting_rules(
             model_approval_probability,
             data,
         )
@@ -153,7 +339,7 @@ class ModelService:
         }
 
         #For debugging purposes
-        raw_model_approval_probability = float(self.pipeline.predict_proba(raw_df)[0][1])  
+        raw_model_approval_probability = 1 - float(self.pipeline.predict_proba(raw_df)[0][1])  
         raw_model_prediction = int(self.pipeline.predict(raw_df)[0])
 
         return {
@@ -163,6 +349,7 @@ class ModelService:
             "statistical_pd": statistical_pd,
             "risk_tier": self._get_risk_tier(adjusted_approval_probability),
             "policy_flags": self._get_policy_flags(data),
+            "policy_details": policy_details,
             "shap_values": shap_map,
         }
 

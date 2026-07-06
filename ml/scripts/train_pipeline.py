@@ -115,6 +115,8 @@ def main():
     approval_model_excluded_cols = [
         target,
         "loan_int_rate",
+        "person_gender",
+        "previous_loan_defaults_on_file"
     ]
 
     X = df.drop(columns=approval_model_excluded_cols)

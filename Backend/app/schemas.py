@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, computed_field
-from typing import Literal
+from typing import Any, Literal
 
 class LoanSimulationInput(BaseModel):
     # Demographics
@@ -33,20 +33,22 @@ class LoanSimulationInput(BaseModel):
     class Config:
         json_schema_extra = {
             "example": {
-                "person_age": 24,
+                "person_age": 30,
                 "person_gender": "Male",
                 "person_education": "Bachelor",
-                "person_income": 60000,
-                "person_emp_exp": 2,
+                "person_income": 58000,
+                "person_emp_exp": 5,
                 "person_home_ownership": "Rent",
-                "loan_amnt": 15000,
+                "loan_amnt": 12000,
                 "loan_intent": "personal",
-                "loan_int_rate": 11.5,
-                "cb_person_cred_hist_length": 4,
-                "credit_score": 680,
+                "loan_int_rate": 11.8,
+                "cb_person_cred_hist_length": 6,
+                "credit_score": 665,
                 "previous_loan_defaults_on_file": "No",
             }
         }
+
+
 
 
 class PredictionResponse(BaseModel):
@@ -56,4 +58,5 @@ class PredictionResponse(BaseModel):
     statistical_pd: float
     risk_tier: str
     policy_flags: list[str]
+    policy_details: dict[str, Any] = {}
     shap_values: dict[str, float]
