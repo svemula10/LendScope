@@ -195,6 +195,20 @@ function App() {
     setError("");
     setActiveView("dashboardDetail");
   }
+  
+  function deleteDashboard(applicationId: number) {
+    setSavedApplications((current) =>
+      current.filter((application) => application.id !== applicationId)
+    );
+
+    if (selectedApplicationId === applicationId) {
+      setSelectedApplicationId(null);
+      setResult(null);
+      setSimulatorResult(null);
+      setActiveView("dashboardList");
+    }
+  }
+
 
   useEffect(() => {
     if (!selectedApplication || activeView !== "dashboardDetail") {
@@ -295,13 +309,23 @@ function App() {
                       <span>{application.result.risk_tier}</span>
                     </div>
 
-                    <button
-                      className="primary-button secondary-button"
-                      type="button"
-                      onClick={() => openDashboard(application)}
-                    >
-                      View Dashboard
-                    </button>
+                    <div className="dashboard-card-actions">
+                      <button
+                        className="primary-button secondary-button"
+                        type="button"
+                        onClick={() => openDashboard(application)}
+                      >
+                        View Dashboard
+                      </button>
+
+                      <button
+                        className="delete-button"
+                        type="button"
+                        onClick={() => deleteDashboard(application.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </article>
                 ))}
               </section>
@@ -552,13 +576,14 @@ function App() {
                           )} from original`}
                     </span>
                   </article>
-
+                  
+                
                   <article className="metric-card warning">
                     <p>Default Risk</p>
                     <strong>{formatPercent(defaultRisk)}</strong>
                     <span>Statistical probability of default</span>
-                  </article>
-
+                  </article> 
+                
                   <article className="metric-card">
                     <p>Risk Tier</p>
                     <strong>{displayedResult.risk_tier}</strong>

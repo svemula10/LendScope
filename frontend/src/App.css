@@ -198,6 +198,28 @@
   font-weight: 750;
 }
 
+.dashboard-card-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.delete-button {
+  border: 1px solid #ffd4d4;
+  border-radius: 8px;
+  padding: 13px 16px;
+  background: #fff1f1;
+  color: #bd2525;
+  font-weight: 750;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.delete-button:hover {
+  background: #ffe4e4;
+  border-color: #ffb8b8;
+}
+
 .metric-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -441,7 +463,16 @@ select:focus {
     grid-template-columns: 1fr;
   }
 
+  .dashboard-card-actions {
+    width: 100%;
+  }
+
+  .dashboard-card-actions button {
+    flex: 1;
+  }
+
   .main-content {
     padding: 22px 18px 32px;
   }
 }
+
