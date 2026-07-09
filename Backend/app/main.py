@@ -24,6 +24,7 @@ def evaluate_loan_baseline(payload: LoanSimulationInput):
     results = model_service.predict_and_explain(payload)
     return results
 
+#this hasn't been used yet, don't think it's needed, but leaving it here for now in case we want to use it later
 @app.post("/api/simulate", response_model=PredictionResponse)
 def evaluate_loan_simulation(payload: LoanSimulationInput):
     """High-speed structural routing optimized natively for interactive client slider updates."""
