@@ -19,8 +19,8 @@ export default function WhatIfSimulator({
         <div>
           <h3>What-If Simulator</h3>
           <p>
-            Adjust key factors to see how the model output changes.
-            {isSimulating ? " Updating..." : ""}
+            Adjust key parameters to monitor real-time score optimization trajectories.
+            {isSimulating ? " Calculating scenario..." : ""}
           </p>
         </div>
       </div>
@@ -84,7 +84,7 @@ export default function WhatIfSimulator({
 
         <label className="slider-field">
           <span>
-            Employment <strong>{simulatorData.person_emp_exp} years</strong>
+            Employment History <strong>{simulatorData.person_emp_exp} years</strong>
           </span>
           <input
             type="range"

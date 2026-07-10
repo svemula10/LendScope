@@ -1,13 +1,13 @@
 import { type SyntheticEvent, useEffect, useState } from "react";
 import "./App.css";
 
-// Import our newly extracted subcomponents
 import Sidebar from "./components/Sidebar";
 import LoanForm from "./components/LoanForm";
 import MetricGrid from "./components/MetricGrid";
 import WhatIfSimulator from "./components/WhatIfSimulator";
 
 export type View = "application" | "dashboardList" | "dashboardDetail";
+export type Mode = "borrower" | "underwriter";
 
 export type LoanForm = {
   applicant_name: string;
@@ -50,6 +50,7 @@ const numericFields: Array<keyof LoanForm> = [
   "cb_person_cred_hist_length",
 ];
 
+// Fallback defaults prevent payload fragmentation during borrower profile initialization
 const emptyForm: LoanForm = {
   applicant_name: "",
   person_age: 0,
@@ -88,6 +89,7 @@ function formatPercent(value: number) {
   return `${Math.round(percent)}%`;
 }
 
+// Render currency formatting for simple numbers
 function formatMoney(value: number) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -101,6 +103,7 @@ function formatIntent(value: string) {
 }
 
 function App() {
+  const [currentMode, setCurrentMode] = useState<Mode>("borrower");
   const [activeView, setActiveView] = useState<View>("dashboardList");
   const [formData, setFormData] = useState<LoanForm>(emptyForm);
   const [savedApplications, setSavedApplications] = useState<SavedApplication[]>([]);
@@ -135,20 +138,37 @@ function App() {
   }
 
   function updateField(name: keyof LoanForm, value: string) {
-    setFormData((current) => ({
-      ...current,
-      [name]: numericFields.includes(name) ? Number(value) : value,
-    }));
+    setFormData((current) => {
+      let parsedValue: number | string = value;
+      
+      if (numericFields.includes(name)) {
+        // Keep the decimal float for interest rates, but cleanly snap everything else to whole integers
+        parsedValue = name === "loan_int_rate" ? Number(value) : Math.round(Number(value));
+      }
+      
+      return {
+        ...current,
+        [name]: parsedValue,
+      };
+    });
   }
 
   function updateSimulatorField(name: keyof LoanForm, value: string) {
-    setSimulatorData((current) => ({
-      ...current,
-      [name]: numericFields.includes(name) ? Number(value) : value,
-    }));
+    setSimulatorData((current) => {
+      let parsedValue: number | string = value;
+      
+      if (numericFields.includes(name)) {
+        // Match the same clean rounding strategy inside your slider states
+        parsedValue = name === "loan_int_rate" ? Number(value) : Math.round(Number(value));
+      }
+      
+      return {
+        ...current,
+        [name]: parsedValue,
+      };
+    });
   }
 
-  // The predict function sends a POST request to the backend API with the loan application data and returns the prediction result.
   async function predict(application: LoanForm) {
     const response = await fetch("http://localhost:8000/api/predict", {
       method: "POST",
@@ -165,7 +185,6 @@ function App() {
     return (await response.json()) as PredictionResult;
   }
 
-  
   async function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsLoading(true);
@@ -217,7 +236,6 @@ function App() {
     }
   }
 
-  // The useEffect hook is used to trigger the prediction API call whenever the simulatorData, selectedApplication, or activeView changes. It sets a timeout to avoid making too many requests in quick succession.
   useEffect(() => {
     if (!selectedApplication || activeView !== "dashboardDetail") {
       return;
@@ -241,52 +259,53 @@ function App() {
   }, [simulatorData, selectedApplication, activeView]);
 
   return (
-    // The main application shell, including the sidebar and main content area
     <div className="app-shell">
-      {/* The sidebar, which allows navigation between views and starting a new application */}
       <Sidebar
         activeView={activeView}
         setActiveView={setActiveView}
         startNewApplication={startNewApplication}
+        currentMode={currentMode}
+        setCurrentMode={setCurrentMode}
       />
 
-      {/* The main content area, which displays the current view based on the activeView state*/}
       <main className="main-content">
-        {activeView === "dashboardList" && ( //if activeView = "dashboardList", then render the dashboard list view
+        {activeView === "dashboardList" && (
           <>
             <header className="topbar">
               <div>
-                <p className="eyebrow">Dashboards</p>
-                <h2>Application Dashboards</h2>
-                <p className="subtext">View previously analyzed loan applications.</p>
+                <p className="eyebrow">{currentMode === "borrower" ? "Applicant Center" : "Management Registries"}</p>
+                <h2>{currentMode === "borrower" ? "My Evaluation History" : "Application Registry"}</h2>
+                <p className="subtext">
+                  {currentMode === "borrower" 
+                    ? "Access and review your previously generated platform scenarios." 
+                    : "Access underlying risk portfolios and underwriting audit snapshots."}
+                </p>
               </div>
 
-              {/* The "New Application" button, which allows the user to start a new loan application analysis */}
               <button className="primary-button" type="button" onClick={startNewApplication}>
-                New Application
+                {currentMode === "borrower" ? "New Scenario Estimate" : "New Application Underwrite"}
               </button>
             </header>
 
-            {/* if the saved applications list is empty then show empty state else show list of dashboards */}
             {savedApplications.length === 0 ? (
               <section className="panel empty-state">
-                <h3>No dashboards yet</h3>
-                <p>Analyze a new application and it will appear here.</p>
+                <h3>No data points tracked</h3>
+                <p>Initialize an evaluation execution card to populate this dashboard view.</p>
               </section>
-            ) : ( //if there are saved applications, render the list of dashboards. The colon is an else
+            ) : (
               <section className="dashboard-list">
-                {savedApplications.map((application) => ( //map over the saved applications and render each one as a card in the dashboard list
+                {savedApplications.map((application) => (
                   <article className="panel dashboard-list-card" key={application.id}>
                     <div>
-                      <h3>{application.form.applicant_name || "Unnamed Applicant"}</h3>
+                      <h3>{application.form.applicant_name || "Unnamed Scenario"}</h3>
                       <p>
-                        {formatMoney(application.form.loan_amnt)} loan · Credit score{" "}
+                        {formatMoney(application.form.loan_amnt)} request · Credit score{" "}
                         {application.form.credit_score}
                       </p>
                     </div>
 
                     <div className="dashboard-list-metrics">
-                      <span>{formatPercent(application.result.approval_probability)} approval</span>
+                      <span>{formatPercent(application.result.approval_probability)} score probability</span>
                       <span>{application.result.risk_tier}</span>
                     </div>
 
@@ -296,7 +315,7 @@ function App() {
                         type="button"
                         onClick={() => openDashboard(application)}
                       >
-                        View Dashboard
+                        Open Dashboard
                       </button>
 
                       <button
@@ -314,7 +333,6 @@ function App() {
           </>
         )}
 
-        {/* If the active view is "application", render the loan application form */}
         {activeView === "application" && (
           <LoanForm
             formData={formData}
@@ -322,6 +340,7 @@ function App() {
             handleSubmit={handleSubmit}
             isLoading={isLoading}
             error={error}
+            currentMode={currentMode}
           />
         )}
 
@@ -329,14 +348,14 @@ function App() {
           <>
             <header className="topbar">
               <div>
-                <p className="eyebrow">Dashboard / Application Review</p>
+                <p className="eyebrow">Dashboard / Evaluation Snapshot</p>
                 <h2>
                   {selectedApplication
-                    ? selectedApplication.form.applicant_name || "Unnamed Applicant"
-                    : "No Application Selected"}
+                    ? selectedApplication.form.applicant_name || "Unnamed Scenario Ledger"
+                    : "No Data Profile Selected"}
                 </h2>
                 <p className="subtext">
-                  Review the model output, snapshot, recommendation, and what-if changes.
+                  Analyze underlying prediction metrics, operational balances, and sandbox variables.
                 </p>
               </div>
 
@@ -345,14 +364,14 @@ function App() {
                 type="button"
                 onClick={() => setActiveView("dashboardList")}
               >
-                Back to Dashboards
+                Return to Archive List
               </button>
             </header>
 
             {!selectedApplication || !displayedResult ? (
               <section className="panel empty-state">
-                <h3>No dashboard selected</h3>
-                <p>Go back to the dashboard list and choose an analyzed application.</p>
+                <h3>No transaction ledger active</h3>
+                <p>Select an archive dashboard tracking file from the master registry console panel.</p>
               </section>
             ) : (
               <>
@@ -361,8 +380,9 @@ function App() {
                   approvalChange={approvalChange}
                   defaultRisk={defaultRisk}
                   riskTier={displayedResult.risk_tier}
-                  recommendation={displayedResult.recommendation ?? "Review"}
+                  recommendation={displayedResult.recommendation ?? "Hold / Under Review"}
                   formatPercent={formatPercent}
+                  currentMode={currentMode}
                 />
 
                 <div className="dashboard-grid">
@@ -376,44 +396,44 @@ function App() {
                   <aside className="panel summary-panel">
                     <div className="panel-header">
                       <div>
-                        <h3>Application Snapshot</h3>
-                        <p>Original submitted application.</p>
+                        <h3>Application Parameters</h3>
+                        <p>Immutable entry parameters logged.</p>
                       </div>
                     </div>
 
                     <dl className="snapshot-list">
                       <div>
-                        <dt>Name</dt>
+                        <dt>Profile Label</dt>
                         <dd>{displayedApplication.applicant_name}</dd>
                       </div>
                       <div>
-                        <dt>Income</dt>
+                        <dt>Base Declared Income</dt>
                         <dd>{formatMoney(displayedApplication.person_income)}</dd>
                       </div>
                       <div>
-                        <dt>Loan Amount</dt>
+                        <dt>Stated Allocation Limit</dt>
                         <dd>{formatMoney(displayedApplication.loan_amnt)}</dd>
                       </div>
                       <div>
-                        <dt>Credit Score</dt>
+                        <dt>Credit Metric Score</dt>
                         <dd>{displayedApplication.credit_score}</dd>
                       </div>
                       <div>
-                        <dt>Employment</dt>
+                        <dt>Stated History Length</dt>
                         <dd>{displayedApplication.person_emp_exp} years</dd>
                       </div>
                       <div>
-                        <dt>Purpose</dt>
+                        <dt>Transaction Context Target</dt>
                         <dd>{formatIntent(displayedApplication.loan_intent)}</dd>
                       </div>
                     </dl>
 
                     <div className="recommendation-box">
-                      <h4>Recommendation Summary</h4>
+                      <h4>Platform Strategy Insight</h4>
                       <p>
                         {displayedResult.recommendation
                           ? displayedResult.recommendation
-                          : `This scenario is classified as ${displayedResult.risk_tier}. Compare the approval probability and default risk before making a final decision.`}
+                          : `The target vector metrics generate an assignment level categorized within ${displayedResult.risk_tier}. Interlock baseline scores against simulator tracks to target safe tier migration loops.`}
                       </p>
                     </div>
                   </aside>

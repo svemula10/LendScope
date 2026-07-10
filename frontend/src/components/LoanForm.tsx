@@ -1,5 +1,5 @@
 import type { SyntheticEvent } from "react";
-import type { LoanForm as LoanFormType } from "../App";
+import type { LoanForm as LoanFormType, Mode } from "../App";
 
 interface LoanFormProps {
   formData: LoanFormType;
@@ -7,6 +7,7 @@ interface LoanFormProps {
   handleSubmit: (event: SyntheticEvent<HTMLFormElement>) => void;
   isLoading: boolean;
   error: string;
+  currentMode: Mode;
 }
 
 export default function LoanForm({
@@ -15,34 +16,45 @@ export default function LoanForm({
   handleSubmit,
   isLoading,
   error,
+  currentMode,
 }: LoanFormProps) {
+  const isBorrower = currentMode === "borrower";
+
   return (
     <>
       <header className="topbar">
         <div>
-          <p className="eyebrow">Applications / New Review</p>
-          <h2>New Loan Application</h2>
+          <p className="eyebrow">
+            {isBorrower ? "Readiness Check / New Simulation" : "Applications / New Review"}
+          </p>
+          <h2>{isBorrower ? "Check My Loan Readiness" : "New Loan Application"}</h2>
           <p className="subtext">
-            Enter borrower details, run the model, then review the full dashboard.
+            {isBorrower
+              ? "Enter your exact background and financial details to estimate your personal approval trajectory."
+              : "Enter borrower details, run the risk model, then review the compliance dashboard."}
           </p>
         </div>
 
         <button className="primary-button" form="loan-form" disabled={isLoading}>
-          {isLoading ? "Analyzing..." : "Analyze Application"}
+          {isLoading ? "Analyzing..." : isBorrower ? "Evaluate My Readiness" : "Analyze Application"}
         </button>
       </header>
 
       <section className="panel application-panel">
         <div className="panel-header">
           <div>
-            <h3>Borrower Information</h3>
-            <p>These fields match the values your FastAPI model expects.</p>
+            <h3>Profile & Financial Details</h3>
+            <p>
+              {isBorrower
+                ? "Provide your details below to run your localized score profile model."
+                : "Ensure these entries match the applicant records for model validation."}
+            </p>
           </div>
         </div>
 
         <form id="loan-form" className="loan-form" onSubmit={handleSubmit}>
           <label>
-            Applicant Name
+            {isBorrower ? "Your Name" : "Applicant Name"}
             <input
               required
               type="text"
@@ -52,7 +64,7 @@ export default function LoanForm({
           </label>
 
           <label>
-            Age
+            {isBorrower ? "Your Age" : "Age"}
             <input
               required
               type="number"
@@ -63,92 +75,7 @@ export default function LoanForm({
           </label>
 
           <label>
-            Annual Income
-            <input
-              required
-              type="number"
-              min="0"
-              value={formData.person_income || ""}
-              onChange={(event) => updateField("person_income", event.target.value)}
-            />
-          </label>
-
-          <label>
-            Employment Experience
-            <input
-              required
-              type="number"
-              min="0"
-              value={formData.person_emp_exp || ""}
-              onChange={(event) => updateField("person_emp_exp", event.target.value)}
-            />
-          </label>
-
-          <label>
-            Credit Score
-            <input
-              required
-              type="number"
-              min="300"
-              max="850"
-              value={formData.credit_score || ""}
-              onChange={(event) => updateField("credit_score", event.target.value)}
-            />
-          </label>
-
-          <label>
-            Loan Amount
-            <input
-              required
-              type="number"
-              min="0"
-              value={formData.loan_amnt || ""}
-              onChange={(event) => updateField("loan_amnt", event.target.value)}
-            />
-          </label>
-
-          <label>
-            Interest Rate
-            <input
-              required
-              type="number"
-              min="0"
-              step="0.01"
-              value={formData.loan_int_rate || ""}
-              onChange={(event) => updateField("loan_int_rate", event.target.value)}
-            />
-          </label>
-
-          <label>
-            Credit History Length
-            <input
-              required
-              type="number"
-              min="0"
-              value={formData.cb_person_cred_hist_length || ""}
-              onChange={(event) => updateField("cb_person_cred_hist_length", event.target.value)}
-            />
-          </label>
-
-          <label>
-            Loan Intent
-            <select
-              required
-              value={formData.loan_intent}
-              onChange={(event) => updateField("loan_intent", event.target.value)}
-            >
-              <option value="">Select loan intent</option>
-              <option value="personal">Personal</option>
-              <option value="education">Education</option>
-              <option value="medical">Medical</option>
-              <option value="venture">Venture</option>
-              <option value="homeimprovement">Home Improvement</option>
-              <option value="debtconsolidation">Debt Consolidation</option>
-            </select>
-          </label>
-
-          <label>
-            Education
+            Education Level
             <select
               required
               value={formData.person_education}
@@ -177,7 +104,92 @@ export default function LoanForm({
           </label>
 
           <label>
-            Home Ownership
+            Annual Income
+            <input
+              required
+              type="number"
+              min="0"
+              value={formData.person_income || ""}
+              onChange={(event) => updateField("person_income", event.target.value)}
+            />
+          </label>
+
+          <label>
+            Employment Experience (Years)
+            <input
+              required
+              type="number"
+              min="0"
+              value={formData.person_emp_exp || ""}
+              onChange={(event) => updateField("person_emp_exp", event.target.value)}
+            />
+          </label>
+
+          <label>
+            Credit Score
+            <input
+              required
+              type="number"
+              min="300"
+              max="850"
+              value={formData.credit_score || ""}
+              onChange={(event) => updateField("credit_score", event.target.value)}
+            />
+          </label>
+
+          <label>
+            Loan Amount Requested
+            <input
+              required
+              type="number"
+              min="0"
+              value={formData.loan_amnt || ""}
+              onChange={(event) => updateField("loan_amnt", event.target.value)}
+            />
+          </label>
+
+          <label>
+            Interest Rate (%)
+            <input
+              required
+              type="number"
+              min="0"
+              step="0.01"
+              value={formData.loan_int_rate || ""}
+              onChange={(event) => updateField("loan_int_rate", event.target.value)}
+            />
+          </label>
+
+          <label>
+            Credit History Length (Years)
+            <input
+              required
+              type="number"
+              min="0"
+              value={formData.cb_person_cred_hist_length || ""}
+              onChange={(event) => updateField("cb_person_cred_hist_length", event.target.value)}
+            />
+          </label>
+
+          <label>
+            Loan Purpose / Intent
+            <select
+              required
+              value={formData.loan_intent}
+              onChange={(event) => updateField("loan_intent", event.target.value)}
+            >
+              <option value="">Select loan intent</option>
+              <option value="personal">Personal</option>
+              <option value="education">Education</option>
+              <option value="medical">Medical</option>
+              <option value="venture">Venture</option>
+              <option value="homeimprovement">Home Improvement</option>
+              <option value="debtconsolidation">Debt Consolidation</option>
+            </select>
+          </label>
+
+          <label>
+            Home Ownership Status
             <select
               required
               value={formData.person_home_ownership}
@@ -192,7 +204,7 @@ export default function LoanForm({
           </label>
 
           <label>
-            Previous Defaults
+            Previous Historical Defaults
             <select
               required
               value={formData.previous_loan_defaults_on_file}

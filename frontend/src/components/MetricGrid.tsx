@@ -1,4 +1,4 @@
-//import type { PredictionResult } from "../App";
+import type { Mode } from "../App";
 
 interface MetricGridProps {
   approvalProbability: number;
@@ -7,6 +7,7 @@ interface MetricGridProps {
   riskTier: string;
   recommendation: string;
   formatPercent: (value: number) => string;
+  currentMode: Mode;
 }
 
 export default function MetricGrid({
@@ -16,35 +17,38 @@ export default function MetricGrid({
   riskTier,
   recommendation,
   formatPercent,
+  currentMode,
 }: MetricGridProps) {
+  const isBorrower = currentMode === "borrower";
+
   return (
     <section className="metric-grid">
       <article className="metric-card">
-        <p>Approval Probability</p>
+        <p>{isBorrower ? "Estimated Approval Chance" : "Approval Probability"}</p>
         <strong>{formatPercent(approvalProbability)}</strong>
         <span>
           {approvalChange === 0
-            ? "Current model estimate"
-            : `${approvalChange > 0 ? "+" : ""}${formatPercent(approvalChange)} from original`}
+            ? isBorrower ? "Current scenario baseline" : "Current model estimate"
+            : `${approvalChange > 0 ? "+" : ""}${formatPercent(approvalChange)} from baseline`}
         </span>
       </article>
 
-      <article className="metric-card warning">
-        <p>Default Risk</p>
-        <strong>{formatPercent(defaultRisk)}</strong>
-        <span>Statistical probability of default</span>
+      <article className={`metric-card ${isBorrower ? "" : "warning"}`}>
+        <p>{isBorrower ? "Approval Horizon" : "Default Risk"}</p>
+        <strong>{isBorrower ? (approvalProbability > 0.7 ? "Strong" : "Moderate") : formatPercent(defaultRisk)}</strong>
+        <span>{isBorrower ? "Aggregated health assessment" : "Statistical probability of default"}</span>
       </article>
 
       <article className="metric-card">
-        <p>Risk Tier</p>
+        <p>{isBorrower ? "Readiness Tier" : "Risk Tier"}</p>
         <strong>{riskTier}</strong>
-        <span>Based on the current scenario</span>
+        <span>Based on current configuration</span>
       </article>
 
-      <article className="metric-card success">
-        <p>Recommendation</p>
-        <strong>{recommendation}</strong>
-        <span>Decision support summary</span>
+      <article className={`metric-card ${approvalProbability > 0.5 ? "success" : "warning"}`}>
+        <p>{isBorrower ? "Strategic Placement" : "Recommendation"}</p>
+        <strong>{isBorrower ? (approvalProbability > 0.65 ? "Target Range" : "Review Fields") : recommendation}</strong>
+        <span>Decision support status</span>
       </article>
     </section>
   );
