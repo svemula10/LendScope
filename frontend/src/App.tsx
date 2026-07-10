@@ -148,6 +148,7 @@ function App() {
     }));
   }
 
+  // The predict function sends a POST request to the backend API with the loan application data and returns the prediction result.
   async function predict(application: LoanForm) {
     const response = await fetch("http://localhost:8000/api/predict", {
       method: "POST",
@@ -164,6 +165,7 @@ function App() {
     return (await response.json()) as PredictionResult;
   }
 
+  
   async function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsLoading(true);
@@ -215,6 +217,7 @@ function App() {
     }
   }
 
+  // The useEffect hook is used to trigger the prediction API call whenever the simulatorData, selectedApplication, or activeView changes. It sets a timeout to avoid making too many requests in quick succession.
   useEffect(() => {
     if (!selectedApplication || activeView !== "dashboardDetail") {
       return;
@@ -238,15 +241,18 @@ function App() {
   }, [simulatorData, selectedApplication, activeView]);
 
   return (
+    // The main application shell, including the sidebar and main content area
     <div className="app-shell">
+      {/* The sidebar, which allows navigation between views and starting a new application */}
       <Sidebar
         activeView={activeView}
         setActiveView={setActiveView}
         startNewApplication={startNewApplication}
       />
 
+      {/* The main content area, which displays the current view based on the activeView state*/}
       <main className="main-content">
-        {activeView === "dashboardList" && (
+        {activeView === "dashboardList" && ( //if activeView = "dashboardList", then render the dashboard list view
           <>
             <header className="topbar">
               <div>
@@ -255,19 +261,21 @@ function App() {
                 <p className="subtext">View previously analyzed loan applications.</p>
               </div>
 
+              {/* The "New Application" button, which allows the user to start a new loan application analysis */}
               <button className="primary-button" type="button" onClick={startNewApplication}>
                 New Application
               </button>
             </header>
 
+            {/* if the saved applications list is empty then show empty state else show list of dashboards */}
             {savedApplications.length === 0 ? (
               <section className="panel empty-state">
                 <h3>No dashboards yet</h3>
                 <p>Analyze a new application and it will appear here.</p>
               </section>
-            ) : (
+            ) : ( //if there are saved applications, render the list of dashboards. The colon is an else
               <section className="dashboard-list">
-                {savedApplications.map((application) => (
+                {savedApplications.map((application) => ( //map over the saved applications and render each one as a card in the dashboard list
                   <article className="panel dashboard-list-card" key={application.id}>
                     <div>
                       <h3>{application.form.applicant_name || "Unnamed Applicant"}</h3>
@@ -306,6 +314,7 @@ function App() {
           </>
         )}
 
+        {/* If the active view is "application", render the loan application form */}
         {activeView === "application" && (
           <LoanForm
             formData={formData}

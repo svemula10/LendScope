@@ -1,4 +1,4 @@
-import type { PredictionResult } from "../App";
+//import type { PredictionResult } from "../App";
 
 interface MetricGridProps {
   approvalProbability: number;
