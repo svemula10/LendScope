@@ -236,9 +236,51 @@ function App() {
     event.preventDefault();
     setIsLoading(true);
     setError("");
+
+    // ========================================================
+    // ADDED LOGICAL VALIDATION CHECKS (Edge-Case Prevention)
+    // ========================================================
+    
+    // Check A: Employment history cannot exceed physically possible limits for Age
+    if (formData.person_emp_exp >= formData.person_age) {
+      setError("Logical Error: Employment experience cannot be equal to or greater than your total age.");
+      setIsLoading(false);
+      return;
+    }
+
+    if (formData.person_age - formData.person_emp_exp < 14) {
+      setError(`Logical Error: Entering ${formData.person_emp_exp} years of work history at age ${formData.person_age} implies working before age 14. Please check your inputs.`);
+      setIsLoading(false);
+      return;
+    }
+
+    // Check B: Credit History Length cannot exceed age
+    if (formData.cb_person_cred_hist_length >= formData.person_age) {
+      setError("Logical Error: Credit history length cannot be longer than your age.");
+      setIsLoading(false);
+      return;
+    }
+
+    if (formData.person_age - formData.cb_person_cred_hist_length < 18) {
+      // Note: While some authorized user cards exist for minors, institutional lenders validate personal credit lines from age 18.
+      setError("Logical Error: Credit history cannot begin before age 18. Please adjust your age or credit history length.");
+      setIsLoading(false);
+      return;
+    }
+
+    // ========================================================
+    // END OF VALIDATION CHECKS (Proceeding to API if valid)
+    // ========================================================
+
     try {
       const data = await predict(formData);
-      const newApplication: SavedApplication = { id: Date.now(), form: formData, result: data };
+
+      const newApplication: SavedApplication = {
+        id: Date.now(),
+        form: formData,
+        result: data,
+      };
+
       setSavedApplications((current) => [newApplication, ...current]);
       setSelectedApplicationId(newApplication.id);
       setResult(data);
@@ -246,7 +288,9 @@ function App() {
       setSimulatorData(formData);
       setActiveView("dashboardDetail");
     } catch {
-      setError("Could not connect to the backend. Make sure FastAPI is running on http://localhost:8000.");
+      setError(
+        "Could not connect to the backend. Make sure FastAPI is running on http://localhost:8000."
+      );
     } finally {
       setIsLoading(false);
     }
