@@ -1,5 +1,6 @@
 import { type SyntheticEvent, useEffect, useState } from "react";
 import "./App.css";
+import { jsPDF } from "jspdf"; // <-- ADDED FEATURE C: Client-Side PDF Generation Package
 
 import Sidebar from "./components/Sidebar";
 import LoanForm from "./components/LoanForm";
@@ -50,7 +51,6 @@ const numericFields: Array<keyof LoanForm> = [
   "cb_person_cred_hist_length",
 ];
 
-// Fallback defaults prevent payload fragmentation during borrower profile initialization
 const emptyForm: LoanForm = {
   applicant_name: "",
   person_age: 0,
@@ -89,7 +89,6 @@ function formatPercent(value: number) {
   return `${Math.round(percent)}%`;
 }
 
-// Render currency formatting for simple numbers
 function formatMoney(value: number) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -128,6 +127,72 @@ function App() {
     ? displayedResult.approval_probability - baselineApproval
     : 0;
 
+  // =========================================================================
+  // PIPELINE MATH: Calculate monthly payment inside parent to feed downstream Feature D
+  // =========================================================================
+  const simLoan = simulatorData.loan_amnt || 0;
+  const simRate = simulatorData.loan_int_rate || 0;
+  const simRateMonthly = simRate / 100 / 12;
+  const simPayment = (simLoan > 0 && simRateMonthly > 0)
+    ? (simLoan * simRateMonthly * Math.pow(1 + simRateMonthly, 36)) / (Math.pow(1 + simRateMonthly, 36) - 1)
+    : simLoan / 36;
+
+  // ==========================================================
+  // ADDED FEATURE C: Client-Side jsPDF Report Compiler Function
+  // ==========================================================
+  function exportAuditPDF() {
+    if (!selectedApplication) return;
+    
+    const doc = new jsPDF();
+    const appForm = selectedApplication.form;
+    const appRes = selectedApplication.result;
+
+    // Formatting structured vector output documents
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(20);
+    doc.setTextColor(8, 23, 51);
+    doc.text("LendScope Underwriting Audit Brief", 14, 20);
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(99, 112, 138);
+    doc.text(`Generated Verification Date: ${new Date().toLocaleString()}`, 14, 27);
+    doc.text(`System Reference ID: TS-${selectedApplication.id}`, 14, 32);
+    
+    doc.setDrawColor(226, 232, 243);
+    doc.line(14, 38, 196, 38);
+
+    // Section 1: Core Output Summary Metrics Data
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.setTextColor(17, 32, 51);
+    doc.text("1. Model Risk Assessment Decisions", 14, 48);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    doc.text(`Applicant Name Target: ${appForm.applicant_name}`, 14, 58);
+    doc.text(`Model Approval Probability: ${formatPercent(appRes.approval_probability)}`, 14, 65);
+    doc.text(`Statistical Probability of Default (PD): ${formatPercent(appRes.statistical_pd)}`, 14, 72);
+    doc.text(`Assigned Risk Classification Tier: ${appRes.risk_tier}`, 14, 79);
+    doc.text(`Underwriter Decision Directive: ${appRes.recommendation ?? "Under Review"}`, 14, 86);
+
+    // Section 2: Immutable Base Stated Metrics Log 
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text("2. Verified Applicant Snapshots Parameters", 14, 102);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    doc.text(`Declared Stated Income: ${formatMoney(appForm.person_income)}`, 14, 112);
+    doc.text(`Allocation Limit Requested: ${formatMoney(appForm.loan_amnt)}`, 14, 119);
+    doc.text(`Assigned Baseline Credit Score: ${appForm.credit_score}`, 14, 126);
+    doc.text(`Employment Experience Value: ${appForm.person_emp_exp} years`, 14, 133);
+    doc.text(`Target Context Stated Intent: ${formatIntent(appForm.loan_intent)}`, 14, 140);
+    doc.text(`Home Ownership Record Status: ${appForm.person_home_ownership}`, 14, 147);
+
+    doc.save(`LendScope-AuditBrief-ID-${selectedApplication.id}.pdf`);
+  }
+
   function startNewApplication() {
     setFormData(emptyForm);
     setError("");
@@ -140,48 +205,30 @@ function App() {
   function updateField(name: keyof LoanForm, value: string) {
     setFormData((current) => {
       let parsedValue: number | string = value;
-      
       if (numericFields.includes(name)) {
-        // Keep the decimal float for interest rates, but cleanly snap everything else to whole integers
         parsedValue = name === "loan_int_rate" ? Number(value) : Math.round(Number(value));
       }
-      
-      return {
-        ...current,
-        [name]: parsedValue,
-      };
+      return { ...current, [name]: parsedValue };
     });
   }
 
   function updateSimulatorField(name: keyof LoanForm, value: string) {
     setSimulatorData((current) => {
       let parsedValue: number | string = value;
-      
       if (numericFields.includes(name)) {
-        // Match the same clean rounding strategy inside your slider states
         parsedValue = name === "loan_int_rate" ? Number(value) : Math.round(Number(value));
       }
-      
-      return {
-        ...current,
-        [name]: parsedValue,
-      };
+      return { ...current, [name]: parsedValue };
     });
   }
 
   async function predict(application: LoanForm) {
     const response = await fetch("http://localhost:8000/api/predict", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(buildPayload(application)),
     });
-
-    if (!response.ok) {
-      throw new Error("Prediction request failed.");
-    }
-
+    if (!response.ok) throw new Error("Prediction request failed.");
     return (await response.json()) as PredictionResult;
   }
 
@@ -189,16 +236,9 @@ function App() {
     event.preventDefault();
     setIsLoading(true);
     setError("");
-
     try {
       const data = await predict(formData);
-
-      const newApplication: SavedApplication = {
-        id: Date.now(),
-        form: formData,
-        result: data,
-      };
-
+      const newApplication: SavedApplication = { id: Date.now(), form: formData, result: data };
       setSavedApplications((current) => [newApplication, ...current]);
       setSelectedApplicationId(newApplication.id);
       setResult(data);
@@ -206,9 +246,7 @@ function App() {
       setSimulatorData(formData);
       setActiveView("dashboardDetail");
     } catch {
-      setError(
-        "Could not connect to the backend. Make sure FastAPI is running on http://localhost:8000."
-      );
+      setError("Could not connect to the backend. Make sure FastAPI is running on http://localhost:8000.");
     } finally {
       setIsLoading(false);
     }
@@ -224,10 +262,7 @@ function App() {
   }
 
   function deleteDashboard(applicationId: number) {
-    setSavedApplications((current) =>
-      current.filter((application) => application.id !== applicationId)
-    );
-
+    setSavedApplications((current) => current.filter((app) => app.id !== applicationId));
     if (selectedApplicationId === applicationId) {
       setSelectedApplicationId(null);
       setResult(null);
@@ -237,13 +272,9 @@ function App() {
   }
 
   useEffect(() => {
-    if (!selectedApplication || activeView !== "dashboardDetail") {
-      return;
-    }
-
+    if (!selectedApplication || activeView !== "dashboardDetail") return;
     const timeoutId = window.setTimeout(async () => {
       setIsSimulating(true);
-
       try {
         const data = await predict(simulatorData);
         setSimulatorResult(data);
@@ -254,7 +285,6 @@ function App() {
         setIsSimulating(false);
       }
     }, 350);
-
     return () => window.clearTimeout(timeoutId);
   }, [simulatorData, selectedApplication, activeView]);
 
@@ -281,7 +311,6 @@ function App() {
                     : "Access underlying risk portfolios and underwriting audit snapshots."}
                 </p>
               </div>
-
               <button className="primary-button" type="button" onClick={startNewApplication}>
                 {currentMode === "borrower" ? "New Scenario Estimate" : "New Application Underwrite"}
               </button>
@@ -298,33 +327,15 @@ function App() {
                   <article className="panel dashboard-list-card" key={application.id}>
                     <div>
                       <h3>{application.form.applicant_name || "Unnamed Scenario"}</h3>
-                      <p>
-                        {formatMoney(application.form.loan_amnt)} request · Credit score{" "}
-                        {application.form.credit_score}
-                      </p>
+                      <p>{formatMoney(application.form.loan_amnt)} request · Credit score {application.form.credit_score}</p>
                     </div>
-
                     <div className="dashboard-list-metrics">
                       <span>{formatPercent(application.result.approval_probability)} score probability</span>
                       <span>{application.result.risk_tier}</span>
                     </div>
-
                     <div className="dashboard-card-actions">
-                      <button
-                        className="primary-button secondary-button"
-                        type="button"
-                        onClick={() => openDashboard(application)}
-                      >
-                        Open Dashboard
-                      </button>
-
-                      <button
-                        className="delete-button"
-                        type="button"
-                        onClick={() => deleteDashboard(application.id)}
-                      >
-                        Delete
-                      </button>
+                      <button className="primary-button secondary-button" type="button" onClick={() => openDashboard(application)}>Open Dashboard</button>
+                      <button className="delete-button" type="button" onClick={() => deleteDashboard(application.id)}>Delete</button>
                     </div>
                   </article>
                 ))}
@@ -349,23 +360,19 @@ function App() {
             <header className="topbar">
               <div>
                 <p className="eyebrow">Dashboard / Evaluation Snapshot</p>
-                <h2>
-                  {selectedApplication
-                    ? selectedApplication.form.applicant_name || "Unnamed Scenario Ledger"
-                    : "No Data Profile Selected"}
-                </h2>
-                <p className="subtext">
-                  Analyze underlying prediction metrics, operational balances, and sandbox variables.
-                </p>
+                <h2>{selectedApplication ? selectedApplication.form.applicant_name || "Unnamed Scenario Ledger" : "No Data Profile Selected"}</h2>
+                <p className="subtext">Analyze underlying prediction metrics, operational balances, and sandbox variables.</p>
               </div>
-
-              <button
-                className="primary-button secondary-button"
-                type="button"
-                onClick={() => setActiveView("dashboardList")}
-              >
-                Return to Archive List
-              </button>
+              
+              <div style={{ display: "flex", gap: "10px" }}>
+                {/* FEATURE C TRIGGER BUTTON: Only visible inside underwriter panel workspace */}
+                {currentMode === "underwriter" && (
+                  <button className="primary-button" style={{ boxShadow: "none" }} type="button" onClick={exportAuditPDF}>
+                    Export Audit PDF Brief
+                  </button>
+                )}
+                <button className="primary-button secondary-button" type="button" onClick={() => setActiveView("dashboardList")}>Return to Archive List</button>
+              </div>
             </header>
 
             {!selectedApplication || !displayedResult ? (
@@ -383,6 +390,8 @@ function App() {
                   recommendation={displayedResult.recommendation ?? "Hold / Under Review"}
                   formatPercent={formatPercent}
                   currentMode={currentMode}
+                  annualIncome={simulatorData.person_income}  // Pass down data to evaluate DTI
+                  simulatedPayment={simPayment}                // Pass down amortization context
                 />
 
                 <div className="dashboard-grid">
@@ -391,6 +400,8 @@ function App() {
                     updateSimulatorField={updateSimulatorField}
                     isSimulating={isSimulating}
                     formatMoney={formatMoney}
+                    currentMode={currentMode}
+                    approvalProbability={approvalProbability}
                   />
 
                   <aside className="panel summary-panel">
@@ -400,34 +411,14 @@ function App() {
                         <p>Immutable entry parameters logged.</p>
                       </div>
                     </div>
-
                     <dl className="snapshot-list">
-                      <div>
-                        <dt>Profile Label</dt>
-                        <dd>{displayedApplication.applicant_name}</dd>
-                      </div>
-                      <div>
-                        <dt>Base Declared Income</dt>
-                        <dd>{formatMoney(displayedApplication.person_income)}</dd>
-                      </div>
-                      <div>
-                        <dt>Stated Allocation Limit</dt>
-                        <dd>{formatMoney(displayedApplication.loan_amnt)}</dd>
-                      </div>
-                      <div>
-                        <dt>Credit Metric Score</dt>
-                        <dd>{displayedApplication.credit_score}</dd>
-                      </div>
-                      <div>
-                        <dt>Stated History Length</dt>
-                        <dd>{displayedApplication.person_emp_exp} years</dd>
-                      </div>
-                      <div>
-                        <dt>Transaction Context Target</dt>
-                        <dd>{formatIntent(displayedApplication.loan_intent)}</dd>
-                      </div>
+                      <div><dt>Profile Label</dt><dd>{displayedApplication.applicant_name}</dd></div>
+                      <div><dt>Base Declared Income</dt><dd>{formatMoney(displayedApplication.person_income)}</dd></div>
+                      <div><dt>Stated Allocation Limit</dt><dd>{formatMoney(displayedApplication.loan_amnt)}</dd></div>
+                      <div><dt>Credit Metric Score</dt><dd>{displayedApplication.credit_score}</dd></div>
+                      <div><dt>Stated History Length</dt><dd>{displayedApplication.person_emp_exp} years</dd></div>
+                      <div><dt>Transaction Context Target</dt><dd>{formatIntent(displayedApplication.loan_intent)}</dd></div>
                     </dl>
-
                     <div className="recommendation-box">
                       <h4>Platform Strategy Insight</h4>
                       <p>
@@ -438,7 +429,6 @@ function App() {
                     </div>
                   </aside>
                 </div>
-
                 {error && <p className="error-message dashboard-error">{error}</p>}
               </>
             )}
