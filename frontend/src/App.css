@@ -107,6 +107,9 @@
   flex: 1;
   min-width: 0;
   padding: 28px 32px 40px;
+  width: 100%;       /* Ensures it stretches with the flex container */
+  max-width: 1400px; /* Upgraded from 980px to accommodate wide resolutions comfortably */
+  margin: 0 auto;    /* Centers the entire dashboard workspace if the screen goes past 1400px */
 }
 
 .topbar {
@@ -160,10 +163,21 @@
   box-shadow: none;
 }
 
+/* Change this to let the dashboard list expand to match the main content width */
 .dashboard-list {
   display: grid;
   gap: 14px;
-  max-width: 980px;
+  width: 100%; /* Changed from max-width: 980px */
+}
+
+/* Let the loan intake form panel use full available space */
+.application-panel {
+  width: 100%; /* Changed from max-width: 980px */
+}
+
+/* Let the empty state fill the view area */
+.empty-state {
+  width: 100%; /* Changed from max-width: 720px */
 }
 
 .dashboard-list-card {
@@ -285,12 +299,23 @@
   max-width: 980px;
 }
 
+
 .panel-header {
   display: flex;
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 18px;
 }
+
+/* //this centers the header
+.panel-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+*/
 
 .panel-header h3,
 .empty-state h3 {
