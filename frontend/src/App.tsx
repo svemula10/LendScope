@@ -463,12 +463,26 @@ function App() {
                       <div><dt>Stated History Length</dt><dd>{displayedApplication.person_emp_exp} years</dd></div>
                       <div><dt>Transaction Context Target</dt><dd>{formatIntent(displayedApplication.loan_intent)}</dd></div>
                     </dl>
-                    <div className="recommendation-box">
+                    {/*
+                    <div className="recommendation-box">  Old recommendation box deal with this later
                       <h4>Platform Strategy Insight</h4>
                       <p>
                         {displayedResult.recommendation
                           ? displayedResult.recommendation
                           : `The target vector metrics generate an assignment level categorized within ${displayedResult.risk_tier}. Interlock baseline scores against simulator tracks to target safe tier migration loops.`}
+                      </p>
+                    </div>
+                    */}
+                    <div className="recommendation-box">
+                      <h4>
+                        {currentMode === "borrower" 
+                          ? "💡 Borrower Strategy Check" 
+                          : "🔒 Policy Compliance Safe Harbor"}
+                      </h4>
+                      <p>
+                        {currentMode === "borrower"
+                          ? "Adjust the sandbox sliders on the left to simulate how moving your credit score or reducing your target loan amount shifts your automated readiness trajectory."
+                          : "System guidelines logged. This application check evaluates input fields against machine learning risk tiers and real-time debt-to-income boundary limits."}
                       </p>
                     </div>
                   </aside>
