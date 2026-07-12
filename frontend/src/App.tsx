@@ -127,9 +127,7 @@ function App() {
     ? displayedResult.approval_probability - baselineApproval
     : 0;
 
-  // =========================================================================
   // PIPELINE MATH: Calculate monthly payment inside parent to feed downstream Feature D
-  // =========================================================================
   const simLoan = simulatorData.loan_amnt || 0;
   const simRate = simulatorData.loan_int_rate || 0;
   const simRateMonthly = simRate / 100 / 12;
@@ -137,9 +135,7 @@ function App() {
     ? (simLoan * simRateMonthly * Math.pow(1 + simRateMonthly, 36)) / (Math.pow(1 + simRateMonthly, 36) - 1)
     : simLoan / 36;
 
-  // ==========================================================
-  // ADDED FEATURE C: Client-Side jsPDF Report Compiler Function
-  // ==========================================================
+  //FEATURE C: Client-Side jsPDF Report Compiler Function
   function exportAuditPDF() {
     if (!selectedApplication) return;
     
@@ -237,9 +233,7 @@ function App() {
     setIsLoading(true);
     setError("");
 
-    // ========================================================
-    // ADDED LOGICAL VALIDATION CHECKS (Edge-Case Prevention)
-    // ========================================================
+    // LOGICAL VALIDATION CHECKS (Edge-Case Prevention)
     
     // Check A: Employment history cannot exceed physically possible limits for Age
     if (formData.person_emp_exp >= formData.person_age) {
@@ -268,9 +262,7 @@ function App() {
       return;
     }
 
-    // ========================================================
     // END OF VALIDATION CHECKS (Proceeding to API if valid)
-    // ========================================================
 
     try {
       const data = await predict(formData);

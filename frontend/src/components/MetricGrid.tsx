@@ -8,8 +8,8 @@ interface MetricGridProps {
   recommendation: string;
   formatPercent: (value: number) => string;
   currentMode: Mode;
-  annualIncome: number;    // <-- Added to dynamically calculate DTI 
-  simulatedPayment: number; // <-- Added payment data pipeline
+  annualIncome: number;   
+  simulatedPayment: number; 
 }
 
 export default function MetricGrid({
@@ -25,9 +25,7 @@ export default function MetricGrid({
 }: MetricGridProps) {
   const isBorrower = currentMode === "borrower";
 
-  // =========================================================
-  // ADDED FEATURE D: Front-End Debt-to-Income Calculation Logic
-  // =========================================================
+  //FEATURE D: Front-End Debt-to-Income Calculation Logic
   const annualLoanCost = simulatedPayment * 12;
   const dtiPercentage = annualIncome > 0 ? (annualLoanCost / annualIncome) * 100 : 0;
 
@@ -70,9 +68,8 @@ export default function MetricGrid({
         <span>Based on current configuration</span>
       </article>
 
-      {/* =============================================================== */}
+
       {/* DYNAMIC SLOT CHECK: Borrower receives action focus; Lender receives DTI Monitor */}
-      {/* =============================================================== */}
       {isBorrower ? (
         <article className={`metric-card ${approvalProbability > 0.5 ? "success" : "warning"}`}>
           <p>Strategic Focus</p>
