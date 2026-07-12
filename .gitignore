@@ -19,6 +19,8 @@ data/
 *.csv
 *.joblib
 *.pkl
+
+notebooks/
 *.ipynb
 
 # Frontend
