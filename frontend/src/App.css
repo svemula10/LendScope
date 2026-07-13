@@ -180,42 +180,64 @@
   width: 100%; /* Changed from max-width: 720px */
 }
 
-.dashboard-list-card {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  align-items: center;
-  gap: 18px;
+.dashboard-list-card { 
+  display: flex;
+  /* CHANGE: Pack items sequentially from the left instead of blowing them apart */
+  justify-content: flex-start; 
+  align-items: center;            
+  /* This controls the uniform, equal distance between your 3 main blocks */
+  gap: 32px; 
+  background: #ffffff;
+  border: 1px solid #e2e8f3;
+  border-radius: 8px;
+  padding: 16px 24px;
+  margin-bottom: 14px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
-.dashboard-list-card h3 {
-  margin: 0;
+.dashboard-list-card div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dashboard-list-card h3 { 
+  margin: 0; 
   font-size: 18px;
+  color: var(--text-h, #08060d);
 }
 
-.dashboard-list-card p {
-  margin: 6px 0 0;
-  color: #6b7891;
+.dashboard-list-card p { 
+  margin: 0; 
+  color: var(--text, #6b7891);
   font-size: 14px;
 }
 
-.dashboard-list-metrics {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+.dashboard-list-metrics { 
+  display: flex; 
+  gap: 12px;             /* The tight spacing between individual badge pills */
+  flex-wrap: wrap;       
+  align-items: center;
+  justify-content: center;
+  /* REMOVE flex-grow: 1 so it doesn't try to balloon out and take up empty space */
 }
 
-.dashboard-list-metrics span {
-  padding: 7px 10px;
-  border-radius: 999px;
+
+/* 3. Keep the Badge Text Protected */
+.dashboard-list-metrics span { 
+  padding: 8px 16px; 
+  border-radius: 999px; 
   background: #eef3ff;
-  color: #263c78;
-  font-size: 13px;
+  color: #263c78; 
+  font-size: 13px; 
   font-weight: 750;
+  white-space: nowrap;   /* Keeps individual badges pristine and un-broken */
 }
 
-.dashboard-card-actions {
-  display: flex;
-  gap: 10px;
+.dashboard-card-actions { 
+  display: flex; 
+  gap: 12px; 
   align-items: center;
 }
 
@@ -375,10 +397,6 @@ select:focus {
   max-width: 720px;
 }
 
-.empty-state {
-  max-width: 720px;
-}
-
 .simulator-grid {
   display: grid;
   gap: 20px;
@@ -456,6 +474,34 @@ select:focus {
   line-height: 1.6;
 }
 
+@media (max-width: 1024px) {
+  .dashboard-list-card {
+    flex-direction: column;       
+    align-items: center;          /* CRITICAL: Centers all 3 main sections horizontally */
+    text-align: center;           /* Centers the text lines inside the text wrapper */
+    gap: 20px;
+    padding: 24px;
+  }
+
+  .dashboard-list-card > div:first-of-type {
+    align-items: center;          /* Centers the individual h3 and p elements */
+    flex-shrink: 0;
+  }
+
+  .dashboard-list-metrics {
+    width: 100%;
+    flex-wrap: wrap;              
+    justify-content: center;      /* Centers the badges horizontally */
+    margin-left: 0;
+  }
+
+  .dashboard-card-actions {
+    width: 100%;
+    justify-content: center;      /* Centers the action buttons horizontally */
+    margin-top: 8px;
+  }
+}
+
 @media (max-width: 1100px) {
   .metric-grid,
   .dashboard-grid {
@@ -466,6 +512,7 @@ select:focus {
     position: static;
   }
 }
+
 
 @media (max-width: 800px) {
   .app-shell {
@@ -488,9 +535,26 @@ select:focus {
   .dashboard-list-card {
     grid-template-columns: 1fr;
   }
+  
+
+  .dashboard-list-card { 
+    display: flex;             /* Switch to flexbox for perfect vertical block ordering */
+    flex-direction: column;
+    align-items: center;          /* CRITICAL: Centers all 3 main sections horizontally */
+    text-align: center;   /* Align text and badges to the left edge */
+    gap: 16px; 
+  }
+
+  .dashboard-list-metrics {
+    width: 100%;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 4px 0;             /* Protect spacing above and below badges */
+  }
 
   .dashboard-card-actions {
-    width: 100%;
+    width: 100%;               /* Ensure actions span full width nicely on mobile */
+    justify-content: flex-start;
   }
 
   .dashboard-card-actions button {
