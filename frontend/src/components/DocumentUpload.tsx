@@ -38,6 +38,8 @@ export default function DocumentUpload({ onDocumentExtracted }: DocumentUploadPr
     if (e.target.files && e.target.files[0]) {
       processFile(e.target.files[0]);
     }
+
+    e.target.value = "";
   };
 
   // Asynchronous network bridge sending file to free FastAPI backend
@@ -98,7 +100,7 @@ export default function DocumentUpload({ onDocumentExtracted }: DocumentUploadPr
         ref={fileInputRef}
         onChange={handleFileChange}
         style={{ display: "none" }}
-        accept=".pdf,image/*"
+        accept=".pdf,.txt,image/*"
       />
       
       <div style={{ fontSize: "28px", marginBottom: "8px" }}>📁</div>

@@ -56,6 +56,46 @@ export default function LoanForm({
           </label>
 
           <label>
+            {isBorrower ? "Your Age" : "Age"}
+            <input
+              required
+              type="number"
+              min="18"
+              value={formData.person_age || ""}
+              onChange={(event) => updateField("person_age", event.target.value)}
+            />
+          </label>
+
+          <label>
+            Education Level
+            <select
+              required
+              value={formData.person_education}
+              onChange={(event) => updateField("person_education", event.target.value)}
+            >
+              <option value="">Select education</option>
+              <option value="High School">High School</option>
+              <option value="Associate">Associate</option>
+              <option value="Bachelor">Bachelor</option>
+              <option value="Master">Master</option>
+              <option value="Doctorate">Doctorate</option>
+            </select>
+          </label>
+
+          <label>
+            Gender
+            <select
+              required
+              value={formData.person_gender}
+              onChange={(event) => updateField("person_gender", event.target.value)}
+            >
+              <option value="">Select gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </label>
+
+          <label>
             Annual Income
             <input
               required
@@ -148,10 +188,10 @@ export default function LoanForm({
               onChange={(event) => updateField("person_home_ownership", event.target.value)}
             >
               <option value="">Select home ownership</option>
-              <option value="RENT">Rent</option>
-              <option value="OWN">Own</option>
-              <option value="MORTGAGE">Mortgage</option>
-              <option value="OTHER">Other</option>
+              <option value="Rent">Rent</option>
+              <option value="Own">Own</option>
+              <option value="Mortgage">Mortgage</option>
+              <option value="Other">Other</option>
             </select>
           </label>
 
@@ -163,8 +203,8 @@ export default function LoanForm({
               onChange={(event) => updateField("previous_loan_defaults_on_file", event.target.value)}
             >
               <option value="">Select previous defaults</option>
-              <option value="N">No</option>
-              <option value="Y">Yes</option>
+              <option value="No">No</option>
+              <option value="Yes">Yes</option>
             </select>
           </label>
 
