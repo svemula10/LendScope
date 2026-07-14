@@ -324,7 +324,7 @@
 
 .panel-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   gap: 16px;
   margin-bottom: 18px;
 }

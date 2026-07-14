@@ -135,6 +135,34 @@ function App() {
     ? (simLoan * simRateMonthly * Math.pow(1 + simRateMonthly, 36)) / (Math.pow(1 + simRateMonthly, 36) - 1)
     : simLoan / 36;
 
+
+
+  const handleDocumentExtraction = (extractedData: Partial<LoanForm>) => {
+    setFormData((current) => {
+      const updated = { ...current };
+
+      Object.keys(extractedData).forEach((key) => {
+        const fieldName = key as keyof LoanForm;
+        const incomingValue = extractedData[fieldName];
+
+        if (incomingValue !== undefined && incomingValue !== null) {
+          if (numericFields.includes(fieldName)) {
+            const parsedNumber = fieldName === "loan_int_rate" 
+              ? Number(incomingValue) 
+              : Math.round(Number(incomingValue));
+            
+            // Type-safe assignment without 'any' by structuring via Record indexing
+            (updated as Record<keyof LoanForm, unknown>)[fieldName] = parsedNumber;
+          } else {
+            (updated as Record<keyof LoanForm, unknown>)[fieldName] = incomingValue;
+          }
+        }
+      });
+
+      return updated;
+    });
+  };
+
   //FEATURE C: Client-Side jsPDF Report Compiler Function
   function exportAuditPDF() {
     if (!selectedApplication) return;
@@ -387,7 +415,8 @@ function App() {
             handleSubmit={handleSubmit}
             isLoading={isLoading}
             error={error}
-            currentMode={currentMode}
+            currentMode={currentMode as Mode}
+            onDocumentExtracted={handleDocumentExtraction} // <-- INJECTED PROPERTY BINDING
           />
         )}
 

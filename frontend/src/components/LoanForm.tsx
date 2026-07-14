@@ -1,5 +1,6 @@
 import type { SyntheticEvent } from "react";
 import type { LoanForm as LoanFormType, Mode } from "../App";
+import DocumentUpload from "./DocumentUpload"; // <-- ADDED V2 BINDING
 
 interface LoanFormProps {
   formData: LoanFormType;
@@ -8,6 +9,7 @@ interface LoanFormProps {
   isLoading: boolean;
   error: string;
   currentMode: Mode;
+  onDocumentExtracted: (extractedData: Partial<LoanFormType>) => void; // <-- ADDED V2 PROPERTY
 }
 
 export default function LoanForm({
@@ -17,90 +19,40 @@ export default function LoanForm({
   isLoading,
   error,
   currentMode,
+  onDocumentExtracted, // <-- Destructured here
 }: LoanFormProps) {
   const isBorrower = currentMode === "borrower";
 
   return (
     <>
-      <header className="topbar">
-        <div>
-          <p className="eyebrow">
-            {isBorrower ? "Readiness Check / New Simulation" : "Applications / New Review"}
-          </p>
-          <h2>{isBorrower ? "Check My Loan Readiness" : "New Loan Application"}</h2>
-          <p className="subtext">
-            {isBorrower
-              ? "Enter your exact background and financial details to estimate your personal approval trajectory."
-              : "Enter borrower details, run the risk model, then review the compliance dashboard."}
-          </p>
-        </div>
-
-        <button className="primary-button" form="loan-form" disabled={isLoading}>
-          {isLoading ? "Analyzing..." : isBorrower ? "Evaluate My Readiness" : "Analyze Application"}
-        </button>
-      </header>
-
-      <section className="panel application-panel">
+      <div className="panel application-panel">
         <div className="panel-header">
           <div>
-            <h3>Profile & Financial Details</h3>
-            <p>
+            <span className="eyebrow">
+              {isBorrower ? "Readiness Check / New Simulation" : "Applications / New Review"}
+            </span>
+            <h3>{isBorrower ? "Check My Loan Readiness" : "New Loan Application"}</h3>
+            <p className="subtext">
               {isBorrower
-                ? "Provide your details below to run your localized score profile model."
-                : "Ensure these entries match the applicant records for model validation."}
+                ? "Enter your exact background and financial details to estimate your personal approval trajectory."
+                : "Enter borrower details, run the risk model, then review the compliance dashboard."}
             </p>
           </div>
         </div>
 
-        <form id="loan-form" className="loan-form" onSubmit={handleSubmit}>
+        {/* --- ADDED V2 FEATURE: SINGLE UPLOAD COMPONENT OVER ENTRY GRID --- */}
+        <DocumentUpload onDocumentExtracted={onDocumentExtracted} />
+
+        <form onSubmit={handleSubmit} className="loan-form">
           <label>
-            {isBorrower ? "Your Name" : "Applicant Name"}
+            Applicant Full Name
             <input
               required
               type="text"
+              //placeholder="e.g. Alex Rivera"
               value={formData.applicant_name}
               onChange={(event) => updateField("applicant_name", event.target.value)}
             />
-          </label>
-
-          <label>
-            {isBorrower ? "Your Age" : "Age"}
-            <input
-              required
-              type="number"
-              min="18"
-              value={formData.person_age || ""}
-              onChange={(event) => updateField("person_age", event.target.value)}
-            />
-          </label>
-
-          <label>
-            Education Level
-            <select
-              required
-              value={formData.person_education}
-              onChange={(event) => updateField("person_education", event.target.value)}
-            >
-              <option value="">Select education</option>
-              <option value="High School">High School</option>
-              <option value="Associate">Associate</option>
-              <option value="Bachelor">Bachelor</option>
-              <option value="Master">Master</option>
-              <option value="Doctorate">Doctorate</option>
-            </select>
-          </label>
-
-          <label>
-            Gender
-            <select
-              required
-              value={formData.person_gender}
-              onChange={(event) => updateField("person_gender", event.target.value)}
-            >
-              <option value="">Select gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
           </label>
 
           <label>
@@ -196,10 +148,10 @@ export default function LoanForm({
               onChange={(event) => updateField("person_home_ownership", event.target.value)}
             >
               <option value="">Select home ownership</option>
-              <option value="Rent">Rent</option>
-              <option value="Own">Own</option>
-              <option value="Mortgage">Mortgage</option>
-              <option value="Other">Other</option>
+              <option value="RENT">Rent</option>
+              <option value="OWN">Own</option>
+              <option value="MORTGAGE">Mortgage</option>
+              <option value="OTHER">Other</option>
             </select>
           </label>
 
@@ -211,14 +163,20 @@ export default function LoanForm({
               onChange={(event) => updateField("previous_loan_defaults_on_file", event.target.value)}
             >
               <option value="">Select previous defaults</option>
-              <option value="No">No</option>
-              <option value="Yes">Yes</option>
+              <option value="N">No</option>
+              <option value="Y">Yes</option>
             </select>
           </label>
+
+          <div style={{ gridColumn: "span 2", marginTop: "12px" }}>
+            <button className="primary-button" type="submit" disabled={isLoading}>
+              {isLoading ? "Analyzing..." : isBorrower ? "Evaluate My Readiness" : "Analyze Application"}
+            </button>
+          </div>
         </form>
 
-        {error && <p className="error-message">{error}</p>}
-      </section>
+        {error && <div className="error-message">{error}</div>}
+      </div>
     </>
   );
 }

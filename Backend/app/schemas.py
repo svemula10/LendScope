@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, computed_field
-from typing import Any, Literal
+from typing import Any, Literal, Optional
 
 class LoanSimulationInput(BaseModel):
     # Demographics
@@ -60,3 +60,17 @@ class PredictionResponse(BaseModel):
     policy_flags: list[str]
     policy_details: dict[str, Any] = {}
     shap_values: dict[str, float]
+
+
+class DocumentExtractionResponse(BaseModel):
+    applicant_name: Optional[str] = None
+    person_age: Optional[int] = None
+    person_income: Optional[int] = None
+    person_emp_exp: Optional[int] = None
+    person_home_ownership: Optional[str] = None
+    loan_amnt: Optional[int] = None
+    loan_int_rate: Optional[float] = None
+    loan_intent: Optional[str] = None
+    credit_score: Optional[int] = None
+    cb_person_cred_hist_length: Optional[int] = None
+    previous_loan_defaults_on_file: Optional[str] = None
