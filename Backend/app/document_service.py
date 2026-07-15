@@ -58,13 +58,10 @@ class DocumentService:
         # ==========================================
         # 1. APPLICANT NAME EXTRACTION
         # ==========================================
-        # Match standard credit reports, txt fields, and license formats (Prefix 1/2 or LN/FN)
         name_match = re.search(r"(?:Applicant\s+Name|Names?\s+Reported|Employee\s+Name|Customer\s+Name|Name|1|2|LN|FN)\s*:?\s*([A-Za-z\s\.\,\-]+)", text, re.IGNORECASE)
         if name_match:
             potential_name = name_match.group(1).split("\n")[0].strip()
-            # Stop collection if lines spill directly into trailing fields
             potential_name = re.sub(r"\b(?:Date|DOB|Birth|Age|Income|SSN|Address|Telephone|Phone)\b.*$", "", potential_name, flags=re.IGNORECASE).strip()
-            # Clean commas (e.g., "SAMPLE, ANDREW JASON" -> "Andrew Jason Sample")
             if "," in potential_name:
                 parts = [p.strip() for p in potential_name.split(",")]
                 potential_name = " ".join(parts[::-1])
@@ -72,21 +69,59 @@ class DocumentService:
                 data["applicant_name"] = potential_name.title()
 
         # ==========================================
-        # 2. AGE / DOB EXTRACTION
+        # 2. AGE / DOB EXTRACTION (Fixed for AAMVA "3 DOB" & OCR O/0 Faults)
         # ==========================================
-        # Check direct numeric entry
-        age_match = re.search(r"\b(?:Age)\s*:?\s*(\d+)\b", text, re.IGNORECASE)
+        age_match = re.search(r"\b(?:Age|Current\s+Age)\s*[:|-]?\s*(\d{2,3})\b", text, re.IGNORECASE)
         if age_match:
             data["person_age"] = int(age_match.group(1))
         else:
-            # Fallback to date calculations (DOB)
-            dob_match = re.search(r"\b(?:DOB|Birth|Date\s+of\s+Birth)\s*:?\s*([\d\-\/]{8,10}|[A-Za-z]+\s+\d+\,\s+\d{4})", text, re.IGNORECASE)
-            if dob_match:
-                raw_date = dob_match.group(1)
-                year_match = re.search(r"\b(19\d{2}|20[0-2]\d)\b", raw_date)
-                if year_match:
-                    data["person_age"] = 2026 - int(year_match.group(1))
+            raw_date_str = ""
+            
+            # --- TIER 1: Strict Adjacent Label Search ---
+            dob_adjacent = re.search(r"(?:DOB|Birth|Date\s+of\s+Birth|DateOfBirth|BirthDate)[\s*:|\.\,-]*\s*([A-Za-z0-9\s\-\/\,]{6,50})", text, re.IGNORECASE)
+            if dob_adjacent:
+                raw_date_str = dob_adjacent.group(1).split("\n")[0].strip()
 
+            # --- TIER 2: Proximity Character Window Scan ---
+            if not raw_date_str or len(re.findall(r"\d", raw_date_str)) < 2:
+                dob_label_match = re.search(r"(?:DOB|Birth|Date\s+of\s+Birth|DateOfBirth|BirthDate)", text, re.IGNORECASE)
+                if dob_label_match:
+                    start_idx = dob_label_match.end()
+                    window = text[start_idx : start_idx + 40]
+                    # Upgraded regex: matches numeric configurations OR full/short month name configurations
+                    date_bubble = re.search(r"(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})|((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2}\,\s+\d{4})", window, re.IGNORECASE)
+                    if date_bubble:
+                        raw_date_str = date_bubble.group(0)
+
+            # --- TIER 3: Global Sequential Date Scan Fallback ---
+            if not raw_date_str:
+                for line in lines[:15]:
+                    if re.search(r"\b(EXP|ISS|Expires|Issued|4a|4b|Date\s+Reported|Hired)\b", line, re.IGNORECASE):
+                        continue
+                    date_match = re.search(r"(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})|((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2}\,\s+\d{4})", line, re.IGNORECASE)
+                    if date_match:
+                        raw_date_str = date_match.group(0)
+                        break
+
+            # --- PRECISE UNIVERSAL DATE PARSING ---
+            if raw_date_str:
+                # Clean common OCR reading glitches
+                raw_date_str = raw_date_str.replace('O', '0').replace('o', '0').strip()
+                
+                # First, extract any explicit 4-digit year format (e.g., 1974 or 1970)
+                four_digit_year_match = re.search(r"\b(19\d{2}|20[0-2]\d)\b", raw_date_str)
+                
+                if four_digit_year_match:
+                    birth_year = int(four_digit_year_match.group(1))
+                    data["person_age"] = 2026 - birth_year
+                else:
+                    # Fallback for 2-digit numeric dates (e.g., -85 or /85)
+                    clean_numeric_match = re.search(r"(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2})\b", raw_date_str)
+                    if clean_numeric_match:
+                        year_chunk = clean_numeric_match.group(3)
+                        birth_year = int(year_chunk)
+                        birth_year += 2000 if birth_year <= 26 else 1900
+                        data["person_age"] = 2026 - birth_year
         # ==========================================
         # 3. FINANCIAL NUMERICS (INCOME & LOAN AMNT)
         # ==========================================
@@ -110,7 +145,13 @@ class DocumentService:
         if rate_match:
             data["loan_int_rate"] = float(rate_match.group(1))
 
-        exp_match = re.search(r"(?:Employment\s+Experience|Work\s+History|Years\s+of\s+Exp|Exp)\s*:?\s*(\d+)", text, re.IGNORECASE)
+        # FIXED: Explicitly ignore "EXP:" if it appears directly next to numbers resembling a license expiration date
+        if re.search(r"\b(?:EXP)\b\s*:\s*[\d]{2}", text, re.IGNORECASE):
+            # If it's a license expiration date string, skip evaluating simple "EXP" acronym check
+            exp_match = re.search(r"(?:Employment\s+Experience|Work\s+History|Years\s+of\s+Experience)\s*:?\s*(\d+)", text, re.IGNORECASE)
+        else:
+            exp_match = re.search(r"(?:Employment\s+Experience|Work\s+History|Years\s+of\s+Exp|\bExp\b)\s*:?\s*(\d+)", text, re.IGNORECASE)
+        
         if exp_match:
             data["person_emp_exp"] = int(exp_match.group(1))
 
@@ -128,8 +169,60 @@ class DocumentService:
                 break
 
         # Gender
-        if re.search(r"\b(?:Female|F)\b", text, re.IGNORECASE): data["person_gender"] = "Female"
-        elif re.search(r"\b(?:Male|M)\b", text, re.IGNORECASE): data["person_gender"] = "Male"
+        raw_gender_str = ""
+
+        # Tier 1: Adjacent Context Check (Drops strict word boundaries to allow "15SEX" variants)
+        gender_adjacent = re.search(r"(?:Sex|Gender|GEN)[\s*:|\.\,-]*\s*([A-Za-z]+)", text, re.IGNORECASE)
+        if gender_adjacent:
+            raw_gender_str = gender_adjacent.group(1).strip()
+
+        # Tier 2: Isolated Window Bubble Protection
+        # Choops a narrow snippet right after the label to locate explicit characters or words
+        if not raw_gender_str or raw_gender_str.upper() not in ["M", "F", "MALE", "FEMALE"]:
+            gender_label_match = re.search(r"(?:Sex|Gender|GEN)", text, re.IGNORECASE)
+            if gender_label_match:
+                start_idx = gender_label_match.end()
+                window = text[start_idx : start_idx + 25].upper()
+                
+                if "FEMALE" in window:
+                    raw_gender_str = "Female"
+                elif "MALE" in window:
+                    raw_gender_str = "Male"
+                else:
+                    # Enforce boundary restrictions on solitary values so we don't accidentally capture words like "MAIN"
+                    char_match = re.search(r"\b(F|M)\b", window)
+                    if char_match:
+                        raw_gender_str = char_match.group(1)
+
+        # Normalize token outputs to match schema requirements
+        if raw_gender_str:
+            normalized = raw_gender_str.upper()
+            if normalized in ["F", "FEMALE", "FEM"]:
+                data["person_gender"] = "Female"
+            elif normalized in ["M", "MALE", "MAS"]:
+                data["person_gender"] = "Male"
+
+        # --- TIER 3: Universal OCR Character-Swap Corrections ---
+        # If we found a string token, normalize it to the schema display expectations ("Male" or "Female")
+        if raw_gender_str:
+            normalized = raw_gender_str.upper()
+            if normalized in ["F", "FEMALE", "FEM"]:
+                data["person_gender"] = "Female"
+            elif normalized in ["M", "MALE", "MAS"]:
+                data["person_gender"] = "Male"
+        else:
+            # Complete Fallback: Scan the lines array for standard AAMVA pattern "15SEX: [Letter]" 
+            # even if Tesseract completely corrupted the letter 'F' or 'M' into an artifact like 'E', 'l', or '1'
+            for line in lines:
+                if "15" in line and "SEX" in line:
+                    # If it's a female indicator misread as an E or 1
+                    if any(err in line.upper() for err in [" F", " E", " I"]):
+                        data["person_gender"] = "Female"
+                        break
+                    # If it's a male indicator misread as a 1 or vertical pipe
+                    elif any(err in line.upper() for err in [" M", " 1", " |"]):
+                        data["person_gender"] = "Male"
+                        break
 
         # Home Ownership
         for status in ["Rent", "Own", "Mortgage", "Other"]:
@@ -148,11 +241,9 @@ class DocumentService:
                 break
 
         # Historical Defaults & Collections Integration
-        # Accounts flagging collections, bankruptcies, liens, or explicit historical defaults
         default_keywords = r"(?:Historical\s+Defaults|Previous\s+Defaults|Defaults|Collection\s+Account|Bankruptcy|Lien)"
         default_match = re.search(default_keywords + r"\s*:?\s*(Yes|No|Filed)?", text, re.IGNORECASE)
         
-        # If explicitly stated "no", or if keywords appear dynamically but are absent, deduce state
         if default_match and "no" in default_match.group(0).lower():
             data["previous_loan_defaults_on_file"] = "No"
         elif re.search(r"\b(?:Collection\s+Account|Bankruptcy|Lien|Chapter\s+7)\b", text, re.IGNORECASE):

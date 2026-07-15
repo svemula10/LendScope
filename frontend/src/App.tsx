@@ -138,7 +138,7 @@ function App() {
     : simLoan / 36;
 
 
-
+/*
   const handleDocumentExtraction = (extracted: Partial<LoanForm>) => {
     setFormData((current) => {
       return {
@@ -156,6 +156,44 @@ function App() {
         cb_person_cred_hist_length: extracted.cb_person_cred_hist_length ?? current.cb_person_cred_hist_length,
         previous_loan_defaults_on_file: extracted.previous_loan_defaults_on_file ?? current.previous_loan_defaults_on_file,
       };
+    });
+  };
+*/
+
+  const handleDocumentExtraction = (extracted: Partial<LoanForm>) => {
+    setFormData((current) => {
+      const updated = { ...current };
+
+      // Helper utility: Only update if current field is missing, empty, or zero, 
+      // AND the incoming extracted field actually has a valid value.
+      const safeUpdate = <K extends keyof LoanForm>(
+        key: K,
+        extractedValue: LoanForm[K] | undefined
+      ) => {
+        const isCurrentEmpty = !current[key] || current[key] === 0 || current[key] === "";
+        const isNewValid = extractedValue !== undefined && extractedValue !== null && extractedValue !== "";
+        
+        if (isCurrentEmpty && isNewValid) {
+          updated[key] = extractedValue as LoanForm[K];
+        }
+      };
+
+      // Apply safe protection down the entire schema line
+      safeUpdate("applicant_name", extracted.applicant_name);
+      safeUpdate("person_age", extracted.person_age);
+      safeUpdate("person_income", extracted.person_income);
+      safeUpdate("person_emp_exp", extracted.person_emp_exp);
+      safeUpdate("person_education", extracted.person_education);
+      safeUpdate("person_gender", extracted.person_gender);
+      safeUpdate("person_home_ownership", extracted.person_home_ownership);
+      safeUpdate("loan_amnt", extracted.loan_amnt);
+      safeUpdate("loan_int_rate", extracted.loan_int_rate);
+      safeUpdate("loan_intent", extracted.loan_intent);
+      safeUpdate("credit_score", extracted.credit_score);
+      safeUpdate("cb_person_cred_hist_length", extracted.cb_person_cred_hist_length);
+      safeUpdate("previous_loan_defaults_on_file", extracted.previous_loan_defaults_on_file);
+
+      return updated;
     });
   };
 
