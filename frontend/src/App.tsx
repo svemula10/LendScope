@@ -70,6 +70,8 @@ const emptyForm: LoanForm = {
 };
 
 function buildPayload(form: LoanForm): PredictionPayload {
+  const normalizedIntent = form.loan_intent.toLowerCase();
+
   return {
     person_age: form.person_age,
     person_income: form.person_income,
@@ -79,8 +81,8 @@ function buildPayload(form: LoanForm): PredictionPayload {
     person_home_ownership: form.person_home_ownership,
     loan_amnt: form.loan_amnt,
     loan_int_rate: form.loan_int_rate,
-    loan_intent: form.loan_intent,
     credit_score: form.credit_score,
+    loan_intent: normalizedIntent as PredictionPayload["loan_intent"],
     cb_person_cred_hist_length: form.cb_person_cred_hist_length,
     previous_loan_defaults_on_file: form.previous_loan_defaults_on_file,
   };

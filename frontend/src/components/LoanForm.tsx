@@ -174,12 +174,12 @@ export default function LoanForm({
               onChange={(event) => updateField("loan_intent", event.target.value)}
             >
               <option value="">Select loan intent</option>
-              <option value="Personal">Personal</option>
-              <option value="Education">Education</option>
-              <option value="Medical">Medical</option>
-              <option value="Venture">Venture</option>
-              <option value="Home Improvement">Home Improvement</option>
-              <option value="Debt Consolidation">Debt Consolidation</option>
+              <option value="personal">Personal</option>
+              <option value="education">Education</option>
+              <option value="medical">Medical</option>
+              <option value="venture">Venture</option>
+              <option value="homeimprovement">Home Improvement</option>
+              <option value="debtconsolidation">Debt Consolidation</option>
             </select>
           </label>
 

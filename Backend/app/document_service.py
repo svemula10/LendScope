@@ -230,14 +230,20 @@ class DocumentService:
                 data["person_home_ownership"] = status
                 break
 
-        # Loan Intent (Normalized space matching e.g. "debtconsolidation" vs "Debt Consolidation")
-        intent_map = {
-            "personal": "Personal", "education": "Education", "medical": "Medical",
-            "venture": "Venture", "home": "Home Improvement", "debt": "Debt Consolidation"
-        }
-        for key, display in intent_map.items():
-            if re.search(r"\b" + re.escape(key) + r"\w*", text, re.IGNORECASE):
-                data["loan_intent"] = display
+        # Loan Intent (normalized to the backend schema values)
+        intent_patterns = [
+            (r"\bpersonal\b", "personal"),
+            (r"\beducation\b", "education"),
+            (r"\bmedical\b", "medical"),
+            (r"\bventure\b", "venture"),
+            (r"\bhome\s+improvement\b", "homeimprovement"),
+            (r"\bdebt\s+consolidation\b", "debtconsolidation"),
+            (r"\bhome\b", "homeimprovement"),
+            (r"\bdebt\b", "debtconsolidation"),
+        ]
+        for pattern, normalized_value in intent_patterns:
+            if re.search(pattern, text, re.IGNORECASE):
+                data["loan_intent"] = normalized_value
                 break
 
         # Historical Defaults & Collections Integration
