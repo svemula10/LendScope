@@ -566,3 +566,14 @@ select:focus {
   }
 }
 
+.panel.application-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure inputs sit comfortably within their labels */
+.loan-form input,
+.loan-form select {
+  width: 100%;
+  box-sizing: border-box;
+}

@@ -26,6 +26,8 @@ export type LoanForm = {
   previous_loan_defaults_on_file: string;
 };
 
+
+
 export type PredictionPayload = Omit<LoanForm, "applicant_name">;
 
 export type PredictionResult = {
@@ -137,29 +139,23 @@ function App() {
 
 
 
-  const handleDocumentExtraction = (extractedData: Partial<LoanForm>) => {
+  const handleDocumentExtraction = (extracted: Partial<LoanForm>) => {
     setFormData((current) => {
-      const updated = { ...current };
-
-      Object.keys(extractedData).forEach((key) => {
-        const fieldName = key as keyof LoanForm;
-        const incomingValue = extractedData[fieldName];
-
-        if (incomingValue !== undefined && incomingValue !== null) {
-          if (numericFields.includes(fieldName)) {
-            const parsedNumber = fieldName === "loan_int_rate" 
-              ? Number(incomingValue) 
-              : Math.round(Number(incomingValue));
-            
-            // Type-safe assignment without 'any' by structuring via Record indexing
-            (updated as Record<keyof LoanForm, unknown>)[fieldName] = parsedNumber;
-          } else {
-            (updated as Record<keyof LoanForm, unknown>)[fieldName] = incomingValue;
-          }
-        }
-      });
-
-      return updated;
+      return {
+        applicant_name: extracted.applicant_name ?? current.applicant_name,
+        person_age: extracted.person_age ?? current.person_age,
+        person_income: extracted.person_income ?? current.person_income,
+        person_emp_exp: extracted.person_emp_exp ?? current.person_emp_exp,
+        person_education: extracted.person_education ?? current.person_education,
+        person_gender: extracted.person_gender ?? current.person_gender,
+        person_home_ownership: extracted.person_home_ownership ?? current.person_home_ownership,
+        loan_amnt: extracted.loan_amnt ?? current.loan_amnt,
+        loan_int_rate: extracted.loan_int_rate ?? current.loan_int_rate,
+        loan_intent: extracted.loan_intent ?? current.loan_intent,
+        credit_score: extracted.credit_score ?? current.credit_score,
+        cb_person_cred_hist_length: extracted.cb_person_cred_hist_length ?? current.cb_person_cred_hist_length,
+        previous_loan_defaults_on_file: extracted.previous_loan_defaults_on_file ?? current.previous_loan_defaults_on_file,
+      };
     });
   };
 
@@ -226,21 +222,23 @@ function App() {
     setActiveView("application");
   }
 
-  function updateField(name: keyof LoanForm, value: string) {
+  function updateField(name: keyof LoanForm, value: string | number) {
     setFormData((current) => {
       let parsedValue: number | string = value;
       if (numericFields.includes(name)) {
-        parsedValue = name === "loan_int_rate" ? Number(value) : Math.round(Number(value));
+        const valueAsNumber = typeof value === "string" ? Number(value) : value;
+        parsedValue = name === "loan_int_rate" ? valueAsNumber : Math.round(valueAsNumber);
       }
       return { ...current, [name]: parsedValue };
     });
   }
 
-  function updateSimulatorField(name: keyof LoanForm, value: string) {
+  function updateSimulatorField(name: keyof LoanForm, value: string | number) {
     setSimulatorData((current) => {
       let parsedValue: number | string = value;
       if (numericFields.includes(name)) {
-        parsedValue = name === "loan_int_rate" ? Number(value) : Math.round(Number(value));
+        const valueAsNumber = typeof value === "string" ? Number(value) : value;
+        parsedValue = name === "loan_int_rate" ? valueAsNumber : Math.round(valueAsNumber);
       }
       return { ...current, [name]: parsedValue };
     });
@@ -256,7 +254,7 @@ function App() {
     return (await response.json()) as PredictionResult;
   }
 
-  async function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
+  async function handleSubmit(event: SyntheticEvent<Element>) {
     event.preventDefault();
     setIsLoading(true);
     setError("");
@@ -416,7 +414,7 @@ function App() {
             isLoading={isLoading}
             error={error}
             currentMode={currentMode as Mode}
-            onDocumentExtracted={handleDocumentExtraction} // <-- INJECTED PROPERTY BINDING
+            onDocumentExtracted={handleDocumentExtraction}
           />
         )}
 

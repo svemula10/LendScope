@@ -11,12 +11,10 @@ export default function DocumentUpload({ onDocumentExtracted }: DocumentUploadPr
   const [isProcessing, setIsProcessing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Triggered when clicking the box to browse local files
   const handleBoxClick = () => {
     fileInputRef.current?.click();
   };
 
-  // Drag-and-drop layout events
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(true);
@@ -38,11 +36,9 @@ export default function DocumentUpload({ onDocumentExtracted }: DocumentUploadPr
     if (e.target.files && e.target.files[0]) {
       processFile(e.target.files[0]);
     }
-
     e.target.value = "";
   };
 
-  // Asynchronous network bridge sending file to free FastAPI backend
   const processFile = async (file: File) => {
     setIsProcessing(true);
     setUploadStatus(`Reading ${file.name}...`);
@@ -53,28 +49,39 @@ export default function DocumentUpload({ onDocumentExtracted }: DocumentUploadPr
     try {
       const response = await fetch("http://localhost:8000/api/documents/upload", {
         method: "POST",
-        body: formData, // Automatically formats multipart/form-data with bounds
+        body: formData,
       });
 
       if (!response.ok) throw new Error("Document extraction failed.");
 
       const result = await response.json();
       
-      // Filter out null/undefined extractions so they don't overwrite user blanks
+      // Clean payload and count verified fields
       const cleanedData: Partial<LoanForm> = {};
+      let fieldsExtractedCount = 0;
+
       Object.keys(result).forEach((key) => {
         const value = result[key];
-        if (value !== null && value !== undefined) {
+        if (value !== null && value !== undefined && value !== "") {
           cleanedData[key as keyof LoanForm] = value;
+          fieldsExtractedCount++;
         }
       });
 
-      onDocumentExtracted(cleanedData);
-      setUploadStatus(`Successfully extracted parameters from ${file.name}!`);
-    } catch { // <-- Simply drop the '(err)' variable completely since it's unread
-        setUploadStatus("Couldn't process document configuration automatically.");
-        }
-    };
+      // Dynamic alert notifications handling based on real parameters found
+      if (fieldsExtractedCount > 0) {
+        onDocumentExtracted(cleanedData);
+        setUploadStatus(`✓ Successfully extracted ${fieldsExtractedCount} parameters from ${file.name}!`);
+      } else {
+        setUploadStatus(`⚠ No recognizable loan parameters could be extracted from "${file.name}".`);
+      }
+
+    } catch {
+      setUploadStatus("✕ Couldn't process document configuration automatically.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   return (
     <div
@@ -90,8 +97,8 @@ export default function DocumentUpload({ onDocumentExtracted }: DocumentUploadPr
         textAlign: "center",
         cursor: "pointer",
         transition: "all 0.2s ease",
-        margin: "0 auto 24px auto", // Centers the block (top, right, bottom, left)
-        width: "95%", // Less than 100% needs "auto" margins to center
+        margin: "0 auto 24px auto",
+        width: "100%",
         boxSizing: "border-box",
       }}
     >
@@ -111,7 +118,6 @@ export default function DocumentUpload({ onDocumentExtracted }: DocumentUploadPr
         LendScope parses unstructured records to auto-populate your configuration fields.
       </p>
 
-      {/* Dynamic Example Badges Row */}
       <div style={{ display: "flex", gap: "8px", justifyContent: "center", flexWrap: "wrap" }}>
         <span style={{ fontSize: "11px", padding: "4px 10px", background: "#eef3ff", color: "#263c78", borderRadius: "999px", fontWeight: 700 }}>💡 Pay Stubs</span>
         <span style={{ fontSize: "11px", padding: "4px 10px", background: "#eef3ff", color: "#263c78", borderRadius: "999px", fontWeight: 700 }}>💡 Credit Bureau Files</span>

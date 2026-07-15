@@ -37,26 +37,18 @@ def evaluate_loan_simulation(payload: LoanSimulationInput):
 
 @app.post("/api/documents/upload", response_model=DocumentExtractionResponse)
 async def upload_document(file: UploadFile = File(...)):
-    """
-    Multipart API endpoint receiver. Ingests bytes arrays from dropped files, 
-    extracts string content payload data, and runs the classification service.
-    """
-    # Enforce safe document type bounds
-    allowed_extensions = ["txt", "pdf", "csv", "json"]
-    file_extension = file.filename.split(".")[-1].lower() if file.filename else ""
-    
-    # Text fallback support handles standard plain transcripts or OCR stream prints
+    # Restrict extensions to safe limits
+    allowed_extensions = {".pdf", ".png", ".jpg", ".jpeg", ".webp", ".txt"}
+    if not any(file.filename.lower().endswith(ext) for ext in allowed_extensions):
+        raise HTTPException(status_code=400, detail="Unsupported file format.")
+
     try:
         file_bytes = await file.read()
-        # Decode contents to normal UTF-8 plaintext strings safely
-        raw_text = file_bytes.decode("utf-8", errors="ignore")
+        # Parse extracted text using PyMuPDF / Tesseract Pipeline
+        raw_text = DocumentService.extract_text_from_bytes(file_bytes, file.filename)
         
-        # Pass decoded plain strings straight into our extraction service
-        extracted_data = await DocumentService.extract_fields_from_text(raw_text)
-        return extracted_data
-        
-    except Exception:
-        raise HTTPException(
-            status_code=500, 
-            detail="System configuration error parsing raw text data strings structure internally."
-        )
+        # Analyze and match patterns
+        extracted_fields = await DocumentService.extract_fields_from_text(raw_text)
+        return extracted_fields
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal extraction error: {str(e)}")

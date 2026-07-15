@@ -1,142 +1,164 @@
 import re
-from typing import Optional
+import pymupdf
+from PIL import Image
+import io
 from app.schemas import DocumentExtractionResponse
 
 class DocumentService:
     @staticmethod
-    async def extract_fields_from_text(text: str) -> DocumentExtractionResponse:
-        applicant_name: Optional[str] = None
-        person_age: Optional[int] = None
-        person_income: Optional[int] = None
-        person_emp_exp: Optional[int] = None
-        person_education: Optional[str] = None 
-        person_gender: Optional[str] = None    
-        person_home_ownership: Optional[str] = None
-        loan_amnt: Optional[int] = None
-        loan_int_rate: Optional[float] = None
-        loan_intent: Optional[str] = None
-        credit_score: Optional[int] = None
-        cb_person_cred_hist_length: Optional[int] = None
-        previous_loan_defaults_on_file: Optional[str] = None
+    def extract_text_from_bytes(file_bytes: bytes, filename: str) -> str:
+        extracted_text = ""
+        lower_name = filename.lower()
 
-        # 1. Regex Compile Patterns
-        name_patterns = [r"(?:name|applicant|employee)\s*:\s*([A-Za-z\s\.\-\,]+)", r"borrower\s+([A-Za-z\s]+)"]
-        income_patterns = [r"(?:annual|gross|base|total)\s*(?:income|salary|earnings)\s*(?:\:\s*|\=\s*)?\$?\s*([0-9\.\,]+)"]
-        score_patterns = [r"(?:credit\s+score|fico|bureau\s+rating)\s*:\s*([0-9]{3})", r"score\s*:\s*([0-9]{3})"]
-        loan_patterns = [r"(?:loan\s+amount|requested|principal)\s*:\s*\$?\s*([0-9\.\,]+)"]
-        rate_patterns = [r"(?:interest\s+rate|apr|coupon)\s*:\s*([0-9\.]+)\s*\%?"]
-        exp_patterns = [r"(?:employment|experience|job\s+length|tenure)\s*:\s*([0-9]+)"]
-        hist_patterns = [r"(?:history\s+length|credit\s+history|file\s+age)\s*:\s*([0-9]+)"]
-        
-        # Age Pattern Mapping
-        age_patterns = [r"\b(?:age)\s*:\s*([0-9]{2})\b", r"\bbirth\s*date\s*age\s*:\s*([0-9]{2})\b"]
-
-        def clean_int(val: str) -> Optional[int]:
+        if any(lower_name.endswith(ext) for ext in [".png", ".jpg", ".jpeg", ".webp"]):
             try:
-                cleaned = re.sub(r'[^\d]', '', val.split('.')[0])
-                return int(cleaned) if cleaned else None
-            except ValueError:
-                return None
+                import pytesseract
+                image = Image.open(io.BytesIO(file_bytes))
+                extracted_text = pytesseract.image_to_string(image)
+            except Exception as e:
+                print(f"OCR image failure: {e}")
+            return extracted_text
 
-        # 2. Sequential Line Analysis Loop
-        lines = text.splitlines()
-        for line in lines:
-            line_str = line.strip()
-            
-            if not applicant_name:
-                for p in name_patterns:
-                    m = re.search(p, line_str, re.IGNORECASE)
-                    if m: applicant_name = m.group(1).strip(); break
+        elif lower_name.endswith(".pdf"):
+            try:
+                doc = pymupdf.open(stream=file_bytes, filetype="pdf")
+                for page in doc:
+                    text = page.get_text()
+                    if len(text.strip()) < 40:
+                        try:
+                            text = page.get_textpage_ocr(language="eng").extractText()
+                        except Exception:
+                            try:
+                                import pytesseract
+                                pix = page.get_pixmap(dpi=150)
+                                image = Image.open(io.BytesIO(pix.tobytes("png")))
+                                text = pytesseract.image_to_string(image)
+                            except Exception:
+                                pass
+                    extracted_text += text + "\n"
+            except Exception as e:
+                print(f"PDF structure failure: {e}")
+            return extracted_text
 
-            if not person_income:
-                for p in income_patterns:
-                    m = re.search(p, line_str, re.IGNORECASE)
-                    if m: person_income = clean_int(m.group(1)); break
+        elif lower_name.endswith(".txt"):
+            return file_bytes.decode("utf-8", errors="ignore")
+        
+        return extracted_text
 
-            if not credit_score:
-                for p in score_patterns:
-                    m = re.search(p, line_str, re.IGNORECASE)
-                    if m: credit_score = clean_int(m.group(1)); break
+    @classmethod
+    async def extract_fields_from_text(cls, text: str) -> DocumentExtractionResponse:
+        # Initialize dictionary keys
+        data = {field: None for field in DocumentExtractionResponse.__fields__.keys()}
+        if not text.strip():
+            return DocumentExtractionResponse(**data)
 
-            if not loan_amnt:
-                for p in loan_patterns:
-                    m = re.search(p, line_str, re.IGNORECASE)
-                    if m: loan_amnt = clean_int(m.group(1)); break
+        # --- Clean Line Splits Utility ---
+        lines = [line.strip() for line in text.split("\n") if line.strip()]
 
-            if not loan_int_rate:
-                for p in rate_patterns:
-                    m = re.search(p, line_str, re.IGNORECASE)
-                    if m:
-                        try: loan_int_rate = float(m.group(1))
-                        except ValueError: pass
-                        break
+        # ==========================================
+        # 1. APPLICANT NAME EXTRACTION
+        # ==========================================
+        # Match standard credit reports, txt fields, and license formats (Prefix 1/2 or LN/FN)
+        name_match = re.search(r"(?:Applicant\s+Name|Names?\s+Reported|Employee\s+Name|Customer\s+Name|Name|1|2|LN|FN)\s*:?\s*([A-Za-z\s\.\,\-]+)", text, re.IGNORECASE)
+        if name_match:
+            potential_name = name_match.group(1).split("\n")[0].strip()
+            # Stop collection if lines spill directly into trailing fields
+            potential_name = re.sub(r"\b(?:Date|DOB|Birth|Age|Income|SSN|Address|Telephone|Phone)\b.*$", "", potential_name, flags=re.IGNORECASE).strip()
+            # Clean commas (e.g., "SAMPLE, ANDREW JASON" -> "Andrew Jason Sample")
+            if "," in potential_name:
+                parts = [p.strip() for p in potential_name.split(",")]
+                potential_name = " ".join(parts[::-1])
+            if potential_name and len(potential_name.split()) >= 2:
+                data["applicant_name"] = potential_name.title()
 
-            if not person_emp_exp:
-                for p in exp_patterns:
-                    m = re.search(p, line_str, re.IGNORECASE)
-                    if m: person_emp_exp = clean_int(m.group(1)); break
+        # ==========================================
+        # 2. AGE / DOB EXTRACTION
+        # ==========================================
+        # Check direct numeric entry
+        age_match = re.search(r"\b(?:Age)\s*:?\s*(\d+)\b", text, re.IGNORECASE)
+        if age_match:
+            data["person_age"] = int(age_match.group(1))
+        else:
+            # Fallback to date calculations (DOB)
+            dob_match = re.search(r"\b(?:DOB|Birth|Date\s+of\s+Birth)\s*:?\s*([\d\-\/]{8,10}|[A-Za-z]+\s+\d+\,\s+\d{4})", text, re.IGNORECASE)
+            if dob_match:
+                raw_date = dob_match.group(1)
+                year_match = re.search(r"\b(19\d{2}|20[0-2]\d)\b", raw_date)
+                if year_match:
+                    data["person_age"] = 2026 - int(year_match.group(1))
 
-            if not cb_person_cred_hist_length:
-                for p in hist_patterns:
-                    m = re.search(p, line_str, re.IGNORECASE)
-                    if m: cb_person_cred_hist_length = clean_int(m.group(1)); break
+        # ==========================================
+        # 3. FINANCIAL NUMERICS (INCOME & LOAN AMNT)
+        # ==========================================
+        income_match = re.search(r"(?:Annual\s+Income|Gross\s+Pay|Income|Salary)\s*:?\s*\$?([0-9,]+)", text, re.IGNORECASE)
+        if income_match:
+            val = int(income_match.group(1).replace(",", ""))
+            data["person_income"] = val * 12 if val < 10000 else val
 
-            # Age Extraction Parser Logic
-            if not person_age:
-                for p in age_patterns:
-                    m = re.search(p, line_str, re.IGNORECASE)
-                    if m: person_age = clean_int(m.group(1)); break
+        loan_match = re.search(r"(?:Requested\s+Loan\s+Amount|Loan\s+Amount|Amount\s+Requested|Principal)\s*:?\s*\$?([0-9,]+)", text, re.IGNORECASE)
+        if loan_match:
+            data["loan_amnt"] = int(loan_match.group(1).replace(",", ""))
 
-            # Categorical Keyword Mapping for Education Options
-            if not person_education:
-                # Looks for any line mentioning education or degree, or standalone graduation terms
-                if re.search(r'education|degree|level', line_str, re.IGNORECASE):
-                    if re.search(r'bachelor|undergrad|college|university', line_str, re.IGNORECASE):
-                        person_education = "Bachelor" # Maps to your exact form dropdown value
-                    elif re.search(r'master|mba|grad', line_str, re.IGNORECASE):
-                        person_education = "Master"
-                    elif re.search(r'high\s*school|ged|secondary', line_str, re.IGNORECASE):
-                        person_education = "High School"
-                    elif re.search(r'Associate', line_str, re.IGNORECASE):
-                        person_education = "Associate"
-                    elif re.search(r'doctorate', line_str, re.IGNORECASE):
-                        person_education = "Doctorate"
+        # ==========================================
+        # 4. CREDIT DATA VARIABLES
+        # ==========================================
+        score_match = re.search(r"(?:Credit\s+Score|FICO|VantageScore)\s*:?\s*(\d{3})", text, re.IGNORECASE)
+        if score_match:
+            data["credit_score"] = int(score_match.group(1))
 
-            # Categorical Keyword Mapping for Gender Fields
-            if not person_gender:
-                if re.search(r'gender|sex', line_str, re.IGNORECASE):
-                    if re.search(r'\bfemale\b|\bf\b', line_str, re.IGNORECASE):
-                        person_gender = "Female"
-                    elif re.search(r'\bmale\b|\bm\b', line_str, re.IGNORECASE):
-                        person_gender = "Male"
+        rate_match = re.search(r"(?:Interest\s+Rate|Int\s+Rate|Rate|APR)\s*:?\s*([0-9.]+)\s*\%?", text, re.IGNORECASE)
+        if rate_match:
+            data["loan_int_rate"] = float(rate_match.group(1))
 
-            # Remaining Form Logic
-            if not person_home_ownership:
-                if re.search(r'\brent\b', line_str, re.IGNORECASE): person_home_ownership = "Rent"
-                elif re.search(r'\bmortgage\b', line_str, re.IGNORECASE): person_home_ownership = "Mortgage"
-                elif re.search(r'\bown\b', line_str, re.IGNORECASE): person_home_ownership = "Own"
-                elif re.search(r'\bother\b', line_str, re.IGNORECASE): person_home_ownership = "Other"
+        exp_match = re.search(r"(?:Employment\s+Experience|Work\s+History|Years\s+of\s+Exp|Exp)\s*:?\s*(\d+)", text, re.IGNORECASE)
+        if exp_match:
+            data["person_emp_exp"] = int(exp_match.group(1))
 
-            if not loan_intent:
-                for purpose in ["personal", "education", "medical", "venture", "homeimprovement", "debtconsolidation"]:
-                    if re.search(rf'\b{purpose}\b', line_str, re.IGNORECASE): loan_intent = purpose; break
+        hist_match = re.search(r"(?:Credit\s+History\s+Length|History\s+Length|Credit\s+Age)\s*:?\s*(\d+)", text, re.IGNORECASE)
+        if hist_match:
+            data["cb_person_cred_hist_length"] = int(hist_match.group(1))
 
-            if not previous_loan_defaults_on_file:
-                if re.search(r'(?:prior|previous|historical)\s+default\s*:\s*(?:yes|y)', line_str, re.IGNORECASE): previous_loan_defaults_on_file = "Yes"
-                elif re.search(r'(?:prior|previous|historical)\s+default\s*:\s*(?:no|n)', line_str, re.IGNORECASE): previous_loan_defaults_on_file = "No"
+        # ==========================================
+        # 5. CATEGORICAL & DEFAULTS STRUCTURES
+        # ==========================================
+        # Education
+        for level in ["High School", "Associate", "Bachelor", "Master", "Doctorate"]:
+            if re.search(r"\b" + re.escape(level) + r"\b", text, re.IGNORECASE):
+                data["person_education"] = level
+                break
 
-        return DocumentExtractionResponse(
-            applicant_name=applicant_name,
-            person_age=person_age,
-            person_income=person_income,
-            person_emp_exp=person_emp_exp,
-            person_education=person_education,
-            person_gender=person_gender,
-            person_home_ownership=person_home_ownership,
-            loan_amnt=loan_amnt,
-            loan_int_rate=loan_int_rate,
-            loan_intent=loan_intent,
-            credit_score=credit_score,
-            cb_person_cred_hist_length=cb_person_cred_hist_length,
-            previous_loan_defaults_on_file=previous_loan_defaults_on_file
-        )
+        # Gender
+        if re.search(r"\b(?:Female|F)\b", text, re.IGNORECASE): data["person_gender"] = "Female"
+        elif re.search(r"\b(?:Male|M)\b", text, re.IGNORECASE): data["person_gender"] = "Male"
+
+        # Home Ownership
+        for status in ["Rent", "Own", "Mortgage", "Other"]:
+            if re.search(r"\b" + re.escape(status) + r"\b", text, re.IGNORECASE):
+                data["person_home_ownership"] = status
+                break
+
+        # Loan Intent (Normalized space matching e.g. "debtconsolidation" vs "Debt Consolidation")
+        intent_map = {
+            "personal": "Personal", "education": "Education", "medical": "Medical",
+            "venture": "Venture", "home": "Home Improvement", "debt": "Debt Consolidation"
+        }
+        for key, display in intent_map.items():
+            if re.search(r"\b" + re.escape(key) + r"\w*", text, re.IGNORECASE):
+                data["loan_intent"] = display
+                break
+
+        # Historical Defaults & Collections Integration
+        # Accounts flagging collections, bankruptcies, liens, or explicit historical defaults
+        default_keywords = r"(?:Historical\s+Defaults|Previous\s+Defaults|Defaults|Collection\s+Account|Bankruptcy|Lien)"
+        default_match = re.search(default_keywords + r"\s*:?\s*(Yes|No|Filed)?", text, re.IGNORECASE)
+        
+        # If explicitly stated "no", or if keywords appear dynamically but are absent, deduce state
+        if default_match and "no" in default_match.group(0).lower():
+            data["previous_loan_defaults_on_file"] = "No"
+        elif re.search(r"\b(?:Collection\s+Account|Bankruptcy|Lien|Chapter\s+7)\b", text, re.IGNORECASE):
+            data["previous_loan_defaults_on_file"] = "Yes"
+        elif default_match:
+            val = default_match.group(1)
+            data["previous_loan_defaults_on_file"] = "Yes" if val and "no" not in val.lower() else "No"
+
+        return DocumentExtractionResponse(**data)

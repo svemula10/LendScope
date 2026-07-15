@@ -1,15 +1,15 @@
 import type { SyntheticEvent } from "react";
 import type { LoanForm as LoanFormType, Mode } from "../App";
-import DocumentUpload from "./DocumentUpload"; // <-- ADDED V2 BINDING
+import DocumentUpload from "./DocumentUpload";
 
 interface LoanFormProps {
   formData: LoanFormType;
-  updateField: (name: keyof LoanFormType, value: string) => void;
+  updateField: (name: keyof LoanFormType, value: string | number) => void;
   handleSubmit: (event: SyntheticEvent<HTMLFormElement>) => void;
   isLoading: boolean;
   error: string;
   currentMode: Mode;
-  onDocumentExtracted: (extractedData: Partial<LoanFormType>) => void; // <-- ADDED V2 PROPERTY
+  onDocumentExtracted: (data: Partial<LoanFormType>) => void;
 }
 
 export default function LoanForm({
@@ -19,14 +19,14 @@ export default function LoanForm({
   isLoading,
   error,
   currentMode,
-  onDocumentExtracted, // <-- Destructured here
+  onDocumentExtracted,
 }: LoanFormProps) {
   const isBorrower = currentMode === "borrower";
 
   return (
-    <>
-      <div className="panel application-panel">
-        <div className="panel-header">
+    <div className="panel application-panel">
+      {/* Restored to your classic V1 header styling with original matching emojis */}
+      <div className="panel-header">
           <div>
             <span className="eyebrow">
               {isBorrower ? "Readiness Check / New Simulation" : "Applications / New Review"}
@@ -40,27 +40,30 @@ export default function LoanForm({
           </div>
         </div>
 
-        {/* --- ADDED V2 FEATURE: SINGLE UPLOAD COMPONENT OVER ENTRY GRID --- */}
-        <DocumentUpload onDocumentExtracted={onDocumentExtracted} />
+      {/* The Upload Box sits directly in the panel frame */}
+      <DocumentUpload onDocumentExtracted={onDocumentExtracted} />
 
-        <form onSubmit={handleSubmit} className="loan-form">
+      <form onSubmit={handleSubmit}>
+        <div className="loan-form">
           <label>
             Applicant Full Name
             <input
               required
               type="text"
-              //placeholder="e.g. Alex Rivera"
-              value={formData.applicant_name}
+              //placeholder="John Doe"
+              value={formData.applicant_name || ""}
               onChange={(event) => updateField("applicant_name", event.target.value)}
             />
           </label>
 
           <label>
-            {isBorrower ? "Your Age" : "Age"}
+            Age
             <input
               required
               type="number"
               min="18"
+              max="120"
+              //placeholder="30"
               value={formData.person_age || ""}
               onChange={(event) => updateField("person_age", event.target.value)}
             />
@@ -171,12 +174,12 @@ export default function LoanForm({
               onChange={(event) => updateField("loan_intent", event.target.value)}
             >
               <option value="">Select loan intent</option>
-              <option value="personal">Personal</option>
-              <option value="education">Education</option>
-              <option value="medical">Medical</option>
-              <option value="venture">Venture</option>
-              <option value="homeimprovement">Home Improvement</option>
-              <option value="debtconsolidation">Debt Consolidation</option>
+              <option value="Personal">Personal</option>
+              <option value="Education">Education</option>
+              <option value="Medical">Medical</option>
+              <option value="Venture">Venture</option>
+              <option value="Home Improvement">Home Improvement</option>
+              <option value="Debt Consolidation">Debt Consolidation</option>
             </select>
           </label>
 
@@ -207,16 +210,14 @@ export default function LoanForm({
               <option value="Yes">Yes</option>
             </select>
           </label>
-
-          <div style={{ gridColumn: "span 2", marginTop: "12px" }}>
-            <button className="primary-button" type="submit" disabled={isLoading}>
-              {isLoading ? "Analyzing..." : isBorrower ? "Evaluate My Readiness" : "Analyze Application"}
-            </button>
-          </div>
-        </form>
+        </div>
 
         {error && <div className="error-message">{error}</div>}
-      </div>
-    </>
+
+        <button className="primary-button" type="submit" disabled={isLoading} style={{ width: "100%", marginTop: "24px" }}>
+          {isLoading ? "Analyzing..." : isBorrower ? "Evaluate My Readiness" : "Analyze Application"}
+        </button>
+      </form>
+    </div>
   );
 }

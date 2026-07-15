@@ -67,7 +67,7 @@ class DocumentExtractionResponse(BaseModel):
     person_age: Optional[int] = None
     person_income: Optional[int] = None
     person_emp_exp: Optional[int] = None
-    person_education: Optional[str] = None  
+    person_education: Optional[str] = None
     person_gender: Optional[str] = None
     person_home_ownership: Optional[str] = None
     loan_amnt: Optional[int] = None
