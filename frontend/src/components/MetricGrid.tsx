@@ -1,3 +1,4 @@
+//MetricGrid.tsx
 import type { Mode } from "../App";
 
 interface MetricGridProps {

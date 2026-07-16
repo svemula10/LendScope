@@ -1,3 +1,4 @@
+//App.tsx
 import { type SyntheticEvent, useEffect, useState } from "react";
 import "./App.css";
 import { jsPDF } from "jspdf"; // <-- ADDED FEATURE C: Client-Side PDF Generation Package

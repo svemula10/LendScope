@@ -1,3 +1,4 @@
+//WhatifSimulator.tsx
 import type { LoanForm as LoanFormType, Mode } from "../App";
 
 interface WhatIfSimulatorProps {
