@@ -114,7 +114,7 @@
 
 .topbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   gap: 24px;
   align-items: flex-start;
   margin-bottom: 22px;
@@ -177,7 +177,7 @@
 
 /* Let the empty state fill the view area */
 .empty-state {
-  width: 100%; /* Changed from max-width: 720px */
+  width: 98%; /* Changed from max-width: 720px */
 }
 
 .dashboard-list-card { 

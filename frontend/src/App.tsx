@@ -262,6 +262,11 @@ function App() {
     setActiveView("application");
   }
 
+  function resetForm() {
+    setFormData(emptyForm);
+    setError("");
+  }
+
   function updateField(name: keyof LoanForm, value: string | number) {
     setFormData((current) => {
       let parsedValue: number | string = value;
@@ -455,6 +460,7 @@ function App() {
             error={error}
             currentMode={currentMode as Mode}
             onDocumentExtracted={handleDocumentExtraction}
+            onReset={resetForm}
           />
         )}
 

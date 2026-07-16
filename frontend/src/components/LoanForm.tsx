@@ -10,6 +10,7 @@ interface LoanFormProps {
   error: string;
   currentMode: Mode;
   onDocumentExtracted: (data: Partial<LoanFormType>) => void;
+  onReset: () => void;
 }
 
 export default function LoanForm({
@@ -20,13 +21,14 @@ export default function LoanForm({
   error,
   currentMode,
   onDocumentExtracted,
+  onReset,
 }: LoanFormProps) {
   const isBorrower = currentMode === "borrower";
 
   return (
     <div className="panel application-panel">
       {/* Restored to your classic V1 header styling with original matching emojis */}
-      <div className="panel-header">
+      <div className="panel-header" style={{ display: "flex", justifyContent: "space-around", alignItems: "flex-start", gap: "12px" }}>
           <div>
             <span className="eyebrow">
               {isBorrower ? "Readiness Check / New Simulation" : "Applications / New Review"}
@@ -38,6 +40,25 @@ export default function LoanForm({
                 : "Enter borrower details, run the risk model, then review the compliance dashboard."}
             </p>
           </div>
+          <button
+            type="button"
+            onClick={onReset}
+            className="secondary-button"
+            style={{
+                padding: "8px 16px",
+                borderRadius: "8px",
+                whiteSpace: "nowrap",
+                background: "#fff5f5",
+                color: "#bd2525",
+                border: "1px solid #fecaca",
+                fontSize: "14px",
+                fontWeight: 600,
+                cursor: "pointer",
+                transition: "all 0.2s ease-in-out",
+              }}
+          >
+            Reset
+          </button>
         </div>
 
       {/* The Upload Box sits directly in the panel frame */}
