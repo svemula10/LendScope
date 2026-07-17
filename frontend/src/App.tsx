@@ -1,12 +1,13 @@
-//App.tsx
+// src/App.tsx
 import { type SyntheticEvent, useEffect, useState } from "react";
 import "./App.css";
-import { jsPDF } from "jspdf"; // <-- ADDED FEATURE C: Client-Side PDF Generation Package
+import { jsPDF } from "jspdf"; // <-- FEATURE C: Client-Side PDF Generation Package
 
 import Sidebar from "./components/Sidebar";
 import LoanForm from "./components/LoanForm";
 import MetricGrid from "./components/MetricGrid";
 import WhatIfSimulator from "./components/WhatIfSimulator";
+import CompliancePanel from "./components/CompliancePanel";
 
 export type View = "application" | "dashboardList" | "dashboardDetail";
 export type Mode = "borrower" | "underwriter";
@@ -27,7 +28,22 @@ export type LoanForm = {
   previous_loan_defaults_on_file: string;
 };
 
+// version 3
+export type PolicyRule = {
+  rule_id: string;
+  name: string;
+  evaluated_metric: string;
+  required_ceiling: string;
+  status: "PASS" | "VIOLATION";
+  citation: string;
+};
 
+// version 3
+export type RecommendationSummary = {
+  header: string;
+  body: string;
+  status: "SUCCESS" | "CRITICAL";
+};
 
 export type PredictionPayload = Omit<LoanForm, "applicant_name">;
 
@@ -119,10 +135,12 @@ function App() {
   const [isSimulating, setIsSimulating] = useState(false);
   const [error, setError] = useState("");
 
+  const [policyGuidelines, setPolicyGuidelines] = useState<PolicyRule[]>([]);
+  const [recommendationSummary, setRecommendationSummary] = useState<RecommendationSummary | null>(null);
+
   const selectedApplication =
     savedApplications.find((application) => application.id === selectedApplicationId) ?? null;
 
-  const displayedApplication = selectedApplication?.form ?? emptyForm;
   const displayedResult = simulatorResult ?? selectedApplication?.result ?? result;
   const baselineResult = selectedApplication?.result ?? result;
   const baselineApproval = baselineResult?.approval_probability ?? 0;
@@ -140,35 +158,10 @@ function App() {
     ? (simLoan * simRateMonthly * Math.pow(1 + simRateMonthly, 36)) / (Math.pow(1 + simRateMonthly, 36) - 1)
     : simLoan / 36;
 
-
-/*
-  const handleDocumentExtraction = (extracted: Partial<LoanForm>) => {
-    setFormData((current) => {
-      return {
-        applicant_name: extracted.applicant_name ?? current.applicant_name,
-        person_age: extracted.person_age ?? current.person_age,
-        person_income: extracted.person_income ?? current.person_income,
-        person_emp_exp: extracted.person_emp_exp ?? current.person_emp_exp,
-        person_education: extracted.person_education ?? current.person_education,
-        person_gender: extracted.person_gender ?? current.person_gender,
-        person_home_ownership: extracted.person_home_ownership ?? current.person_home_ownership,
-        loan_amnt: extracted.loan_amnt ?? current.loan_amnt,
-        loan_int_rate: extracted.loan_int_rate ?? current.loan_int_rate,
-        loan_intent: extracted.loan_intent ?? current.loan_intent,
-        credit_score: extracted.credit_score ?? current.credit_score,
-        cb_person_cred_hist_length: extracted.cb_person_cred_hist_length ?? current.cb_person_cred_hist_length,
-        previous_loan_defaults_on_file: extracted.previous_loan_defaults_on_file ?? current.previous_loan_defaults_on_file,
-      };
-    });
-  };
-*/
-
   const handleDocumentExtraction = (extracted: Partial<LoanForm>) => {
     setFormData((current) => {
       const updated = { ...current };
 
-      // Helper utility: Only update if current field is missing, empty, or zero, 
-      // AND the incoming extracted field actually has a valid value.
       const safeUpdate = <K extends keyof LoanForm>(
         key: K,
         extractedValue: LoanForm[K] | undefined
@@ -181,7 +174,6 @@ function App() {
         }
       };
 
-      // Apply safe protection down the entire schema line
       safeUpdate("applicant_name", extracted.applicant_name);
       safeUpdate("person_age", extracted.person_age);
       safeUpdate("person_income", extracted.person_income);
@@ -200,7 +192,7 @@ function App() {
     });
   };
 
-  //FEATURE C: Client-Side jsPDF Report Compiler Function
+  // FEATURE C: Client-Side jsPDF Report Compiler Function
   function exportAuditPDF() {
     if (!selectedApplication) return;
     
@@ -208,7 +200,6 @@ function App() {
     const appForm = selectedApplication.form;
     const appRes = selectedApplication.result;
 
-    // Formatting structured vector output documents
     doc.setFont("helvetica", "bold");
     doc.setFontSize(20);
     doc.setTextColor(8, 23, 51);
@@ -223,7 +214,6 @@ function App() {
     doc.setDrawColor(226, 232, 243);
     doc.line(14, 38, 196, 38);
 
-    // Section 1: Core Output Summary Metrics Data
     doc.setFont("helvetica", "bold");
     doc.setFontSize(14);
     doc.setTextColor(17, 32, 51);
@@ -237,7 +227,6 @@ function App() {
     doc.text(`Assigned Risk Classification Tier: ${appRes.risk_tier}`, 14, 79);
     doc.text(`Underwriter Decision Directive: ${appRes.recommendation ?? "Under Review"}`, 14, 86);
 
-    // Section 2: Immutable Base Stated Metrics Log 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(14);
     doc.text("2. Verified Applicant Snapshots Parameters", 14, 102);
@@ -260,6 +249,8 @@ function App() {
     setResult(null);
     setSimulatorResult(null);
     setSelectedApplicationId(null);
+    setPolicyGuidelines([]);
+    setRecommendationSummary(null);
     setActiveView("application");
   }
 
@@ -300,14 +291,53 @@ function App() {
     return (await response.json()) as PredictionResult;
   }
 
+  // version 3: Orchestrates ML prediction payload calculations alongside compliance text retrievals
+  async function runFullAnalysis(applicationData: LoanForm) {
+    setIsLoading(true);
+    setError("");
+    try {
+      const API_BASE = "http://localhost:8000";
+
+      const [riskResponse, complianceResponse] = await Promise.all([
+        fetch(`${API_BASE}/api/predict`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(buildPayload(applicationData)),
+        }),
+        fetch(`${API_BASE}/api/predict/compliance`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...applicationData,
+            mode: currentMode
+          }),
+        })
+      ]);
+
+      if (!riskResponse.ok || !complianceResponse.ok) throw new Error("Analysis engine failure.");
+
+      const riskData = await riskResponse.json();
+      const complianceData = await complianceResponse.json();
+
+      setResult(riskData);
+      setSimulatorResult(riskData);
+      setSimulatorData(applicationData);
+      setPolicyGuidelines(complianceData.policy_guidelines);
+      setRecommendationSummary(complianceData.recommendation_summary);
+
+      setActiveView("dashboardDetail");
+    } catch {
+      setError("Could not communicate with the underwriting servers.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   async function handleSubmit(event: SyntheticEvent<Element>) {
     event.preventDefault();
     setIsLoading(true);
     setError("");
 
-    // LOGICAL VALIDATION CHECKS (Edge-Case Prevention)
-    
-    // Check A: Employment history cannot exceed physically possible limits for Age
     if (formData.person_emp_exp >= formData.person_age) {
       setError("Logical Error: Employment experience cannot be equal to or greater than your total age.");
       setIsLoading(false);
@@ -320,7 +350,6 @@ function App() {
       return;
     }
 
-    // Check B: Credit History Length cannot exceed age
     if (formData.cb_person_cred_hist_length >= formData.person_age) {
       setError("Logical Error: Credit history length cannot be longer than your age.");
       setIsLoading(false);
@@ -328,33 +357,48 @@ function App() {
     }
 
     if (formData.person_age - formData.cb_person_cred_hist_length < 18) {
-      // Note: While some authorized user cards exist for minors, institutional lenders validate personal credit lines from age 18.
       setError("Logical Error: Credit history cannot begin before age 18. Please adjust your age or credit history length.");
       setIsLoading(false);
       return;
     }
 
-    // END OF VALIDATION CHECKS (Proceeding to API if valid)
-
     try {
-      const data = await predict(formData);
+      // Parallel routing logic used inside first-time submissions to speed up dashboard initial load
+      const API_BASE = "http://localhost:8000";
+      const [riskResponse, complianceResponse] = await Promise.all([
+        fetch(`${API_BASE}/api/predict`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(buildPayload(formData)),
+        }),
+        fetch(`${API_BASE}/api/predict/compliance`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...formData, mode: currentMode }),
+        })
+      ]);
+
+      if (!riskResponse.ok || !complianceResponse.ok) throw new Error("Processing error.");
+      
+      const riskData = await riskResponse.json();
+      const complianceData = await complianceResponse.json();
 
       const newApplication: SavedApplication = {
         id: Date.now(),
         form: formData,
-        result: data,
+        result: riskData,
       };
 
       setSavedApplications((current) => [newApplication, ...current]);
       setSelectedApplicationId(newApplication.id);
-      setResult(data);
-      setSimulatorResult(data);
+      setResult(riskData);
+      setSimulatorResult(riskData);
       setSimulatorData(formData);
+      setPolicyGuidelines(complianceData.policy_guidelines);
+      setRecommendationSummary(complianceData.recommendation_summary);
       setActiveView("dashboardDetail");
     } catch {
-      setError(
-        "Could not connect to the backend. Make sure FastAPI is running on http://localhost:8000."
-      );
+      setError("Could not connect to the backend. Make sure FastAPI is running on http://localhost:8000.");
     } finally {
       setIsLoading(false);
     }
@@ -362,11 +406,10 @@ function App() {
 
   function openDashboard(application: SavedApplication) {
     setSelectedApplicationId(application.id);
-    setResult(application.result);
-    setSimulatorResult(application.result);
     setSimulatorData(application.form);
     setError("");
-    setActiveView("dashboardDetail");
+    // Re-evaluates compliance calculations parallel with mode variables definitions
+    runFullAnalysis(application.form);
   }
 
   function deleteDashboard(applicationId: number) {
@@ -375,6 +418,8 @@ function App() {
       setSelectedApplicationId(null);
       setResult(null);
       setSimulatorResult(null);
+      setPolicyGuidelines([]);
+      setRecommendationSummary(null);
       setActiveView("dashboardList");
     }
   }
@@ -386,6 +431,17 @@ function App() {
       try {
         const data = await predict(simulatorData);
         setSimulatorResult(data);
+        
+        // Dynamic slider change evaluation of policy matrices calculations
+        const compRes = await fetch("http://localhost:8000/api/predict/compliance", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...simulatorData, mode: currentMode }),
+        });
+        const compData = await compRes.json();
+        setPolicyGuidelines(compData.policy_guidelines);
+        setRecommendationSummary(compData.recommendation_summary);
+        
         setError("");
       } catch {
         setError("The simulator could not reach the prediction API.");
@@ -394,7 +450,7 @@ function App() {
       }
     }, 350);
     return () => window.clearTimeout(timeoutId);
-  }, [simulatorData, selectedApplication, activeView]);
+  }, [simulatorData, selectedApplication, activeView, currentMode]);
 
   return (
     <div className="app-shell">
@@ -475,7 +531,6 @@ function App() {
               </div>
               
               <div style={{ display: "flex", gap: "10px" }}>
-                {/* FEATURE C TRIGGER BUTTON: Only visible inside underwriter panel workspace */}
                 {currentMode === "underwriter" && (
                   <button className="primary-button" style={{ boxShadow: "none" }} type="button" onClick={exportAuditPDF}>
                     Export Audit PDF Brief
@@ -484,7 +539,7 @@ function App() {
                 <button className="primary-button secondary-button" type="button" onClick={() => setActiveView("dashboardList")}>Return to Archive List</button>
               </div>
             </header>
-
+            
             {!selectedApplication || !displayedResult ? (
               <section className="panel empty-state">
                 <h3>No transaction ledger active</h3>
@@ -500,11 +555,14 @@ function App() {
                   recommendation={displayedResult.recommendation ?? "Hold / Under Review"}
                   formatPercent={formatPercent}
                   currentMode={currentMode}
-                  annualIncome={simulatorData.person_income}  // Pass down data to evaluate DTI
-                  simulatedPayment={simPayment}                // Pass down amortization context
+                  annualIncome={simulatorData.person_income}
+                  simulatedPayment={simPayment}
                 />
 
-                <div className="dashboard-grid">
+                {/* THE CORRECT TWO-COLUMN SIDE-BY-SIDE GRID */}
+                <div className="dashboard-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", alignItems: "start" }}>
+                  
+                  {/* Left Column: Sliders Sandbox */}
                   <WhatIfSimulator
                     simulatorData={simulatorData}
                     updateSimulatorField={updateSimulatorField}
@@ -514,43 +572,13 @@ function App() {
                     approvalProbability={approvalProbability}
                   />
 
-                  <aside className="panel summary-panel">
-                    <div className="panel-header">
-                      <div>
-                        <h3>Application Parameters</h3>
-                        <p>Immutable entry parameters logged.</p>
-                      </div>
-                    </div>
-                    <dl className="snapshot-list">
-                      <div><dt>Profile Label</dt><dd>{displayedApplication.applicant_name}</dd></div>
-                      <div><dt>Base Declared Income</dt><dd>{formatMoney(displayedApplication.person_income)}</dd></div>
-                      <div><dt>Stated Allocation Limit</dt><dd>{formatMoney(displayedApplication.loan_amnt)}</dd></div>
-                      <div><dt>Credit Metric Score</dt><dd>{displayedApplication.credit_score}</dd></div>
-                      <div><dt>Stated History Length</dt><dd>{displayedApplication.person_emp_exp} years</dd></div>
-                      <div><dt>Transaction Context Target</dt><dd>{formatIntent(displayedApplication.loan_intent)}</dd></div>
-                    </dl>
-                    {/*
-                    <div className="recommendation-box">  Old recommendation box deal with this later
-                      <h4>Platform Strategy Insight</h4>
-                      <p>
-                        {displayedResult.recommendation
-                          ? displayedResult.recommendation
-                          : `The target vector metrics generate an assignment level categorized within ${displayedResult.risk_tier}. Interlock baseline scores against simulator tracks to target safe tier migration loops.`}
-                      </p>
-                    </div>
-                    */}
-                    <div className="recommendation-box">
-                      <h4>
-                        {currentMode === "borrower" 
-                          ? "💡 Borrower Strategy Check" 
-                          : "🔒 Policy Compliance Safe Harbor"}
-                      </h4>
-                      <p>
-                        {currentMode === "borrower"
-                          ? "Adjust the sandbox sliders on the left to simulate how moving your credit score or reducing your target loan amount shifts your automated readiness trajectory."
-                          : "System guidelines logged. This application check evaluates input fields against machine learning risk tiers and real-time debt-to-income boundary limits."}
-                      </p>
-                    </div>
+                  {/* Right Column Side Panel Console matching your reference target formatting */}
+                  <aside className="panel operations-console-sidebar" style={{ background: "#ffffff", padding: "20px", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
+                    <CompliancePanel 
+                      policyGuidelines={policyGuidelines}
+                      recommendationSummary={recommendationSummary}
+                      uploadedFiles={["underwriting_package_v3.pdf"]} 
+                    />
                   </aside>
                 </div>
                 {error && <p className="error-message dashboard-error">{error}</p>}

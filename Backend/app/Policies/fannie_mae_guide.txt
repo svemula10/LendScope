@@ -1,0 +1,946 @@
+SECTION B3-2-03: Risk Factors Evaluated by DU
+
+B3-2-03, Risk Factors Evaluated by DU (02/05/2025)
+ Print 
+ Share
+Introduction
+This topic contains information on the risk factors evaluated by DU, including:
+Risk Factors Evaluated by DU
+Credit History
+Delinquent Accounts
+Installment Loans
+Rent Payment History
+Revolving Credit Utilization
+Public Records, Foreclosures, and Collection Accounts
+Inquiries
+Borrower’s Equity and LTV Ratio
+Liquid Reserves
+Loan Purpose
+Loan Term
+Loan Amortization Type
+Occupancy Type
+Debt-to-Income Ratio
+Housing Expense
+Property Type
+First-time Homebuyer
+Cash Flow Assessment for Certain Loan Casefiles
+Risk Factors Evaluated by DU
+DU considers the following characteristics in the credit report to assess the creditworthiness of borrowers who have traditional credit histories: credit history, delinquent accounts, installment accounts, revolving credit utilization, public records, foreclosures, collection accounts, and inquiries.
+
+The non-credit risk factors evaluated by DU include: the borrower’s equity and LTV ratio, liquid reserves, loan purpose, loan term, loan amortization type, occupancy type, debt-to-income ratio, housing expense ratio, property type, and variable income.
+
+DU performs a comprehensive evaluation of these factors, weighing each factor based on the amount of risk it represents and its importance to the recommendation. DU analyzes the results of this evaluation along with the evaluation of the borrower’s credit profile to arrive at the underwriting recommendation for the loan casefile.
+
+More information on these risk factors is provided below. Also see below for information about the risk factors DU considers when evaluating loans where no borrower has a credit score.
+
+Credit History
+A borrower’s credit history is an account of how well the borrower has handled credit, both now and in the past. An older, established history—even though the accounts may have zero balances—will have a more positive impact on the borrower’s credit profile than newly established accounts.
+
+A borrower who has no open credit accounts or a relatively new credit history (a few recently opened accounts) is not automatically considered a high credit risk. Successfully managing newly established accounts, including making payments as agreed, signifies lower risk.
+
+Delinquent Accounts
+Payment history is a significant factor in the evaluation of the borrower’s credit. DU considers the severity of the delinquencies (30, 60, 90, or more days late), the length of time since the delinquencies, and the number and type of accounts that were not paid as agreed.
+
+A payment history that includes bills that are 30 days or more past-due, or a history of paying bills late as evidenced by a number of accounts with late payments, will have a negative impact on the borrower’s credit profile. The amount of time that has elapsed since an account was delinquent is an important factor included in the evaluation of the payment history. For example, a 30-day late payment that is less than three months old indicates a higher risk than a 30-day late payment that occurred several years ago.
+
+Installment Loans
+DU evaluates how well a borrower manages debt for all types of installment loans such as mortgage, second lien, auto, unsecured, and student loans. Research has shown that borrowers with no active installment accounts, or installment accounts that have a minimal reduction in balance, represent a higher risk than borrowers who have active installment accounts that have either paid down or paid off the installment debt.
+
+Rent Payment History
+For certain loan casefiles, DU can consider a borrower's rent payment history identified on a 12-month third-party asset verification report or a credit report. When DU logic can identify rent payments in the asset verification report or credit report, it will use the rent payment history to positively supplement the credit risk assessment.
+
+The following requirements apply when using rent payment history in DU:
+
+At least one borrower must have been renting for at least 12 months with a monthly rent payment of $300 or more and one of the following:
+have no mortgage reported on their credit report,
+have a limited credit history, or
+have no credit score.
+When the rent payment history does not appear on the credit report, for DU to be able to identify rent payments using an asset verification report, the lender must
+enter the monthly rent paid by the borrower in the online loan application,
+obtain an asset verification report with 12 months of bank statement data through an authorized DU validation service asset verification report vendor, and
+confirm the borrower is an account holder and that the account provided in the asset verification report is the one from which the borrower pays rent.
+At the time of loan origination, the originating lender must have access to the full asset verification report containing the data covering the period of time provided to DU for assessment.
+When an asset verification report is used for both rent history and asset documentation, including asset validation through the DU validation service, only the most recent 60 days of account activity must be reviewed in accordance with the requirements in  B3-4.2-02, Depository Accounts and  B3-2-02, DU Validation Service, and retained in the loan file. For additional details on record retention, see  A2-4.1-01, Establishing Loan Files.
+
+Revolving Credit Utilization
+The establishment, use, and amount of revolving credit a borrower has available are important. Trended credit data is used to evaluate the borrower’s ability to manage revolving accounts. A borrower who uses revolving accounts conservatively, meaning low revolving credit utilization or regular payoff of revolving balance, is considered lower risk. A borrower whose revolving credit utilization is high or who has low available revolving credit is considered higher risk.
+
+Public Records, Foreclosures, and Collection Accounts
+A credit history that includes any significant derogatory credit event is considered high risk. Significant derogatory credit events include bankruptcy filings, foreclosures, deeds-in-lieu of foreclosure, preforeclosure sales, mortgage charge-offs, or accounts that have been turned over to a collection agency.
+
+Note: Collection accounts reported as medical collections are not used in the DU risk assessment.
+
+Inquiries
+DU evaluates inquiries on the credit report. Research has shown that a high number of inquiries can indicate a higher degree of risk. However, multiple inquiries made by different mortgage lenders or different auto loan creditors within the same time frame is not viewed by DU as multiple inquiries (these types of inquiries generally reflect borrowers shopping for favorable rates or terms). A borrower who has frequently applied for, or obtained, new or additional credit represents a higher risk.
+
+Borrower’s Equity and LTV Ratio
+The amount of equity in the property is a very important component of the risk analysis. Research has shown that a borrower who makes a large down payment or who has considerable equity in their property is less likely to become delinquent on a mortgage loan than a borrower who makes a small down payment or has a small amount of equity in the property. In other words, the more equity a borrower has in the property, the lower the risk associated with the borrower’s mortgage loan.
+
+DU may use a low LTV ratio to offset other risks that it may identify in the loan application.
+
+Liquid Reserves
+Liquid reserves are those financial assets that are available to a borrower after a loan closes. Reserves are calculated as the total amount of liquid assets remaining after the loan transaction closes divided by the qualifying payment amount.
+
+DU considers higher amounts of liquid reserves as more favorable than lower amounts or no reserves. Research has shown that mortgages to borrowers with higher amounts of liquid reserves tend to have lower delinquency rates. As with a low LTV ratio, DU may consider high amounts of reserves as an offset for other risks that it may identify in the loan application.
+
+Loan Purpose
+There is a certain level of risk associated with every transaction, whether it is a purchase or a refinance. Purchase transactions represent less risk than refinance transactions. When evaluating refinance transactions, a limited cash-out refinance transaction represents less risk than a cash-out refinance transaction.
+
+Loan Term
+Research has shown that mortgages to borrowers who choose to finance their mortgages over shorter terms and build up equity in their properties faster generally tend to perform better than mortgages with longer amortization periods.
+
+Loan Amortization Type
+Research has shown that there is a difference in loan performance based on the manner in which the mortgage amortizes. Fixed-rate mortgages will be viewed as representing less risk than adjustable-rate mortgages.
+
+Occupancy Type
+Performance statistics on investor loans are notably worse than those of owner-occupied or second home loans. Owner-occupied transactions represent the least risk, followed by second home transactions, and investment property transactions having the highest risk level.
+
+Debt-to-Income Ratio
+In DU’s evaluation, generally, the lower the borrower’s debt-to-income ratio (DTI ratio), the lower the associated risk. As the ratio increases, the level of risk also tends to increase; and a high ratio will have the greatest adverse impact on the recommendation when there are also other high-risk factors present.
+
+The composition of the borrower’s debt is also taken into consideration, specifically those with student loan debt. 
+
+Housing Expense
+Borrowers whose housing expense makes up a smaller portion of their total expenses are considered lower risk, while those with a housing expense that makes up a higher portion of their total expenses are considered higher risk. Research has shown that borrowers whose total monthly expenses are composed primarily of their housing expense may find it more difficult to pay this expense when experiencing an event that would cause financial distress, such as the loss of a job.
+
+Property Type
+Another important factor that DU considers in the risk analysis is the collateral or property type. DU differentiates the risk based on the number of units, and in some cases the property type (e.g., manufactured home).
+
+The level of risk associated with each property type is as follows, starting with those property types representing the least amount of risk:
+
+one-unit properties;
+
+condo and co-op properties;
+
+two-, three-, and four-unit properties;
+
+manufactured homes.
+
+First-time Homebuyer
+The presence of a first-time homebuyer on the loan application is considered a mitigating factor in the DU risk assessment.
+
+Cash Flow Assessment for Certain Loan Casefiles
+For certain loan casefiles, DU can conduct a cash flow assessment when the lender provides a 12-month third-party asset verification report for the borrower. DU will assess the borrower's cash flow management history to determine whether it can be used to positively supplement the credit risk assessment.
+
+To be eligible for the cash flow assessment in DU
+
+The lender must obtain an asset verification report with 12 months of bank data through an authorized DU validation service asset verification report vendor and confirm the borrower is an account holder.
+At the time of loan origination, the originating lender must have access to the full asset verification report containing the data covering the timeframe provided to DU for the cash flow assessment.
+When DU conducts a cash flow assessment and provides an Approve/Eligible recommendation, the 12-month asset verification report may also be used to satisfy the nontraditional credit history requirements when one is required for any borrower without a credit score as outlined in B3-5.4-03, Documentation and Assessment of a Nontraditional Credit History.
+
+When an asset verification report is used for both the cash flow assessment and asset documentation, including asset validation through the DU validation service, only the most recent 30 or 60 days of account activity must be reviewed in accordance with the requirements in  B3-4.2-02, Depository Accounts, and B3-2-02, DU Validation Service, and retained in the loan file. For additional details on record retention, see A2-4.1-01, Establishing Loan Files. 
+
+Note: If a 12-month asset verification report is not obtained, nontraditional credit references may be required for each borrower without a credit score. See  B3-5.4-01, Eligibility Requirements for Loans with Nontraditional Credit.
+
+
+
+
+SECTION B3-2-10: Accuracy of DU Data, DU Tolerances, and Errors in the Credit Report
+
+B3-2-10, Accuracy of DU Data, DU Tolerances, and Errors in the Credit Report (12/04/2019) 
+ Print 
+ Share
+Introduction
+This topic contains information on the accuracy of DU data, DU tolerances, and errors in the credit report, including:
+Ensuring DU Data and Delivery Information Accuracy
+DU Tolerances for Refinance Transaction Loan Amount Changes
+Other Errors in the Credit Data
+Non-Applicant Debts/Accounts
+Ensuring DU Data and Delivery Information Accuracy
+The data submitted to DU must reflect the loan as it was closed, including occupancy type, product type, amortization, loan term, property type, loan purpose, sales price, and appraised value.
+
+Verification documents must be reviewed and the verified values compared to the data submitted to DU. The terms of the closed loan must match the terms of the final loan casefile submission in DU or fall within the tolerances listed in the following table:
+
+Data Attribute and Description	Trigger	Action Required
+Interest rate increase
+
+Discrepancies between the credit report payments and balances and those listed on the online loan application, including the presence of debt that is on the credit report but not on the application
+
+Additional debt(s) disclosed by the borrower or identified by the lender during the mortgage process
+
+Verified income is less than the income on the loan application submitted to DU
+
+DU loans — the result of these changes causes the DTI ratio recalculated by the lender to
+now exceed 45%, or
+
+increase by 3 percentage points or more (if the recalculated DTI ratio is 50% or less)
+
+* See resubmission examples below.	Loan casefile must be resubmitted to DU
+Interest rate on fixed-rate and adjustable-rate mortgages	Interest rate decreases, not as the result of a permanent interest rate buydown	No resubmission required
+Interest rate on fixed-rate and adjustable-rate mortgages	Interest rate decreases as the result of a permanent interest rate buydown	
+Loan casefile must be resubmitted to DU
+
+Verified income used to qualify the borrower for loans subject to income limits; for example, as with HomeReady loans.	Income is greater than the loan application indicates	
+Loan casefile must be resubmitted to DU
+
+Assets — Funds Required to Close	The actual amount of assets required to close the transaction exceeds the amount of “Funds Required to Close” per the DU Underwriting Findings report	If the lender has documented sufficient liquid assets to cover the actual amount of assets required to close the transaction, no resubmission required
+Otherwise, loan casefile must be resubmitted to DU
+
+Assets — Reserves Required to be Verified	Due to changes in the actual amount of assets required to close the transaction, the verified amount of reserves is less than the “Reserves Required to be Verified” per the DU Underwriting Findings report	If the lender has documented reserves that equal at least 90% of the Reserves Required to be Verified per the DU Underwriting Findings report, no resubmission required
+Otherwise, loan casefile must be resubmitted to DU
+
+Loan amount tolerances for refinance transactions	(See below)
+*Resubmission examples based on DTI triggers
+
+Original DTI	Recalculated DTI	Resubmission Required
+35	40	Yes
+44	46	Yes
+46	48	No
+46	50	Yes
+DU Tolerances for Refinance Transaction Loan Amount Changes
+For refinance transactions, Fannie Mae allows the following tolerances to the loan amount:
+
+The loan amount may increase $500 or up to 1% of the loan amount, whichever is less.
+
+The loan amount may decrease 5% of the loan amount.
+
+The loan amount tolerances are permitted provided the new LTV/CLTV does not result in
+
+changes to the amount of required mortgage insurance coverage,
+
+different loan-level price adjustments, or
+
+changes to loan eligibility.
+
+For example, if a loan casefile is submitted with a loan amount of $100,000 and the appraised value is $120,000 (which equals 83.3% LTV), the actual loan amount can go up to $100,500 (which equals 83.75% LTV) without requiring resubmission.
+
+On the other hand, if the original loan amount was $108,000 (90% LTV), an increase without resubmission is not permitted because it would result in an LTV of 91%. The higher LTV requires different mortgage insurance coverage, and may result in the loan not being eligible for delivery.
+
+The loan amount tolerance does not apply to Fannie Mae’s requirements regarding the amount of cash back to the borrower on a limited cash-out refinance transaction. (See B2-1.3-02, Limited Cash-Out Refinance Transactions.)
+
+Other Errors in the Credit Data
+In some cases, errors are the result of reporting errors by the credit agency or individual creditors.
+
+If the printed credit report contains derogatory information, and DU does not recognize or consider the derogatory information and does not reflect the derogatory information in the DU Underwriting Findings report, the lender must take action when information not considered by DU would result in a recommendation other than that returned by DU.
+
+For example, if a borrower’s credit report indicates that the borrower had a previous foreclosure, but the DU Underwriting Findings report does not reference the foreclosure, a reporting or data transfer error may have occurred, thus preventing DU from considering the foreclosure in its analysis of the loan. The lender must take action to ensure that the information is considered in the risk analysis.
+
+Non-Applicant Debts/Accounts
+In a small number of casefiles, credit reports may include accounts identified as possible non-applicant accounts (or with another similar notation). DU will include these tradelines in the credit risk assessment, and will also include the accounts in the DTI ratio when provided on the loan application. See B3-6-05, Monthly Debt Obligations for the requirements.
+
+
+
+
+
+SECTION B3-3.1-01: General Income Information
+
+B3-1-01, Comprehensive Risk Assessment (03/04/2026)
+ Print 
+ Share
+Introduction
+This topic contains information on the comprehensive risk assessment approach to underwriting, including:
+Overview
+Comprehensive Risk Assessment
+Overview
+Fannie Mae’s underwriting policies include an evaluation of the borrower’s (or spouse’s to the extent required by applicable law) equity investment, credit history, liquid reserves, reliable and recurring income, and the cumulative effect that these and other risk factors have on mortgage loan performance. Fannie Mae’s underwriting policies enable the lender to consider various scenarios in evaluating a borrower’s willingness and capacity to repay the mortgage loan. The lender must confirm that information provided by the borrower during the loan application process is accurate and complete; include documentation in the loan file that supports the lender’s assessment of the borrower’s credit history, employment and income, assets, and other financial information used for qualifying; conduct a comprehensive risk assessment of each mortgage loan application; and render a decision to either approve or decline the mortgage loan application.
+
+Fannie Mae offers lenders two options for conducting a comprehensive risk assessment–automated underwriting through DU or manual underwriting. Both methods include an evaluation of the borrower’s equity investment, credit history, liquid reserves, reliable and recurring income, and the cumulative effect that these and other risk factors have on mortgage loan performance.
+
+Lenders that choose to manually underwrite a mortgage application are expected to follow the comprehensive risk assessment approach. Under this approach, lenders evaluate certain key risk elements to assess the overall level of delinquency risk.
+
+Lenders are fully responsible for:
+
+evaluating the delinquency risk of each loan;
+
+reviewing the credit report, as well as all other credit information, to determine that the credit report meets Fannie Mae’s requirements, that the data evaluated was accurate, and that the borrower has the capacity to repay the mortgage loan;
+
+assessing the adequacy of the property as collateral for the mortgage requested;
+
+determining whether or not the loan meets Fannie Mae's eligibility requirements as fully described in this Guide;
+
+determining whether or not it is appropriate to deliver the mortgage loan to Fannie Mae; and
+
+fully documenting the assessment and the documentation on which the assessment was based.
+
+Comprehensive Risk Assessment
+Lenders must evaluate the overall level of serious delinquency risk that is present in each mortgage application by taking into consideration any layering of risk factors, the significance of risk factors, and the overall risks present in the mortgage application. The Eligibility Matrix provides a solid foundation for assessing the risk of a manually underwritten loan and identifies the risk elements to evaluate for each transaction type.
+
+The lender's determination of the mortgage delinquency risk, the assessment of the adequacy of the property as security for the mortgage, the determination of whether the mortgage satisfies Fannie Mae's mortgage eligibility criteria, and the acceptability of the documentation in the mortgage file should all enter into the decision on whether to deliver the mortgage to Fannie Mae.
+
+The lender must fully document the results of its comprehensive risk assessment and final underwriting decision and ensure that the information used to reach its comprehensive risk assessment is valid, accurate, and substantiated.
+
+For a more precise or definitive recommendation for determining whether to deliver a given mortgage to Fannie Mae, the lender should submit the mortgage application to DU. DU evaluates the probability of future serious delinquency and arrives at an underwriting recommendation by relying on a comprehensive examination of risk factors in a mortgage application. Furthermore, DU is the standard by which Fannie Mae assesses the delinquency risk on all mortgages sold to Fannie Mae.
+
+
+
+
+SECTION B3-3.2-01: Standards for Employment and Income Documentation 
+
+B3-3.2-01, Standards for Employment and Income Documentation (03/04/2026)
+ Print 
+ Share
+Introduction
+This topic contains information on the standards for documentation of employment income, including:
+General Documentation Requirements
+Documentation Provided by the Borrower
+Documentation Provided by the Borrower's Employer
+Documentation Provided by a Third-Party Employment Verification Vendor
+General Documentation Requirements
+The lender must verify employment income for all borrowers whose income is used to qualify for the loan. This verification can be provided by the borrower, by the borrower’s employer, or by a third-party employment verification vendor. The standards for employment documentation are the same for DU loan casefiles as they are for manually underwritten loans. For example, paystubs, W-2s, and tax returns must meet the same requirements without regard to the underwriting method. A year end paystub reflecting earnings from the entire year is acceptable in lieu of the W-2.
+
+When employment is validated through the DU validation service using an asset verification report, the lender is not required to obtain the employment verification documentation described below. DU will provide messaging indicating the documentation required. Lenders must comply with all requirements pertaining to the DU validation service. See B3-2-02, DU Validation Service for more information.
+
+Documentation Provided by the Borrower
+The following table provides requirements for documentation provided by the borrower.
+
+✓	Requirements - Paystubs and W-2s
+ 	
+The most recent paystub must be dated no earlier than 30 days prior to the initial loan application date and it must include all year-to-date earnings. Additionally, the most recent paystub must include sufficient information to appropriately calculate income; otherwise, additional documentation must be obtained.
+
+Paystubs must comply with B1-1-03, Allowable Age of Credit Documents and Federal Income Tax Returns.
+
+ 	
+IRS W-2 forms must cover the most recent one- or two-year period, based on the documentation requirements for the particular income type, and must clearly identify the borrower as the employee.
+
+”Most recent” W-2 is defined as the W-2 for the calendar year prior to the current calendar year. Alternative documentation, such as an IRS Wage and Income (W-2) Transcript, a written Request for Verification of Employment ( Form 1005) (see below) or the final year-to-date paystub, may be used as long as adequate information is provided.
+
+ 	Documents must be computer-generated or typed by the borrower’s employer(s), although paystubs that the borrower downloads from the Internet are also acceptable. Documents must clearly identify the employer’s name and source of information.
+ 	The information must be complete and legible.
+ 	The original source of the information must be a third party, such as the borrower's human resources department, personnel office, payroll department, company's payroll vendor, or supervisor.
+For tax return requirements, see B3-3.1-02, Tax Return and Transcript Documentation Requirements.
+
+Documentation Provided by the Borrower's Employer
+The lender may use the Request for Verification of Employment ( Form 1005) to document employment and income. The date of the completed form must comply with B1-1-03, Allowable Age of Credit Documents and Federal Income Tax Returns.
+
+The information on Form 1005 must be legible. The following fields on Form 1005 are optional:The remaining fields on the form must be completed as applicable to the borrower. 
+When the borrower authorizes the lender to obtain verifications of employment and income directly from the employer, the lender must have the borrower sign Form 1005.
+ 
+
+Field #	 Title of Optional Field
+11	Probability of continued employment
+14	If overtime or bonus is applicable, is its continuance likely?
+16	Date of applicant’s next pay increase
+17	Projected amount of next pay increase
+18	Date of applicant’s last pay increase
+19	Amount of last pay increase
+24	Reason for leaving (Part III — Verification of Previous Employment)
+The remaining fields on the form must be completed as applicable to the borrower. 
+
+When the borrower authorizes the lender to obtain verifications of employment and income directly from the employer, the lender must have the borrower sign Form 1005.
+
+Alternatively, the lender may have the applicant sign a signature authorization form, which gives the lender blanket authorization to request the information it needs to evaluate the applicant’s creditworthiness.  See B1-1-02, Blanket Authorization Form, for additional information.
+
+Documentation Provided by a Third-Party Employment Verification Vendor
+The lender may receive employment and income verification directly from a third-party employment verification vendor. These verifications are acceptable as long as
+
+the borrower provided proper authorization for the lender to use this verification method,
+the date of the completed verification is in compliance with B1-1-03, Allowable Age of Credit Documents and Federal Income Tax Returns,
+the lender has determined that the vendor has made provisions to comply with reasonable quality control requests from both the lender and any subsequent mortgagee, and
+the lender understands it will be held accountable for the integrity of the information obtained from this source.
+If necessary, the lender must supplement these verifications by obtaining any missing information from the borrower or their employer.
+
+
+
+
+
+
+SECTION B3-5.1-01: General Requirements for Credit Scores
+
+B3-5.1-01, General Requirements for Credit Scores (04/22/2026)
+ Print 
+ Share
+Introduction
+This topic describes Fannie Mae’s requirements for borrower credit scores, including:
+Credit Score Versions
+Minimum Credit Score Requirements
+Exceptions to the Minimum Credit Score Requirement
+DU Credit Score Requirements
+Delivery of Credit Scores
+Loan-Level Price Adjustments Based on Credit Score
+Credit Score Versions
+Credit scores are required for most loans purchased or securitized by Fannie Mae. Fannie Mae is in the process of implementing new credit score models to support transition to a modernized and more competitive credit score framework for loan underwriting. The credit score models approved by U.S. Federal Housing (FHFA) are classic FICO, VantageScore® 4.0, and FICO 10T.
+
+As Fannie Mae advances implementation of this modernized framework, the following versions of the classic FICO score, produced from software developed by Fair Isaac Corporation, are currently required for loans underwritten through DU and manually underwritten mortgage loans:
+
+Equifax Beacon® 5.0;
+Experian®/Fair Isaac Risk Model V2SM; and
+TransUnion FICO® Risk Score, Classic 04.
+The lender must request these FICO credit scores for each borrower from each of the Fannie Mae-approved score providers when they order the three in-file merged credit report. If the borrower’s credit file includes complete and accurate information sufficient to ensure the validity of the credit score, the lender does not need to further evaluate the borrower’s creditworthiness.
+
+The following versions of VantageScore 4.0 are eligible for use by approved lenders:
+
+Equifax VantageScore 4.0,
+Experian VantageScore 4.0,
+TransUnion VantageScore 4.0.
+Lenders that wish to participate in the delivery of loans assessed using VantageScore 4.0 should contact their Fannie Mae customer account team for information regarding program availability, eligibility requirements, and applicable delivery instructions.
+
+Note: The credit report will indicate if a credit score could not be produced due to insufficient credit. The credit report must be maintained in the loan file, whether the report includes traditional credit and a credit score or indicates that a credit score could not be produced due to insufficient or frozen credit.
+
+Consistent with FHFA approvals supporting credit score modernization, the following models are also approved for use in connection with future loans delivered to Fannie Mae.
+
+FICO 10T Versions
+
+FICO Score 10T (Equifax, Experian, TransUnion)
+Fannie Mae is working to implement FICO Score 10T in a timely manner. Lenders will be advised when loans with FICO Score 10T can be delivered.
+
+Minimum Credit Score Requirements
+The following table describes the minimum credit score requirements and how to determine the loan-level credit score that applies to loan eligibility.
+
+Transaction Type	Minimum Credit Score
+Manually underwritten loans	
+The requirements are published in the Eligibility Matrix and are based on the credit score and the highest of the LTV, CLTV, or HCLTV ratios (as applicable); loan purpose; number of units; amortization type; and DTI ratio. To determine the credit score that applies for loan eligibility, use the following:
+
+Loans with one borrower - representative credit score,
+Loans with more than one borrower - average median credit score.
+The minimum credit score that applies for loan eligibility is:
+
+620 — fixed-rate loans
+
+640 — ARMs
+
+DU loan casefiles	A minimum credit score is not required for DU loan casefiles. DU will assess a borrower's creditworthiness in accordance with the risk factors outlined in B3-2-03, Risk Factors Evaluated by DU.
+Mortgage loans insured or guaranteed by a federal government agency (HUD, FHA, VA, and RD)	The minimum representative credit score is 620.
+Loans delivered pursuant to any variance contained in the Lender Contract	Manually underwritten loans: Higher of 620 representative credit score or average median credit score, as applicable, or the minimum representative credit score required by the variance.
+See  B3-5.1-02, Determining the Credit Score for a Mortgage Loan for additional information.
+
+Exceptions to the Minimum Credit Score Requirement
+Certain transactions are not subject to the minimum credit score requirement, including:
+
+loans where no borrower has a credit score (see Section B3–5.4, Nontraditional Credit History);
+manually underwritten HomeReady mortgage loans that include a borrower with a low credit score (see B5-6-02, HomeReady Mortgage Underwriting Methods and Requirements); and
+high LTV refinance loans, except for those loans underwritten using the Alternative Qualification Path.
+DU Credit Score Requirements
+Credit scores are not an integral part of DU's risk assessment because DU performs its own analysis of the credit report data. However, lenders must request credit scores for each borrower from each of the three credit repositories when they order the three in-file merged credit report, described in B3-5.2-01, Requirements for Credit Reports. If one or two of the credit repositories do not contain any credit information for the borrowers who have traditional credit, the credit report is still acceptable as long as
+
+credit data is available from one repository, and
+the lender requested a three in-file merged report.
+If the transaction does not meet the above requirements, refer to Section B3–5.4, Nontraditional Credit History, for underwriting and eligibility requirements.
+
+Frozen Credit Requirements
+
+If the borrower’s credit information is frozen at one of the credit repositories for borrowers who have traditional credit, the credit report is still acceptable as long as
+
+credit data is available from two repositories, and
+the lender requested a three in-file merged report.
+Loans for borrowers with credit data frozen at two or more of the credit repositories will not be eligible whether underwritten manually or in DU.
+
+Delivery of Credit Scores
+Loan Delivery collects credit score data for each borrower and also at the loan level. Lenders are required to deliver the representative credit score for all loans. For additional information, see the Loan Delivery Job Aid: Credit Scores.
+
+Loan-Level Price Adjustments Based on Credit Score
+Loan-level price adjustments (LLPAs) are assessed based on the representative credit score for the loan, in addition to other eligibility and loan features. See the Loan-Level Price Adjustment (LLPA) Matrix for additional information about LLPAs, including information about how LLPAs are assessed for loans that include borrowers without a credit score.
+
+
+
+
+
+SECTION B3-5.1-02: Determining the Credit Score for a Mortgage Loan
+
+B3-5.1-02, Determining the Credit Score for a Mortgage Loan (04/22/2026)
+ Print 
+ Share
+Introduction
+This topic contains requirements for determining the loan-level credit score, including:
+Representative Credit Score
+Average Median Credit Score - Manual Underwriting
+Foreign Credit Reports and Credit Scores
+Representative Credit Score
+The representative credit score for the loan is determined based on the credit scores of each borrower and is used to determine loan eligibility for manually underwritten loans with only one borrower and for pricing purposes (i.e., assessing LLPAs) on all loans. Follow these steps to calculate the representative credit score for a loan:
+
+Step	Description
+1	Fannie Mae recommends obtaining at least two credit scores for each borrower.
+2	
+Select a single score for each borrower.
+
+When two credit scores are obtained, choose the lower score.
+When three credit scores are obtained, choose the middle score. (If two of the three scores are the same, choose the middle of the three scores. For example: 700, 680, 680 = 680; 700, 700, 680 = 700)
+3	
+If there is only one borrower, the single score for the borrower is the representative credit score for the loan.
+
+If there are multiple borrowers, determine the applicable credit score for each individual borrower and select the lowest applicable score from the group as the representative credit score for the loan. If there is a borrower who does not have a credit score, determine the representative credit score for the loan based on the credit scores of the other borrowers on the loan.
+
+Average Median Credit Score - Manual Underwriting
+For certain manually underwritten transactions, the average median credit score is used in place of the representative credit score to determine whether the minimum credit score requirement is met.
+
+The following examples demonstrate how to calculate the average median credit score for eligibility purposes.
+
+Borrowers on the Loan Application	Step 1: Determine each borrower's median score	Step 2: Average the median scores to determine the score for the loan
+Borrower	Scores: 590, 605, 648	
+Average: Not applicable
+
+Representative credit score = 605
+
+Borrower 1
+
+Borrower 2
+
+Scores: 590, 605, 648 Median = 605
+
+Scores: 661, 693, 693 Median = 693
+
+Average: (605+693)/2 = 649
+
+Representative credit score = 605
+
+Borrower 1
+
+Borrower 2
+
+Scores: 590, 605 Median = 590
+
+Scores: 661, 693, 693 Median = 693
+
+Average: (590+693)/2 = 642
+
+Representative credit score = 590
+
+ 
+
+Foreign Credit Reports and Credit Scores
+With the exception of loan casefiles underwritten through DU, Fannie Mae permits the lender to use a credit report from a foreign country to document a borrower's credit history. (See B3-5.2-01, Requirements for Credit Reports.) If a credit score is provided with the foreign credit report it cannot be used to establish eligibility, or be delivered to Fannie Mae unless the credit score is an approved credit score model, as required by B3-5.1-01, General Requirements for Credit Scores. 
+
+If the lender relies on credit reports from foreign countries to document borrower credit histories, the credit report must meet the requirements and standards for domestic reports and must be completed in English or include an English translation.
+
+See Section B3–5.4, Nontraditional Credit History, for requirements that apply when a loan includes a borrower without an acceptable credit history.
+
+
+
+
+
+
+SECTION B3-5.3-07: Significant Derogatory Credit Events — Waiting Periods
+
+B3-5.3-07, Significant Derogatory Credit Events — Waiting Periods and Re-establishing Credit (08/07/2019)
+ Print 
+ Share
+Introduction
+This topic contains information on the waiting periods for significant derogatory credit events, including:
+General Information
+Identification of Significant Derogatory Credit Events in the Credit Report
+Bankruptcy (Chapter 7 or Chapter 11)
+Bankruptcy (Chapter 13)
+Multiple Bankruptcy Filings
+Foreclosure
+Foreclosure and Bankruptcy on the Same Mortgage
+Deed-in-Lieu of Foreclosure, Preforeclosure Sale, and Charge-Off of a Mortgage Account
+Summary — All Waiting Period Requirements
+Requirements for Re-establishing Credit
+General Information
+The presence of significant derogatory credit events dramatically increases the likelihood of a future default and represents a significantly higher level of default risk. Examples of significant derogatory credit events include bankruptcies, foreclosures, deeds-in-lieu of foreclosure, preforeclosure sales, short sales, and charge-offs of mortgage accounts.
+
+Note: The terms “preforeclosure sale” and “short sale” are used interchangeably in this Guide and have the same meaning (see Deed-in-Lieu of Foreclosure, Preforeclosure Sale, and Charge-Off of a Mortgage Account below).
+
+The lender must determine the cause and significance of the derogatory information, verify that sufficient time has elapsed since the date of the last derogatory information, and confirm that the borrower has re-established an acceptable credit history. The lender must make the final decision about the acceptability of a borrower’s credit history when significant derogatory credit information exists.
+
+This topic describes the amount of time that must elapse (the “waiting period”) after a significant derogatory credit event before the borrower is eligible for a new loan salable to Fannie Mae. The waiting period commences on the completion, discharge, or dismissal date (as applicable) of the derogatory credit event and ends on the disbursement date of the new loan for manually underwritten loans. See B3-5.3-09, DU Credit Report Analysis, for additional information pertaining to DU loan casefiles, including how the waiting period is determined. Also see B3-5.3-08, Extenuating Circumstances for Derogatory Credit, for additional information.
+
+Note: The requirements pertaining to significant derogatory credit are not applicable to high LTV refinance loans. (See B5-7-02, High LTV Refinance Underwriting, Documentation, and Collateral Requirements for the New Loan.)
+
+Identification of Significant Derogatory Credit Events in the Credit Report
+Lenders must review the credit report and the Declarations in the loan application to identify instances of significant derogatory credit events. Lenders must review the public records section of the credit report and all tradelines, including mortgage accounts (first liens, second liens, home improvement loans, HELOCs, and manufactured home loans), to identify previous foreclosures, deeds-in-lieu, preforeclosure sales, charge-offs of mortgage accounts, and bankruptcies. Lenders must carefully review the current status of each tradeline, manner of payment codes, and remarks to identify these types of significant derogatory credit events. Remarks Codes are descriptive text or codes that appear on a tradeline, such as “Foreclosure,” “Forfeit deed-in-lieu of foreclosure,” and “Settled for less than full balance.”
+
+Significant derogatory credit events may not be accurately reported or consistently reported in the same manner by all creditors or credit reporting agencies. If not clearly identified in the credit report, the lender must obtain copies of appropriate documentation. The documentation must establish the completion date of a previous foreclosure, deed-in-lieu or preforeclosure sale, or date of the charge-off of a mortgage account; confirm the bankruptcy discharge or dismissal date; and identify debts that were not satisfied by the bankruptcy. Debts that were not satisfied by a bankruptcy must be paid off or have an acceptable, established repayment schedule.
+
+Note: Timeshare accounts are considered installment loans and are not subject to the waiting periods described below.
+
+Bankruptcy (Chapter 7 or Chapter 11)
+A four-year waiting period is required, measured from the discharge or dismissal date of the bankruptcy action.
+
+Exceptions for Extenuating Circumstances
+
+A two-year waiting period is permitted if extenuating circumstances can be documented, and is measured from the discharge or dismissal date of the bankruptcy action.
+
+Bankruptcy (Chapter 13)
+A distinction is made between Chapter 13 bankruptcies that were discharged and those that were dismissed. The waiting period required for Chapter 13 bankruptcy actions is measured as follows:
+
+two years from the discharge date, or
+
+four years from the dismissal date.
+
+The shorter waiting period based on the discharge date recognizes that borrowers have already met a portion of the waiting period within the time needed for the successful completion of a Chapter 13 plan and subsequent discharge. A borrower who was unable to complete the Chapter 13 plan and received a dismissal will be held to a four-year waiting period.
+
+Exceptions for Extenuating Circumstances
+
+A two-year waiting period is permitted after a Chapter 13 dismissal, if extenuating circumstances can be documented. There are no exceptions permitted to the two-year waiting period after a Chapter 13 discharge.
+
+Multiple Bankruptcy Filings
+For a borrower with more than one bankruptcy filing within the past seven years, a five-year waiting period is required, measured from the most recent dismissal or discharge date.
+
+Note: The presence of multiple bankruptcies in the borrower’s credit history is evidence of significant derogatory credit and increases the likelihood of future default. Two or more borrowers with individual bankruptcies are not cumulative, and do not constitute multiple bankruptcies. For example, if the borrower has one bankruptcy and the co-borrower has one bankruptcy this is not considered a multiple bankruptcy.
+
+Exceptions for Extenuating Circumstances
+
+A three-year waiting period is permitted if extenuating circumstances can be documented, and is measured from the most recent bankruptcy discharge or dismissal date. The most recent bankruptcy filing must have been the result of extenuating circumstances.
+
+Foreclosure
+A seven-year waiting period is required, and is measured from the completion date of the foreclosure action as reported on the credit report or other foreclosure documents provided by the borrower.
+
+Exceptions for Extenuating Circumstances
+
+A three-year waiting period is permitted if extenuating circumstances can be documented, and is measured from the completion date of the foreclosure action. Additional requirements apply between three and seven years, which include:
+
+Maximum LTV, CLTV, or HCLTV ratios of the lesser of 90% or the maximum LTV, CLTV, or HCLTV ratios for the transaction per the Eligibility Matrix.
+
+The purchase of a principal residence is permitted.
+
+Limited cash-out refinances are permitted for all occupancy types pursuant to the eligibility requirements in effect at that time.
+
+Note: The purchase of second homes or investment properties and cash-out refinances (any occupancy type) are not permitted until a seven-year waiting period has elapsed.
+
+Foreclosure and Bankruptcy on the Same Mortgage
+If a mortgage debt was discharged through a bankruptcy, the bankruptcy waiting periods may be applied if the lender obtains the appropriate documentation to verify that the mortgage obligation was discharged in the bankruptcy. Otherwise, the greater of the applicable bankruptcy or foreclosure waiting periods must be applied.
+
+Deed-in-Lieu of Foreclosure, Preforeclosure Sale, and Charge-Off of a Mortgage Account
+These transaction types are completed as alternatives to foreclosure.
+
+A deed-in-lieu of foreclosure is a transaction in which the deed to the real property is transferred back to the servicer. These are typically identified on the credit report through Remarks Codes such as “Forfeit deed-in-lieu of foreclosure.”
+
+A preforeclosure sale or short sale is the sale of a property in lieu of a foreclosure resulting in a payoff of less than the total amount owed, which was pre-approved by the servicer. These are typically identified on the credit report through Remarks Codes such as “Settled for less than full balance.”
+
+A charge-off of a mortgage account occurs when a creditor has determined that there is little (or no) likelihood that the mortgage debt will be collected. A charge-off is typically reported after an account reaches a certain delinquency status, and is identified on the credit report with a manner of payment (MOP) code of “9.”
+
+A four-year waiting period is required from the completion date of the deed-in-lieu of foreclosure, preforeclosure sale, or charge-off as reported on the credit report or other documents provided by the borrower.
+
+Exceptions for Extenuating Circumstances
+
+A two-year waiting period is permitted if extenuating circumstances can be documented.
+
+Note: Deeds-in-lieu and preforeclosure sales may not be accurately or consistently reported in the same manner by all creditors or credit reporting agencies. See Identification of Significant Derogatory Credit Events in the Credit Report above for additional information.
+
+Summary — All Waiting Period Requirements
+The following table summarizes the waiting period requirements for all significant derogatory credit events.
+
+Derogatory Event	Waiting Period Requirements	Waiting Period with Extenuating Circumstances
+Bankruptcy — Chapter 7 or 11	4 years	2 years
+Bankruptcy — Chapter 13	
+2 years from discharge date
+
+4 years from dismissal date
+
+2 years from discharge date
+
+2 years from dismissal date
+
+Multiple Bankruptcy Filings	5 years if more than one filing within the past 7 years	3 years from the most recent discharge or dismissal date
+Foreclosure1	7 years	3 years
+Additional requirements after 3 years up to 7 years:
+
+90% maximum LTV ratios2
+
+Purchase, principal residence
+
+Limited cash-out refinance, all occupancy types
+
+Deed-in-Lieu of Foreclosure, Preforeclosure Sale, or Charge-Off of Mortgage Account	4 years	2 years
+Requirements for Re-establishing Credit
+After a bankruptcy, foreclosure, deed-in-lieu of foreclosure, preforeclosure sale, or charge-off of a mortgage account, the borrower’s credit will be considered re-established if all of the following are met:
+
+The waiting period and the related additional requirements are met.
+
+The loan receives a recommendation from DU that is acceptable for delivery to Fannie Mae or, if manually underwritten, meets the minimum credit score requirements based on the parameters of the loan and the established eligibility requirements.
+
+The borrower has traditional credit as outlined in Section B3–5.3, Traditional Credit History. Nontraditional credit or “thin files” are not acceptable.
+
+1
+When both a bankruptcy and foreclosure are disclosed on the loan application, or when both appear on the credit report, the lender may apply the bankruptcy waiting period if the lender obtains the appropriate documentation to verify that the mortgage loan in question was discharged in the bankruptcy. Otherwise, the greater of the applicable bankruptcy or foreclosure waiting period must be applied.
+
+
+
+
+
+SECTION B3-6-01: General Information on Liabilities
+
+B3-6-01, General Information on Liabilities (05/04/2022)
+ Print 
+ Share
+Introduction
+This topic contains information on liabilities, including:
+General Information on Liabilities
+Monthly Obligations Not Included in Liabilities
+General Information on Liabilities
+The lender’s risk analysis must include all liabilities affecting income or assets that will affect the borrower’s ability to fulfill the mortgage payment obligation.
+
+A borrower’s liabilities include the following:
+
+housing payment (mortgage or rent) for each borrower’s principal residence,
+
+all revolving charge accounts,
+
+installment loan debts with a remaining payment term greater than 10 months,
+
+installment debts secured by virtual currency,
+
+lease payments,
+
+real estate loans,
+
+HELOCs,
+
+alimony and child support,
+
+maintenance payments, and
+
+all other debts of a recurring nature.
+
+For each liability, the lender must determine the unpaid balance, the terms of repayment, and the borrower’s payment history, and verify any other liability that is not shown on a credit report by obtaining documentation from the borrower or creditor.
+
+If the credit report does not contain a reference for each significant open debt shown on the loan application—including outstanding mortgage debt, bank, student, or credit union loans—the lender must provide separate credit verification.
+
+If a current liability appears on the credit report that is not shown on the loan application, the borrower should provide a reasonable explanation for the undisclosed debt. Documentation may be required to support the borrower’s explanation.
+
+If the borrower discloses, or the lender discovers, additional liabilities after the underwriting decision has been made, up to and concurrent with closing, the lender must recalculate the borrower's debt-to-income ratio.
+
+See B3-6-02, Debt-to-Income Ratios and B3-6-03, Monthly Housing Expense for the Subject Property for additional information.
+
+Monthly Obligations Not Included in Liabilities
+Some obligations, often identified on a borrower’s paystub, are not considered a liability and will not be included as a debt or deducted from the borrower’s gross income when calculating the borrower’s debt-to-income ratio. These obligations include items such as
+
+federal, state, and local taxes;
+
+Federal Insurance Contributions Act (FICA) or other retirement contributions, such as 401(k) accounts (including repayment of debt secured by these funds);
+
+commuting costs;
+
+union dues; and
+
+voluntary deductions.
+
+
+
+
+
+SECTION B3-6-02: Debt-to-Income Ratios
+
+B3-6-02, Debt-to-Income Ratios (04/02/2025)
+ Print 
+ Share
+Introduction
+This topic contains information on the use of the debt-to-income (DTI) ratio, including:
+DTI Ratios
+Maximum DTI Ratios
+Exceptions to the Maximum DTI Ratio
+Calculating Total Monthly Obligation
+DTI Ratio Tolerance and Re-Underwriting Criteria
+Applying the Re-underwriting Criteria
+DTI Ratios
+The DTI ratio consists of two components:
+
+total monthly obligations, which includes the qualifying payment for the subject mortgage loan and other long-term and significant short-term monthly debts (see Calculating Total Monthly Obligation below); and
+
+total monthly income of all borrowers, to the extent the income is used to qualify for the mortgage (see Chapter B3–3, Income Assessment).
+
+Maximum DTI Ratios
+For manually underwritten loans, Fannie Mae’s maximum total DTI ratio is 36% of the borrower’s stable monthly income. The maximum can be exceeded up to 45% if the borrower meets the credit score and reserve requirements reflected in the Eligibility Matrix.
+
+For loan casefiles underwritten through DU, the maximum allowable DTI ratio is 50%.
+
+See B3-1-01, Comprehensive Risk Assessment for information about the DTI.
+
+Exceptions to the Maximum DTI Ratio
+Fannie Mae makes exceptions to the maximum allowable DTI ratios for particular mortgage transactions, including:
+
+cash-out refinance transactions — the maximum ratio may be lower for loan casefiles underwritten through DU (see B2-1.3-03, Cash-Out Refinance Transactions);
+high LTV refinance transactions - except for loans underwritten under the Alternative Qualification Path, there are no maximum DTI ratio requirements (see B5-7-01, High LTV Refinance Loan and Borrower Eligibility);
+borrowers who do not have a credit score — the maximum ratio may be lower for manually underwritten loans (see B3-5.4-01, Eligibility Requirements for Loans with Nontraditional Credit);
+non-occupant borrowers — the maximum ratio is lower than 45% for the occupying borrower for manually underwritten loans (see B2-2-04, Guarantors, Co-Signers, or Non-Occupant Borrowers on the Subject Transaction); and
+government mortgage loans — lenders must follow the requirements for the respective government agency.
+Calculating Total Monthly Obligation
+The total monthly obligation is the sum of the following:
+
+the housing payment for each borrower’s principal residence
+if the subject loan is the borrower’s principal residence, use the PITIA and qualifying payment amount (see B3-6-03, Monthly Housing Expense for the Subject Property);
+if there is a non-occupant borrower, use the mortgage payment (including HOA fees and subordinate lien payments) or rental payments (see B3-6-05, Monthly Debt Obligations);
+if the subject loan is a second home or investment property, use the mortgage payment (including HOA fees and subordinate lien payments) or rental payments (see B3-6-05, Monthly Debt Obligations;
+the qualifying payment amount if the subject loan is for a second home or investment property (see B3-6-04, Qualifying Payment Requirements);
+monthly payments on installment debts and other mortgage debts that extend beyond ten months;
+monthly payments on installment debts and other mortgage debts that extend ten months or less if the payments significantly affect the borrower’s ability to meet credit obligations;
+monthly payments on installment debts secured by virtual currency;
+monthly payments on revolving debts;
+monthly payments on lease agreements, regardless of the expiration date of the lease;
+monthly alimony, child support, or maintenance payments that extend beyond ten months (alimony (but not child support or maintenance) may instead be deducted from income, (see B3-6-05, Monthly Debt Obligations);
+monthly payments for other recurring monthly obligations; and
+any net loss from a rental property.
+Note: Fannie Mae acknowledges that lenders may sometimes apply a more conservative approach when qualifying borrowers. This is acceptable as long as Fannie Mae’s minimum requirements are met, and lenders consistently apply the same approach to similar loans. For example, a lender might calculate a higher minimum payment on a credit card account than what Fannie Mae requires, which is acceptable as long as the lender consistently applies this calculation to all mortgage applications with revolving debts.
+
+DTI Ratio Tolerance and Re-Underwriting Criteria
+Fannie Mae expects lenders to have in place processes to facilitate borrower disclosure of changes in financial circumstances throughout the origination process and prefunding quality control processes to increase the likelihood of discovering material undisclosed debts or reduced income. See D1-2-01, Lender Prefunding Quality Control Review Process.
+
+As a result of the lender's normal processes and controls, the lender may need to re-underwrite the loan after initial underwriting. If the borrower discloses or the lender discovers additional debt(s) or reduced income after the underwriting decision was made up to and concurrent with loan closing, the loan must be re-underwritten if the new information causes the DTI ratio to increase by more than the allowed tolerances.
+
+In all cases, if the lender determines that there is new subordinate financing on the subject property during the loan process, the mortgage loan must be re-underwritten.
+
+Note: Re-underwriting means that loan casefiles must be resubmitted to DU with updated information; and for manually underwritten loans, a comprehensive risk and eligibility assessment must be performed.
+
+Applying the Re-underwriting Criteria
+The following steps are required if the borrower discloses or the lender discovers additional debt(s) or reduced income after the underwriting decision was made up to and concurrent with loan closing:
+
+Step	Description
+1	
+The lender must document the additional debt(s) and reduced income in accordance with B3-6-01, General Information on Liabilities or B3-3, Income Assessment , as applicable.
+
+Note: The lender is not required to obtain a new credit report to verify the additional debt(s). However, if the lender chooses to obtain a new credit report after the initial underwriting decision was made, the loan must be re-underwritten.
+
+2	If there is new subordinate debt on the subject property, the mortgage loan must be re-underwritten.
+3	The lender must recalculate the DTI ratio. For DU loan casefiles, the DTI ratio should be recalculated outside of DU.
+4	
+If the recalculated DTI ratio exceeds 45% for a manually underwritten loan or 50% for a DU loan casefile, the loan is not eligible for delivery to Fannie Mae.
+Manually underwritten loans: If the recalculated DTI does not exceed 45%, the mortgage loan must be re-underwritten with the updated information to determine if the loan is still eligible for delivery. Note: If the increase in the DTI ratio moves the DTI ratio above the 36% threshold, the loan must meet the credit score and reserve requirements in the Eligibility Matrix that apply to DTI ratios greater than 36% up to 45%.
+DU loan casefiles: See B3-2-10, Accuracy of DU Data, DU Tolerances, and Errors in the Credit Report for the tolerances and resubmission requirements associated with changes impacting the DTI.
+High LTV refinance loans: For loans underwritten in accordance with the Alternative Qualification Path, if the recalculated DTI ratio exceeds 45%, the loan is not eligible for delivery to Fannie Mae. If the DTI does not exceed 45%, but is increasing by 3 or more percentage points, the loan must be re-underwritten with the updated information to determine if the loan is still eligible for delivery.
+5	The final loan application signed by the borrower must include all income and debts verified, disclosed, or identified during the mortgage process.
+6	Upon delivery to Fannie Mae, the lender must deliver the qualifying monthly income and expense amounts that are on the final loan application. See C1-2-02, Loan Data and Documentation Delivery Requirements.
+
+
+
+
+
+
+
+SECTION B3-6-05: Monthly Debt Obligations
+
+
+B3-6-05, Monthly Debt Obligations (06/03/2026)
+ Print 
+ Share
+Introduction
+This topic describes obligations that should be considered in underwriting the loan, including:
+Alimony, Child Support, Equalization Payments, and Separate Maintenance Payments
+Bridge / Swing Loans
+Business Debt in Borrower’s Name
+Court-Ordered Assignment of Debt
+Debts Paid by Others
+Non-Applicant Accounts
+Deferred Installment Debt
+Federal Income Tax Installment Agreements
+Garnishments
+Home Equity Lines of Credit
+Installment Debt
+Lease Payments
+Rental Housing Payment
+Loans Secured by Financial Assets
+Open 30–Day Charge Accounts
+Other Real Estate Owned—Qualifying Impact
+Revolving Charge/Lines of Credit
+Student Loans
+Alimony, Child Support, Equalization Payments, and Separate Maintenance Payments
+When the borrower is required to pay alimony, child support, equalization payments, or separate maintenance payments under a divorce decree, separation agreement, or any other written legal agreement—and those payments must continue to be made for more than ten months—the payments must be considered as part of the borrower’s recurring monthly debt obligations. However, voluntary payments do not need to be taken into consideration and an exception is allowed for alimony. A copy of the divorce decree, separation agreement, court order, or equivalent documentation confirming the amount of the obligation must be obtained and retained in the loan file.
+
+For alimony, equalization payments, and separate maintenance obligations, the lender has the option to reduce the qualifying income by the amount of the obligation in lieu of including it as a monthly payment in the calculation of the DTI ratio.
+
+Note: For loan casefiles underwritten through DU, when using the option of reducing the borrower’s monthly qualifying income by the alimony, equalization payments, or separate maintenance payment, the lender must enter the amount of the monthly obligation as a negative alimony or separate maintenance income amount. (If the borrower also receives alimony, equalization payments, or separate maintenance income, the amounts should be combined and entered as a net amount.)
+
+Bridge / Swing Loans
+When a borrower obtains a bridge (or swing) loan, the funds from that loan can be used for closing on a new principal residence before the current residence is sold. This creates a contingent liability that must be considered part of the borrower’s recurring monthly debt obligations and included in the DTI ratio calculation.
+
+Fannie Mae will waive this requirement and not require the debt to be included in the DTI ratio if the following documentation is provided:
+
+a fully executed sales contract for the current residence, and
+confirmation that any financing contingencies have been cleared.
+Business Debt in Borrower’s Name
+When a self-employed borrower claims that a monthly obligation that appears on their personal credit report (such as a Small Business Administration loan) is being paid by the borrower’s business, the lender must confirm that it verified that the obligation was actually paid out of company funds and that this was considered in its cash flow analysis of the borrower’s business.
+
+The account payment does not need to be considered as part of the borrower’s DTI ratio if:
+
+the account in question does not have a history of delinquency,
+the business provides acceptable evidence that the obligation was paid out of company funds (such as 12 months of canceled company checks), and
+the lender’s cash flow analysis of the business took payment of the obligation into consideration.
+The account payment must be considered as part of the borrower’s DTI ratio in any of the following situations:
+
+If the business does not provide sufficient evidence that the obligation was paid out of company funds.
+If the business provides acceptable evidence of its payment of the obligation, but the lender’s cash flow analysis of the business does not reflect any business expense related to the obligation (such as an interest expense—and taxes and insurance, if applicable—equal to or greater than the amount of interest that one would reasonably expect to see given the amount of financing shown on the credit report and the age of the loan). It is reasonable to assume that the obligation has not been accounted for in the cash flow analysis.
+If the account in question has a history of delinquency. To ensure that the obligation is counted only once, the lender should adjust the net income of the business by the amount of interest, taxes, or insurance expense, if any, that relates to the account in question.
+Court-Ordered Assignment of Debt
+When a borrower has outstanding debt that was assigned to another party by court order (such as under a divorce decree or separation agreement) and the creditor does not release the borrower from liability, the borrower has a contingent liability. The lender is not required to count this contingent liability as part of the borrower’s recurring monthly debt obligations.
+
+The lender is not required to evaluate the payment history for the assigned debt after the effective date of the assignment. The lender cannot disregard the borrower’s payment history for the debt before its assignment.
+
+Debts Paid by Others
+Certain debts can be excluded from the borrower’s recurring monthly obligations and the DTI ratio:
+
+When a borrower is obligated on a non-mortgage debt - but is not the party who is actually repaying the debt - the lender may exclude the monthly payment from the borrower's recurring monthly obligations. This policy applies whether or not the other party is obligated on the debt, but is not applicable if the other party is an interested party to the subject transaction (such as the seller or real estate agent). Non-mortgage debts include installment loans, student loans, revolving accounts, lease payments, alimony, child support, and separate maintenance. See below for treatment of payments due under a federal income tax installment agreement.
+When a borrower is obligated on a mortgage debt - but is not the party who is actually repaying the debt - the lender may exclude the full monthly housing expense (PITIA) from the borrower’s recurring monthly obligations if
+the party making the payments is obligated on the mortgage debt,
+there are no delinquencies in the most recent 12 months, and
+the borrower is not using rental income from the applicable property to qualify.
+In order to exclude non-mortgage debts, including when the borrower is an authorized user on a revolving account, or mortgage debts from the borrower’s DTI ratio, the lender must obtain the most recent 12 months' canceled checks (or bank statements) from the other party making the payments that document a 12-month payment history with no delinquent payments.
+
+When a borrower is obligated on a mortgage debt, regardless of whether or not the other party is making the monthly mortgage payments, the referenced property must be included in the count of financed properties (if applicable per B2-2-03, Multiple Financed Properties for the Same Borrower.
+
+Non-Applicant Accounts
+Credit reports may include accounts identified as possible non-applicant accounts (or with other similar notation). Non-applicant accounts may belong to the borrower, or they may truly belong to another individual.
+
+Typical causes of non-applicant accounts include:
+
+applicants who are Juniors or Seniors,
+individuals who move frequently,
+unrelated individuals who have identical names, and
+debts the borrower applied for under a different Social Security number or under a different address. These may be indicative of potential fraud.
+If the debts do not belong to the borrower, the lender may provide supporting documentation to validate this, and may exclude the non-applicant debts for the borrower’s DTI ratio. If the debts do belong to the borrower, they must be included as part of the borrower’s recurring monthly debt obligations.
+
+Deferred Installment Debt
+Deferred installment debts must be included as part of the borrower’s recurring monthly debt obligations. For deferred installment debts other than student loans, if the borrower’s credit report does not indicate the monthly amount that will be payable at the end of the deferment period, the lender must obtain copies of the borrower’s payment letters or forbearance agreements so that a monthly payment amount can be determined and used in calculating the borrower’s total monthly obligations.
+
+For information about deferred student loans, see Student Loans below.
+
+Federal Income Tax Installment Agreements
+When a borrower has entered into or applied for an installment agreement with the IRS to repay delinquent federal income taxes, and there is no indication that a Notice of Federal Tax Lien has been filed against the borrower in the county in which the subject property is located, the lender must obtain the following documentation:
+
+For installment agreements approved by the IRS
+a copy of the approved IRS installment agreement with the terms of repayment, including the monthly payment amount and total amount due; and
+evidence the borrower is current on the payments associated with the tax installment plan. Acceptable evidence includes the most recent payment reminder from the IRS, reflecting the last payment amount and date and the next payment amount owed and due date.
+For installment agreements pending approval by the IRS
+a copy of the application for the installment agreement with the terms of repayment, including the monthly payment amount and total amount due.
+In both cases, if the borrower is not paying off the amount owed in full, the lender must include the monthly payment amount as part of the borrower's monthly debt obligations. If any of the above conditions are not met, the borrower must pay off the outstanding balance due under the installment agreement with the IRS in accordance with B3-6-07, Debts Paid Off At or Prior to Closing.
+
+The payments on a federal income tax installment agreement approved by the IRS can be excluded from the borrower’s DTI ratio if the agreement meets the terms in Debts Paid by Others or Installment Debt in this topic. 
+
+As a reminder, the lender remains responsible under the life-of-loan representations and warranties for clear title and first-lien enforceability in accordance with A2-2-07, Life-of-Loan Representations and Warranties.
+
+Garnishments
+All garnishments with more than ten months remaining must be included in the borrower’s recurring monthly debt obligations for qualifying purposes.
+
+Home Equity Lines of Credit
+When the mortgage that will be delivered to Fannie Mae also has a home equity line of credit (HELOC) that provides for a monthly payment of principal and interest or interest only, the payment on the HELOC must be considered as part of the borrower’s recurring monthly debt obligations. If the HELOC does not require a payment, there is no recurring monthly debt obligation so the lender does not need to develop an equivalent payment amount.
+
+Installment Debt
+All installment debt that is not secured by a financial asset—including student loans, automobile loans, personal loans, and timeshares—must be considered part of the borrower’s recurring monthly debt obligations if there are more than ten monthly payments remaining. However, an installment debt with fewer monthly payments remaining also should be considered as a recurring monthly debt obligation if it significantly affects the borrower’s ability to meet their credit obligations. See below for treatment of payments due under a federal income tax installment agreement.
+
+Note: A timeshare account should be treated as an installment debt regardless of how it is reported on the credit report or other documentation (that is, even if reported as a mortgage loan).
+
+Lease Payments
+Lease payments must be considered as recurring monthly debt obligations regardless of the number of months remaining on the lease. This is because the expiration of a lease agreement for rental housing or an automobile typically leads to either a new lease agreement, the buyout of the existing lease, or the purchase of a new vehicle or house.
+
+Rental Housing Payment
+The housing payment for each borrower’s principal residence must be considered when underwriting the loan. For the following scenarios, the borrower’s monthly rental housing payment must be evaluated (if the borrower does not otherwise have a mortgage payment or no housing expense):
+
+for non-occupant borrowers, and
+for second homes or investment properties.
+The following list provides examples of acceptable documentation to verify the rental payment:
+
+six months canceled checks or equivalent payment source;
+six months bank statements reflecting a clear and consistent payment to an organization or individual;
+direct verification of rent from a management company or individual landlord; or
+a copy of a current, fully executed lease agreement and two months canceled checks (or equivalent payment source) supporting the rental payment amount.
+Note: Refer to B3-5.4-03, Documentation and Assessment of a Nontraditional Credit History for rental payment history requirements when using non-traditional credit.
+
+Loans Secured by Financial Assets
+When a borrower uses their financial assets—life insurance policies, 401(k) accounts, individual retirement accounts, certificates of deposit, stocks, bonds, etc.—as security for a loan, the borrower has a contingent liability.
+
+The lender is not required to include this contingent liability as part of the borrower’s recurring monthly debt obligations provided the lender obtains a copy of the applicable loan instrument that shows the borrower’s financial asset as collateral for the loan. If the borrower intends to use the same asset to satisfy financial reserve requirements, the lender must reduce the value of the asset (the account balance, in most cases) by the proceeds from the secured loan and any related fees to determine whether the borrower has sufficient reserves.
+
+Note: Payment on any debt secured by virtual currency is an exception to the above policy and must be included when calculating the debt-to-income ratio.
+
+Open 30–Day Charge Accounts
+Open 30–day charge accounts require the balance to be paid in full every month. Fannie Mae does not require open 30–day charge accounts to be included in the debt-to-income ratio.
+
+See B3-6-07, Debts Paid Off At or Prior to Closing, for additional information on open 30–day charge accounts.
+
+Other Real Estate Owned—Qualifying Impact
+For details regarding the qualifying impact of other real estate owned, see B3-6-06, Qualifying Impact of Other Real Estate Owned.
+
+Revolving Charge/Lines of Credit
+Revolving charge accounts and unsecured lines of credit are open-ended and must be treated as long-term debts and considered part of the borrower's recurring monthly debt obligations. These tradelines include credit cards and department store charge cards, including accounts on which the borrower is an authorized user, and personal lines of credit. Equity lines of credit secured by real estate should be included in the housing expense.
+
+If the credit report does not show a required minimum payment amount and there is no supplemental documentation to support a payment of less than 5%, the lender must use 5% of the outstanding balance as the borrower's recurring monthly debt obligation.
+
+For DU loan casefiles, if a revolving debt is provided on the loan application without a monthly payment amount, DU will use the greater of $10 or 5% of the outstanding balance as the monthly payment when calculating the total debt-to-income ratio.
+
+Student Loans
+If a monthly student loan payment is provided on the credit report, the lender may use that amount for qualifying purposes. If the credit report does not reflect the correct monthly payment, the lender may use the monthly payment that is on the student loan documentation (the most recent student loan statement) to qualify the borrower.
+
+If the credit report does not provide a monthly payment for the student loan, or if the credit report shows $0 as the monthly payment, the lender must determine the qualifying monthly payment using one of the options below.
+
+If the borrower is on an income-driven payment plan, the lender may obtain student loan documentation to verify the actual monthly payment is $0. The lender may then qualify the borrower with a $0 payment.
+For deferred loans or loans in forbearance, the lender may calculate
+a payment equal to 1% of the outstanding student loan balance (even if this amount is lower than the actual fully amortizing payment), or
+a fully amortizing payment using the documented loan repayment terms.

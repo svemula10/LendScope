@@ -4,6 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from .schemas import LoanSimulationInput, PredictionResponse, DocumentExtractionResponse
 from .model_service import model_service
 from app.document_service import DocumentService
+from .compliance_service import compliance_audit_service
+
 
 app = FastAPI(title="LendScope Borrower Engine", version="1.0.0")
 
@@ -53,3 +55,17 @@ async def upload_document(file: UploadFile = File(...)):
         return extracted_fields
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal extraction error: {str(e)}")
+    
+
+
+@app.post("/api/predict/compliance")
+async def evaluate_application_compliance(payload: dict):
+    """
+    Ingests active input values from the loan form alongside a mode parameter ('borrower' | 'underwriter'),
+    running a persona-aware deterministic rule gate with localized vector text grounding citations.
+    """
+    # Isolate user view mode parameter, defaulting safely to underwriter
+    user_mode = payload.get("mode", "underwriter").lower()
+    
+    audit_results = compliance_audit_service.execute_underwriting_audit(payload, mode=user_mode)
+    return audit_results
