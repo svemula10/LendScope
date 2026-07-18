@@ -7,7 +7,8 @@ import Sidebar from "./components/Sidebar";
 import LoanForm from "./components/LoanForm";
 import MetricGrid from "./components/MetricGrid";
 import WhatIfSimulator from "./components/WhatIfSimulator";
-import CompliancePanel from "./components/CompliancePanel";
+import RecommendationSummary from "./components/RecommendationSummary";
+import PolicyGuidelines from "./components/PolicyGuidelines";
 
 export type View = "application" | "dashboardList" | "dashboardDetail";
 export type Mode = "borrower" | "underwriter";
@@ -35,7 +36,8 @@ export type PolicyRule = {
   evaluated_metric: string;
   required_ceiling: string;
   status: "PASS" | "VIOLATION";
-  citation: string;
+  summary_citation: string;   // <-- Update this to match CompliancePanel.tsx
+  full_text_citation: string;
 };
 
 // version 3
@@ -298,27 +300,30 @@ function App() {
     try {
       const API_BASE = "http://localhost:8000";
 
-      const [riskResponse, complianceResponse] = await Promise.all([
-        fetch(`${API_BASE}/api/predict`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(buildPayload(applicationData)),
-        }),
-        fetch(`${API_BASE}/api/predict/compliance`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ...applicationData,
-            mode: currentMode
-          }),
-        })
-      ]);
-
-      if (!riskResponse.ok || !complianceResponse.ok) throw new Error("Analysis engine failure.");
-
+      // 1. Fetch ML Prediction Base Values First
+      const riskResponse = await fetch(`${API_BASE}/api/predict`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(buildPayload(applicationData)),
+      });
+      if (!riskResponse.ok) throw new Error("Risk API issue.");
       const riskData = await riskResponse.json();
+
+      // 2. Feed ML Output Insights over the wire to sync the RAG Template Generation Notice Cards!
+      const complianceResponse = await fetch(`${API_BASE}/api/predict/compliance`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...applicationData,
+          mode: currentMode,
+          ml_probability: riskData.approval_probability, // Handed down dynamically
+          ml_risk_tier: riskData.risk_tier               // Handed down dynamically
+        }),
+      });
+      if (!complianceResponse.ok) throw new Error("Compliance API issue.");
       const complianceData = await complianceResponse.json();
 
+      // Set Master State Matrix
       setResult(riskData);
       setSimulatorResult(riskData);
       setSimulatorData(applicationData);
@@ -572,13 +577,15 @@ function App() {
                     approvalProbability={approvalProbability}
                   />
 
-                  {/* Right Column Side Panel Console matching your reference target formatting */}
-                  <aside className="panel operations-console-sidebar" style={{ background: "#ffffff", padding: "20px", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
-                    <CompliancePanel 
-                      policyGuidelines={policyGuidelines}
-                      recommendationSummary={recommendationSummary}
-                      uploadedFiles={["underwriting_package_v3.pdf"]} 
-                    />
+                  {/* Right Column Layout Sidebar Frame */}
+                  <aside className="panel operations-console-sidebar" style={{ background: "transparent", border: "none", padding: 0, boxShadow: "none" }}>
+                    
+                    {/* Box 1 Component */}
+                    <RecommendationSummary recommendationSummary={recommendationSummary} />
+
+                    {/* Box 2 Component */}
+                    <PolicyGuidelines policyGuidelines={policyGuidelines} />
+
                   </aside>
                 </div>
                 {error && <p className="error-message dashboard-error">{error}</p>}

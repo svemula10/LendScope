@@ -27,6 +27,9 @@ node_modules/
 dist/
 build/
 
+#Backend
+#backend/app/chroma_db
+
 # Distribution / packaging
 .Python
 build/
