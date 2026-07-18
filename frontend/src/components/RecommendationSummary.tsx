@@ -23,7 +23,7 @@ export default function RecommendationSummary({ recommendationSummary }: Recomme
       boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.05)",
       display: "grid",
       gap: "10px",
-      marginBottom: "20px"
+      marginBottom: "24px"
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
         <span style={{ fontSize: "20px", lineHeight: "1" }}>

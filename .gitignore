@@ -28,7 +28,7 @@ dist/
 build/
 
 #Backend
-#backend/app/chroma_db
+backend/app/chroma_db/
 
 # Distribution / packaging
 .Python

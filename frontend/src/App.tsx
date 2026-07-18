@@ -431,32 +431,43 @@ function App() {
 
   useEffect(() => {
     if (!selectedApplication || activeView !== "dashboardDetail") return;
+    
     const timeoutId = window.setTimeout(async () => {
       setIsSimulating(true);
       try {
-        const data = await predict(simulatorData);
-        setSimulatorResult(data);
-        
-        // Dynamic slider change evaluation of policy matrices calculations
-        const compRes = await fetch("http://localhost:8000/api/predict/compliance", {
+        const API_BASE = "http://localhost:8000";
+
+        // 1. ✅ CALL THE HELPER FUNCTION HERE (This marks it as used and clears the lint flag)
+        const riskData = await predict(simulatorData);
+
+        // 2. Run your parallel compliance check using the helper's calculated inputs
+        const complianceResponse = await fetch(`${API_BASE}/api/predict/compliance`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...simulatorData, mode: currentMode }),
+          body: JSON.stringify({
+            ...simulatorData,
+            mode: currentMode,
+            ml_probability: riskData.approval_probability,
+            ml_risk_tier: riskData.risk_tier
+          }),
         });
-        const compData = await compRes.json();
-        setPolicyGuidelines(compData.policy_guidelines);
-        setRecommendationSummary(compData.recommendation_summary);
-        
+        if (!complianceResponse.ok) throw new Error("Simulator Compliance API failure.");
+        const complianceData = await complianceResponse.json();
+
+        // 3. Mutate master reactive states
+        setSimulatorResult(riskData);
+        setPolicyGuidelines(complianceData.policy_guidelines);
+        setRecommendationSummary(complianceData.recommendation_summary);
         setError("");
       } catch {
-        setError("The simulator could not reach the prediction API.");
+        setError("The simulator could not update semantic compliance indexes.");
       } finally {
         setIsSimulating(false);
       }
     }, 350);
+
     return () => window.clearTimeout(timeoutId);
   }, [simulatorData, selectedApplication, activeView, currentMode]);
-
   return (
     <div className="app-shell">
       <Sidebar

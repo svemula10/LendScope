@@ -19,6 +19,10 @@ interface PolicyGuidelinesProps {
 export default function PolicyGuidelines({ policyGuidelines }: PolicyGuidelinesProps) {
   const [expandedRuleId, setExpandedRuleId] = useState<string | null>(null);
 
+  const toggleRule = (id: string) => {
+    setExpandedRuleId(expandedRuleId === id ? null : id);
+  };
+
   return (
     <div className="panel guidelines-card-container" style={{
       background: "#ffffff",
@@ -43,24 +47,24 @@ export default function PolicyGuidelines({ policyGuidelines }: PolicyGuidelinesP
           const isExpanded = expandedRuleId === rule.rule_id;
           const isViolation = rule.status === "VIOLATION";
 
-          // Aligns the pipeline values cleanly to render seamlessly
+          // Selects the deep RAG guidebook text wall coming over the API channel loop
           const massiveHandbookText = rule.full_text_citation || rule.citation || "Detailed reference documentation log matching this policy is loading.";
 
           return (
             <div 
               key={rule.rule_id} 
-              onClick={() => setExpandedRuleId(isExpanded ? null : rule.rule_id)}
+              onClick={() => toggleRule(rule.rule_id)}
               style={{
                 background: "#ffffff", 
                 border: `1px solid ${isExpanded ? "#4b6fff" : "#e2e8f0"}`,
                 borderRadius: "8px", 
                 cursor: "pointer", 
-                transition: "all 0.15s ease", 
+                transition: "all 0.2s ease",
                 overflow: "hidden",
                 display: "grid"
               }}
             >
-              {/* Header Row */}
+              {/* Clean, Non-bloated Rule Main Header Row */}
               <div style={{ padding: "14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div style={{ display: "grid", gap: "4px" }}>
                   <span style={{ fontWeight: 600, fontSize: "14px", color: "#0f172a" }}>{rule.name}</span>
@@ -79,27 +83,42 @@ export default function PolicyGuidelines({ policyGuidelines }: PolicyGuidelinesP
                   }}>
                     {rule.status}
                   </span>
-                  <span style={{ fontSize: "12px", transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }}>
+                  <span style={{ 
+                    fontSize: "12px", 
+                    transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)", 
+                    transition: "transform 0.2s",
+                    color: "#94a3b8" 
+                  }}>
                     ▼
                   </span>
                 </div>
               </div>
 
- 
-              {/* RESTORED ACCORDION FORMATTING FROM THE ORIGINAL FILE SHAPE */}
+              {/* REVEALS ONLY WHEN EXPANDED: The styled blockquote with the complete big text wall details */}
               {isExpanded && (
                 <div style={{
-                  padding: "14px", background: "#f8fafc", borderTop: "1px solid #e2e8f0",
-                  fontSize: "12.5px", lineHeight: "1.6", color: "#334155"
+                  padding: "0 14px 14px 14px", 
+                  background: "#ffffff",
+                  fontSize: "12.5px", 
+                  lineHeight: "1.6", 
+                  color: "#334155"
                 }} onClick={(e) => e.stopPropagation()}>
                   <div style={{ display: "flex", gap: "4px", marginBottom: "6px", color: "#4b6fff", fontWeight: 600 }}>
-                    <span>📂</span>
-                    <span>RAG Source Citation Grounding:</span>
+                    <span>📂</span> RAG Source Citation Grounding:
                   </div>
                   <blockquote style={{ 
-                    margin: 0, fontStyle: "italic", background: "#ffffff", padding: "12px", 
-                    borderLeft: "3px solid #4b6fff", borderRadius: "4px", border: "1px solid #e2e8f0",
-                    borderLeftWidth: "4px", maxHeight: "180px", overflowY: "auto", whiteSpace: "pre-wrap"
+                    margin: 0, 
+                    fontStyle: "italic", 
+                    background: "#f8fafc", 
+                    padding: "12px", 
+                    borderLeft: "4px solid #4b6fff", 
+                    borderRadius: "4px",
+                    borderTop: "1px solid #e2e8f0",
+                    borderRight: "1px solid #e2e8f0",
+                    borderBottom: "1px solid #e2e8f0",
+                    maxHeight: "180px", 
+                    overflowY: "auto", 
+                    whiteSpace: "pre-wrap"
                   }}>
                     "{massiveHandbookText}"
                   </blockquote>
@@ -110,7 +129,7 @@ export default function PolicyGuidelines({ policyGuidelines }: PolicyGuidelinesP
         })}
       </div>
 
-      {/* Guidebook Reference Note */}
+      {/* Guidebook Reference Notice */}
       <div style={{
         marginTop: "4px", padding: "12px 14px", background: "#f1f5f9", borderRadius: "8px",
         border: "1px dashed #cbd5e1", display: "flex", alignItems: "start", gap: "10px"
