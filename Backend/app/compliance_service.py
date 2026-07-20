@@ -157,7 +157,7 @@ class ComplianceAuditService:
                 rec_body = f"Application placed in high-risk baseline bracket (Approval Odds: {ml_probability*100:.0f}%). Automated agency allocation blocked. Requires manual documentation overlay checks to clear portfolio assignment."
             else:
                 rec_header = "Moderate Risk - Roadmap to Success"
-                rec_body = f"You are close to safe territory, but your current setup puts you in a cautious bracket (Approval Odds: {ml_probability*100:.0f}%). Try these minor slider adjustments to build a safer profile:\n\n• Adjust the requested loan amount slider down to cross under the 38% DTI threshold.\n• Boost your simulated credit score to move into a stronger risk tier."
+                rec_body = f"You are close to safe territory, but your current setup puts you in a cautious bracket (Approval Odds: {ml_probability*100:.0f}%). Try these minor slider adjustments to build a safer profile:\n\n• Adjust the requested loan amount slider down or income slider up to improve your probability.\n• Boost your simulated credit score to move into a stronger risk tier."
 
         elif ml_risk_tier == "MEDIUM" or has_policy_violations:
             rec_status = "CRITICAL" if has_policy_violations else "SUCCESS"
@@ -174,8 +174,8 @@ class ComplianceAuditService:
                 rec_header = "Automated Agency Pass Approved"
                 rec_body = f"Premium eligibility asset match (Approval Probability: {ml_probability*100:.0f}%, Risk Profile: LOW). Fully compliant with handbook fixed-rate constraints. Recommended for standard portfolio delivery."
             else:
-                rec_header = "Excellent Profile - Strong Approval! 🎉"
-                rec_body = f"Excellent! Your requested loan metrics, debt footprint ({computed_dti:.1f}%), and high credit score place you in our top lending tier (Approval Odds: {ml_probability*100:.0f}%). Lenders prefer files matching this exact profile description."
+                rec_header = "Excellent Profile🎉"
+                rec_body = f"Excellent! Your requested loan metrics, debt footprint ({computed_dti:.1f}%), and credit score place you in our top lending tier (Approval Odds: {ml_probability*100:.0f}%). Lenders prefer files matching this exact profile description."
 
         return {
             "policy_guidelines": rules_scorecard,

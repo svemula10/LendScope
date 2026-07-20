@@ -1,4 +1,3 @@
-// frontend/src/components/RecommendationSummary.tsx
 interface RecommendationSummaryData {
   header: string;
   body: string;
@@ -21,30 +20,26 @@ export default function RecommendationSummary({ recommendationSummary }: Recomme
       padding: "20px",
       borderRadius: "12px",
       boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.05)",
-      display: "grid",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
       gap: "10px",
       marginBottom: "24px"
     }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        <span style={{ fontSize: "20px", lineHeight: "1" }}>
-          {isSuccess ? "✅" : "⚠️"}
-        </span>
-        <h3 style={{ 
-          margin: 0, 
-          fontSize: "15px", 
-          fontWeight: 700, 
-          color: isSuccess ? "#166534" : "#991b1b" 
-        }}>
-          {recommendationSummary.header}
-        </h3>
-      </div>
+      <h3 style={{ 
+        margin: 0, 
+        fontSize: "15px", 
+        color: isSuccess ? "#166534" : "#991b1b" 
+      }}>
+        {recommendationSummary.header}
+      </h3>
+      
       <p style={{ 
         margin: 0, 
         fontSize: "13.5px", 
         lineHeight: "1.6", 
         color: isSuccess ? "#14532d" : "#7f1d1d", 
-        whiteSpace: "pre-line",
-        fontWeight: 500
+        whiteSpace: "pre-line"
       }}>
         {recommendationSummary.body}
       </p>
