@@ -140,6 +140,7 @@ class ComplianceAuditService:
         # ========================================================
         has_policy_violations = len(violations_list) > 0
         violations_block = "\n".join(violations_list)
+        has_default = loan_data.get("previous_loan_defaults_on_file", "").lower() in ["yes", "y"]
 
         if ml_risk_tier == "CRITICAL" or ml_probability < 0.40:
             rec_status = "CRITICAL"
@@ -176,6 +177,13 @@ class ComplianceAuditService:
             else:
                 rec_header = "Excellent Profile🎉"
                 rec_body = f"Excellent! Your requested loan metrics, debt footprint ({computed_dti:.1f}%), and credit score place you in our top lending tier (Approval Odds: {ml_probability*100:.0f}%). Lenders prefer files matching this exact profile description."
+
+        has_default = loan_data.get("previous_loan_defaults_on_file", "").lower() in ["yes", "y"]
+        if has_default:
+            if mode == "underwriter":
+                rec_body += "\n\n⚠️ Audit Note: Previous default on file requires manual verification of credit remediation documents."
+            else:
+                rec_body += "\n\n⚠️ Note: A previous loan default is on file; this significantly impacts your approval probability and risk assessment."
 
         return {
             "policy_guidelines": rules_scorecard,

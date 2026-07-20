@@ -124,7 +124,10 @@ class ModelService:
         # -------------------------------------------------
 
         if previous_default:
-            caps.append(("previous_default_on_file", 0.55))
+            if income > 100000:
+                penalties.append(("previous_default_high_income_relief", 0.15))
+            else:
+                penalties.append(("previous_default_standard_impact", 0.35))
 
         if credit_score < 520:
             caps.append(("credit_score_below_520", 0.25))
@@ -238,7 +241,7 @@ class ModelService:
             adjusted_probability = min(adjusted_probability, strictest_cap)
 
         total_penalty = sum(value for _, value in penalties)
-        adjusted_probability -= total_penalty
+        adjusted_probability = max(0.0, adjusted_probability - total_penalty)
 
         # -------------------------------------------------
         # 5. Give back small credit for genuinely strong compensating factors
@@ -280,7 +283,7 @@ class ModelService:
                 boosts.append(("stable_home_ownership", 0.015))
 
         total_boost = sum(value for _, value in boosts)
-        adjusted_probability += total_boost
+        adjusted_probability = max(0.0, adjusted_probability + total_boost)
 
         # Final clamp
         adjusted_probability = max(0.0, min(1.0, adjusted_probability))
