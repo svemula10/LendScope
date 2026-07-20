@@ -115,7 +115,7 @@ class ComplianceAuditService:
         if not defaults_passed: 
             violations_list.append("• Credit profile summary contains severely historical default marks.")
 
-        defaults_title = "Derogatory Default Review" if mode == "underwriter" else "Prior Credit History Background"
+        defaults_title = "Default Review" if mode == "underwriter" else "Prior Credit History Background"
         defaults_summary = (
             "SUMMARY OF SECTION B3-5.3-07: This section delineates the treatment of significant derogatory credit "
             "events, including prior foreclosures, bankruptcies, and outstanding repository loan defaults on active "

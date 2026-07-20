@@ -9,6 +9,7 @@ import MetricGrid from "./components/MetricGrid";
 import WhatIfSimulator from "./components/WhatIfSimulator";
 import RecommendationSummary from "./components/RecommendationSummary";
 import PolicyGuidelines from "./components/PolicyGuidelines";
+import BorrowerSnapshot from "./components/BorrowerSnapshot";
 
 export type View = "application" | "dashboardList" | "dashboardDetail";
 export type Mode = "borrower" | "underwriter";
@@ -578,15 +579,22 @@ function App() {
                 {/* THE CORRECT TWO-COLUMN SIDE-BY-SIDE GRID */}
                 <div className="dashboard-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", alignItems: "start" }}>
                   
-                  {/* Left Column: Sliders Sandbox */}
-                  <WhatIfSimulator
-                    simulatorData={simulatorData}
-                    updateSimulatorField={updateSimulatorField}
-                    isSimulating={isSimulating}
-                    formatMoney={formatMoney}
-                    currentMode={currentMode}
-                    approvalProbability={approvalProbability}
-                  />
+                  <aside className="panel operations-console-sidebar left-sidebar" style={{ background: "transparent", border: "none", padding: 0, boxShadow: "none" }}>
+                    
+                    {/* Left Column: Sliders Sandbox */}
+                    <WhatIfSimulator
+                      simulatorData={simulatorData}
+                      updateSimulatorField={updateSimulatorField}
+                      isSimulating={isSimulating}
+                      formatMoney={formatMoney}
+                      currentMode={currentMode}
+                      approvalProbability={approvalProbability}
+                    />
+                    
+                      <BorrowerSnapshot data={simulatorData} />
+
+                  </aside>
+
 
                   {/* Right Column Layout Sidebar Frame */}
                   <aside className="panel operations-console-sidebar" style={{ background: "transparent", border: "none", padding: 0, boxShadow: "none" }}>
@@ -599,6 +607,8 @@ function App() {
 
                   </aside>
                 </div>
+
+
                 {error && <p className="error-message dashboard-error">{error}</p>}
               </>
             )}
