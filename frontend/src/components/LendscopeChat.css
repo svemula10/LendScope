@@ -8,11 +8,19 @@
   margin-top: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
   overflow: hidden;
-  
-  /* ⬅️ CRITICAL FIX: Forces the card to stretch and fill the available column height */
   flex: 1;
-  min-height: 580px; 
-  max-height: calc(100vh - 180px);
+}
+
+/* 🟢 Borrower Mode Custom Height */
+.lendscope-chat-panel.borrower {
+  min-height: 730px; 
+  max-height: calc(100vh - 220px);
+}
+
+/* 🛡️ Underwriter Mode Custom Height (Taller or Shorter) */
+.lendscope-chat-panel.underwriter {
+  min-height: 500px; 
+  max-height: calc(100vh - 120px);
 }
 
 .chat-panel-header {

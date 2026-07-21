@@ -54,7 +54,7 @@ export default function MonthlyRepaymentCalculator({
           textTransform: "uppercase", 
           letterSpacing: "0.025em" 
         }}>
-          Amortization & Schedule
+          Monthly Repayment Schedule
         </h3>
         
         {/* Term Selector Pills matching app accent theme (#4b6fff) */}

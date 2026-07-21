@@ -603,7 +603,7 @@ function App() {
                       />
                     )}
 
-                    <BorrowerSnapshot data={simulatorData} />                    
+                    <BorrowerSnapshot data={formData} />                    
 
                   </aside>
 
@@ -618,7 +618,13 @@ function App() {
                     <PolicyGuidelines policyGuidelines={policyGuidelines} />
 
 
-                    <LendScopeChat mode={currentMode} currentContext={simulatorData} />
+                    <LendScopeChat 
+                      mode={currentMode} 
+                      currentContext={{
+                        baseline: formData,         // Original extracted/submitted application data
+                        simulated: simulatorData    // Live what-if slider modifications
+                      }}
+                    />
 
                   </aside>
                 </div>

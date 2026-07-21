@@ -1,4 +1,3 @@
-// src/components/BorrowerSnapshot.tsx
 import type { LoanForm } from "../App";
 
 interface BorrowerSnapshotProps {
@@ -6,8 +5,8 @@ interface BorrowerSnapshotProps {
 }
 
 export default function BorrowerSnapshot({ data }: BorrowerSnapshotProps) {
-  // We group these into simple key-value pairs for easy grid rendering
   const items = [
+    { label: "Applicant", value: data.applicant_name || "Primary Applicant" },
     { label: "Age", value: data.person_age },
     { label: "Education", value: data.person_education },
     { label: "Annual Income", value: `$${data.person_income.toLocaleString()}` },
@@ -16,6 +15,7 @@ export default function BorrowerSnapshot({ data }: BorrowerSnapshotProps) {
     { label: "Loan Amount", value: `$${data.loan_amnt.toLocaleString()}` },
     { label: "Interest Rate", value: `${data.loan_int_rate}%` },
     { label: "Intent", value: data.loan_intent },
+    { label: "Credit Score", value: data.credit_score },
   ];
 
   return (
@@ -24,7 +24,7 @@ export default function BorrowerSnapshot({ data }: BorrowerSnapshotProps) {
       border: "1px solid #e2e8f0",
       borderRadius: "12px",
       padding: "20px",
-      marginTop: "24px", // Matches your dashboard vertical rhythm
+      marginTop: "16px",
       boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)"
     }}>
       <h3 style={{ 
@@ -35,7 +35,7 @@ export default function BorrowerSnapshot({ data }: BorrowerSnapshotProps) {
         textTransform: "uppercase",
         letterSpacing: "0.05em"
       }}>
-        Application Snapshot
+        Original Application Snapshot
       </h3>
 
       <div style={{ display: "grid", gap: "1px", background: "#e2e8f0", borderRadius: "8px", overflow: "hidden" }}>
@@ -43,7 +43,7 @@ export default function BorrowerSnapshot({ data }: BorrowerSnapshotProps) {
           <div key={item.label} style={{ 
             display: "flex", 
             justifyContent: "space-between", 
-            padding: "10px 14px", 
+            padding: "9px 14px", 
             background: index % 2 === 0 ? "#ffffff" : "#f8fafc" 
           }}>
             <span style={{ fontSize: "13px", color: "#64748b" }}>{item.label}</span>

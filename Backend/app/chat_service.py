@@ -1,4 +1,3 @@
-# backend/app/chat_service.py
 import os
 from dotenv import load_dotenv
 from groq import Groq, GroqError
@@ -13,15 +12,14 @@ class ChatOrchestrator:
         
         self.borrower_system_prompt = (
             "You are LendScope's Borrower Assistant, a friendly financial coach. "
-            "You have access to the user's live loan simulation metrics provided in the context below. "
-            "Use these exact figures (income, credit score, loan amount, etc.) to give tailored, "
-            "personalized advice on their approval chances and DTI ratio."
+            "You have access to both the user's ORIGINAL application baseline and their active WHAT-IF SIMULATOR state. "
+            "Compare them when appropriate so the user understands how their slider changes impact their profile relative to reality."
         )
         
         self.underwriter_system_prompt = (
             "You are LendScope's Underwriter Policy Copilot (Powered by Llama 3.3). "
-            "You have direct access to the application data packet provided in the context below. "
-            "Audit these exact numbers against institutional risk ceilings and DTI thresholds. Cite exact policy rules."
+            "You have access to both the ORIGINAL unedited applicant record and the active SIMULATION audit parameters. "
+            "Audit these figures against institutional lending policies and flag any risky deviations."
         )
 
     def generate_response(self, mode: str, message: str, context_data: dict, history: list) -> dict:
@@ -34,17 +32,22 @@ class ChatOrchestrator:
         is_borrower = mode.lower() == "borrower"
         system_prompt = self.borrower_system_prompt if is_borrower else self.underwriter_system_prompt
 
-        # Format applicant live form context cleanly for Llama 3.3
-        context_summary = "No active application form data found."
-        if context_data and isinstance(context_data, dict):
-            filtered_data = {k: v for k, v in context_data.items() if v is not None and v != ""}
-            if filtered_data:
-                context_summary = ", ".join([f"{k}: {v}" for k, v in filtered_data.items()])
+        # Safely extract baseline vs simulated packages
+        baseline = context_data.get("baseline", {}) if isinstance(context_data, dict) else {}
+        simulated = context_data.get("simulated", {}) if isinstance(context_data, dict) else {}
+
+        baseline_text = ", ".join([f"{k}: {v}" for k, v in baseline.items() if v is not None]) or "N/A"
+        simulated_text = ", ".join([f"{k}: {v}" for k, v in simulated.items() if v is not None]) or "N/A"
+
+        context_payload = (
+            f"[ORIGINAL APPLICATION BASELINE DATA]:\n{baseline_text}\n\n"
+            f"[ACTIVE WHAT-IF SIMULATOR STATE]:\n{simulated_text}"
+        )
 
         messages = [
             {
                 "role": "system", 
-                "content": f"{system_prompt}\n\n[APPLICANT LIVE FORM CONTEXT]:\n{context_summary}"
+                "content": f"{system_prompt}\n\n{context_payload}"
             }
         ]
 
