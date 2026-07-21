@@ -1,0 +1,154 @@
+/* src/components/LendScopeChat.css */
+.lendscope-chat-panel {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  
+  /* ⬅️ CRITICAL FIX: Forces the card to stretch and fill the available column height */
+  flex: 1;
+  min-height: 580px; 
+  max-height: calc(100vh - 180px);
+}
+
+.chat-panel-header {
+  padding: 14px 16px;
+  background: #081733;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0; /* Prevents header from shrinking */
+}
+
+.lendscope-chat-panel.borrower .chat-panel-header {
+  background: #4b6fff;
+}
+
+.chat-shield-icon {
+  font-size: 20px;
+}
+
+.chat-title-group h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.chat-title-group p {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: #cbd5e1;
+}
+
+.chat-messages-container {
+  flex: 1; /* Expands to fill all vertical space between header and input bar */
+  padding: 14px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #f8fafc;
+}
+
+.chat-bubble {
+  max-width: 88%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.4;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+
+.chat-bubble.user {
+  background: #081733;
+  color: white;
+  align-self: flex-end;
+  border-bottom-right-radius: 2px;
+}
+
+.lendscope-chat-panel.borrower .chat-bubble.user {
+  background: #4b6fff;
+}
+
+.chat-bubble.assistant {
+  background: #ffffff;
+  color: #1e293b;
+  align-self: flex-start;
+  border: 1px solid #e2e8f0;
+  border-bottom-left-radius: 2px;
+}
+
+.chat-citations {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-top: 1px dashed #e2e8f0;
+  padding-top: 4px;
+}
+
+.chat-citations small {
+  font-size: 10px;
+  color: #64748b;
+  font-style: italic;
+}
+
+.typing-indicator {
+  color: #64748b;
+  font-style: italic;
+}
+
+.chat-input-bar {
+  display: flex;
+  padding: 12px;
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  align-items: center;
+  flex-shrink: 0; /* Pins input bar securely to the bottom */
+}
+
+.chat-input-bar input {
+  flex: 1;
+  padding: 9px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  outline: none;
+  font-size: 13px;
+  background: #f8fafc;
+  color: #1e293b;
+}
+
+.chat-input-bar input:focus {
+  border-color: #4b6fff;
+  background: #ffffff;
+}
+
+.chat-input-bar button {
+  margin-left: 8px;
+  width: 38px;
+  height: 38px;
+  background: #081733;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: opacity 0.2s;
+}
+
+.chat-input-bar button:hover {
+  opacity: 0.9;
+}
+
+.lendscope-chat-panel.borrower .chat-input-bar button {
+  background: #4b6fff;
+}

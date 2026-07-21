@@ -11,6 +11,7 @@ import RecommendationSummary from "./components/RecommendationSummary";
 import PolicyGuidelines from "./components/PolicyGuidelines";
 import BorrowerSnapshot from "./components/BorrowerSnapshot";
 import MonthlyRepaymentCalculator from "./components/MonthlyRepaymentCalculator";
+import LendScopeChat from "./components/LendscopeChat";
 
 export type View = "application" | "dashboardList" | "dashboardDetail";
 export type Mode = "borrower" | "underwriter";
@@ -602,19 +603,13 @@ function App() {
                       />
                     )}
 
-
-
-                    <BorrowerSnapshot data={simulatorData} />
-
-
-                    
-
+                    <BorrowerSnapshot data={simulatorData} />                    
 
                   </aside>
 
 
                   {/* Right Column Layout Sidebar Frame */}
-                  <aside className="panel operations-console-sidebar" style={{ background: "transparent", border: "none", padding: 0, boxShadow: "none" }}>
+                  <aside className="panel operations-console-sidebar" style={{ background: "transparent", border: "none", padding: 0, boxShadow: "none", display: "flex", flexDirection: "column", height:"100%"}}>
                     
                     {/* Box 1 Component */}
                     <RecommendationSummary recommendationSummary={recommendationSummary} />
@@ -622,7 +617,8 @@ function App() {
                     {/* Box 2 Component */}
                     <PolicyGuidelines policyGuidelines={policyGuidelines} />
 
-                    
+
+                    <LendScopeChat mode={currentMode} currentContext={simulatorData} />
 
                   </aside>
                 </div>

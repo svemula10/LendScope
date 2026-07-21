@@ -5,7 +5,8 @@ from .schemas import LoanSimulationInput, PredictionResponse, DocumentExtraction
 from .model_service import model_service
 from app.document_service import DocumentService
 from .compliance_service import compliance_audit_service
-
+from pydantic import BaseModel
+from .chat_service import chat_orchestrator
 
 app = FastAPI(title="LendScope Borrower Engine", version="1.0.0")
 
@@ -17,6 +18,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+class ChatRequest(BaseModel):
+    mode: str  # "borrower" or "underwriter"
+    message: str
+    context_data: dict = {}
+    history: list = []
 
 @app.get("/health")
 def health_check():
@@ -69,3 +76,18 @@ async def evaluate_application_compliance(payload: dict):
     
     audit_results = compliance_audit_service.execute_underwriting_audit(payload, mode=user_mode)
     return audit_results
+
+
+@app.post("/api/chat")
+async def chat_endpoint(payload: ChatRequest):
+    """Handles real-time context-aware persona chat using Groq Llama 3.3 70B."""
+    try:
+        response = chat_orchestrator.generate_response(
+            mode=payload.mode,
+            message=payload.message,
+            context_data=payload.context_data,
+            history=payload.history
+        )
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
