@@ -4,6 +4,19 @@ import chromadb
 from chromadb.utils import embedding_functions
 
 def seed_database_local():
+
+    is_production = os.getenv("RENDER") or os.getenv("RAILWAY_ENVIRONMENT") or os.getenv("ENVIRONMENT") == "production"
+
+    if is_production:
+        # Production-safe: Runs entirely in RAM, avoiding file lock / read-only errors
+        chroma_client = chromadb.Client()
+        print("☁️ ChromaDB initialized in production in-memory mode.")
+    else:
+        # Local development-safe: Uses persistent storage on your machine's hard drive
+        persist_dir = "./chroma_db"
+        chroma_client = chromadb.PersistentClient(path=persist_dir)
+        print(f"📂 ChromaDB initialized in local persistent mode at: {persist_dir}")
+
     db_path = os.path.join(os.path.dirname(__file__), "chroma_db")
     client = chromadb.PersistentClient(path=db_path)
     
