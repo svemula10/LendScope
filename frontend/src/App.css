@@ -183,11 +183,9 @@
 
 .dashboard-list-card { 
   display: flex;
-  /* CHANGE: Pack items sequentially from the left instead of blowing them apart */
-  justify-content: flex-start; 
-  align-items: center;            
-  /* This controls the uniform, equal distance between your 3 main blocks */
-  gap: 32px; 
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
   background: #ffffff;
   border: 1px solid #e2e8f3;
   border-radius: 8px;
@@ -319,7 +317,9 @@
 }
 
 .application-panel {
+  width: 100%;
   max-width: 980px;
+  margin: 0 auto;
 }
 
 

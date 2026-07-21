@@ -8,6 +8,8 @@ import numpy as np
 
 class ModelService:
     def __init__(self):
+        print("⏳ LendScope backend is loading...")
+
         #Get absolute path to backend folder
         base_dir = Path(__file__).resolve().parent.parent
 

@@ -10,6 +10,7 @@ import WhatIfSimulator from "./components/WhatIfSimulator";
 import RecommendationSummary from "./components/RecommendationSummary";
 import PolicyGuidelines from "./components/PolicyGuidelines";
 import BorrowerSnapshot from "./components/BorrowerSnapshot";
+import MonthlyRepaymentCalculator from "./components/MonthlyRepaymentCalculator";
 
 export type View = "application" | "dashboardList" | "dashboardDetail";
 export type Mode = "borrower" | "underwriter";
@@ -590,8 +591,24 @@ function App() {
                       currentMode={currentMode}
                       approvalProbability={approvalProbability}
                     />
+
+                    {/* Monthly Repayment Calculator */}
                     
-                      <BorrowerSnapshot data={simulatorData} />
+                    {currentMode === "borrower" && (
+                      <MonthlyRepaymentCalculator
+                        loanAmount={simulatorData.loan_amnt}
+                        annualRate={simulatorData.loan_int_rate}
+                        formatMoney={formatMoney}
+                      />
+                    )}
+
+
+
+                    <BorrowerSnapshot data={simulatorData} />
+
+
+                    
+
 
                   </aside>
 
@@ -604,6 +621,8 @@ function App() {
 
                     {/* Box 2 Component */}
                     <PolicyGuidelines policyGuidelines={policyGuidelines} />
+
+                    
 
                   </aside>
                 </div>
