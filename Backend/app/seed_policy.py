@@ -3,23 +3,19 @@ import os
 import chromadb
 from chromadb.utils import embedding_functions
 
-def seed_database_local():
-
+def seed_database():
     is_production = os.getenv("RENDER") or os.getenv("RAILWAY_ENVIRONMENT") or os.getenv("ENVIRONMENT") == "production"
 
     if is_production:
         # Production-safe: Runs entirely in RAM, avoiding file lock / read-only errors
-        chroma_client = chromadb.Client()
+        client = chromadb.Client()
         print("☁️ ChromaDB initialized in production in-memory mode.")
     else:
-        # Local development-safe: Uses persistent storage on your machine's hard drive
-        persist_dir = "./chroma_db"
-        chroma_client = chromadb.PersistentClient(path=persist_dir)
-        print(f"📂 ChromaDB initialized in local persistent mode at: {persist_dir}")
+        # Local development-safe: Uses persistent storage inside the app folder
+        db_path = os.path.join(os.path.dirname(__file__), "chroma_db")
+        client = chromadb.PersistentClient(path=db_path)
+        print(f"📂 ChromaDB initialized in local persistent mode at: {db_path}")
 
-    db_path = os.path.join(os.path.dirname(__file__), "chroma_db")
-    client = chromadb.PersistentClient(path=db_path)
-    
     embedding_model = embedding_functions.SentenceTransformerEmbeddingFunction(
         model_name="all-MiniLM-L6-v2"
     )
@@ -29,7 +25,7 @@ def seed_database_local():
         embedding_function=embedding_model
     )
 
-    # Clean out any old index blocks
+    # Clean out any old index blocks safely
     try:
         existing = collection.get()
         if existing and existing["ids"]:
@@ -116,4 +112,4 @@ def seed_database_local():
     print("🎉 RAG database successfully seeded with dynamic metadata-summary assets!")
 
 if __name__ == "__main__":
-    seed_database_local()
+    seed_database()
