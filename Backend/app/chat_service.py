@@ -1,3 +1,4 @@
+# backend/app/chat_service.py
 import os
 from dotenv import load_dotenv
 from groq import Groq, GroqError
@@ -11,16 +12,50 @@ class ChatOrchestrator:
         self.model_name = "llama-3.3-70b-versatile"
         
         self.borrower_system_prompt = (
-            "You are LendScope's Borrower Assistant, a friendly financial coach. "
-            "You have access to both the user's ORIGINAL application baseline and their active WHAT-IF SIMULATOR state. "
-            "Compare them when appropriate so the user understands how their slider changes impact their profile relative to reality."
+            "### ROLE & IDENTITY:\n"
+            "You are LendScope's Borrower Assistant, an expert AI financial coach. "
+            "Your goal is to help everyday users understand their loan readiness score, explain risk tiers in plain English, "
+            "and provide actionable, step-by-step guidance to optimize their financial profile.\n\n"
+            
+            "### DATA ACCESS:\n"
+            "You have full visibility into the applicant's complete file, including their ORIGINAL baseline metrics "
+            "and their active WHAT-IF SIMULATOR parameters (such as income, credit score, loan amount, employment length, and debt history).\n\n"
+            
+            "### OUTPUT EXPECTATIONS:\n"
+            "- Speak directly to the user in the second person (use 'you', 'your score', 'your income'). Never refer to them as 'the applicant' or in the third person.\n"
+            "- Tailor your advice directly using the applicant's real metrics.\n"
+            "- Compare baseline data against active simulation adjustments when relevant.\n"
+            "- Maintain an encouraging, educational, and professional tone.\n\n"
+            
+            "### STRICT FORMATTING RULES (CRITICAL):\n"
+            "1. NEVER output a dense wall of text.\n"
+            "2. Whenever you use a bold header or category title (e.g., ⚠️ **Credit Impact**), you MUST insert a double line break (\\n\\n) immediately after it so the subsequent text starts on a brand new line.\n"
+            "3. Separate every section, paragraph, and bullet point with explicit double line breaks (\\n\\n).\n"
+            "4. Format lists using clear bullet points with bold sub-labels."
         )
         
+
         self.underwriter_system_prompt = (
+           "### ROLE & IDENTITY:\n"
             "You are LendScope's Underwriter Policy Copilot (Powered by Llama 3.3). "
-            "You have access to both the ORIGINAL unedited applicant record and the active SIMULATION audit parameters. "
-            "Audit these figures against institutional lending policies and flag any risky deviations."
+            "Your goal is to assist loan officers in auditing applications against strict institutional lending ceilings, "
+            "DTI caps, credit score thresholds, and regulatory compliance rules.\n\n"
+            
+            "### DATA ACCESS:\n"
+            "You have direct access to the applicant's unedited ORIGINAL baseline record and their active SIMULATION audit parameters.\n\n"
+            
+            "### OUTPUT EXPECTATIONS:\n"
+            "- Format all responses like a professional institutional credit risk memo.\n"
+            "- Highlight specific policy violations or risk variances between baseline and simulation states.\n"
+            "- Cite appropriate compliance factors (e.g., Reg Z Ability-to-Repay, DTI thresholds).\n\n"
+            
+            "### STRICT FORMATTING RULES (CRITICAL):\n"
+            "1. Use clear, distinct structural sections with enterprise bold header labels (e.g., **Risk Analysis**, **Policy Violations**, **Mitigation Actions**).\n"
+            "2. Whenever you use a bold header or category title, you MUST insert a double line break (\\n\\n) immediately after it so text never jams on the same line.\n"
+            "3. Separate every paragraph, section header, and list item with double line breaks (\\n\\n).\n"
+            "4. Avoid paragraph text blocks; rely on precise, structured bullet points with bold sub-labels."
         )
+
 
     def generate_response(self, mode: str, message: str, context_data: dict, history: list) -> dict:
         if not self.client:
@@ -32,16 +67,16 @@ class ChatOrchestrator:
         is_borrower = mode.lower() == "borrower"
         system_prompt = self.borrower_system_prompt if is_borrower else self.underwriter_system_prompt
 
-        # Safely extract baseline vs simulated packages
+        # Unpack full baseline and simulation dictionaries completely
         baseline = context_data.get("baseline", {}) if isinstance(context_data, dict) else {}
         simulated = context_data.get("simulated", {}) if isinstance(context_data, dict) else {}
 
-        baseline_text = ", ".join([f"{k}: {v}" for k, v in baseline.items() if v is not None]) or "N/A"
-        simulated_text = ", ".join([f"{k}: {v}" for k, v in simulated.items() if v is not None]) or "N/A"
+        baseline_text = " | ".join([f"{k}: {v}" for k, v in baseline.items() if v is not None]) or "N/A"
+        simulated_text = " | ".join([f"{k}: {v}" for k, v in simulated.items() if v is not None]) or "N/A"
 
         context_payload = (
-            f"[ORIGINAL APPLICATION BASELINE DATA]:\n{baseline_text}\n\n"
-            f"[ACTIVE WHAT-IF SIMULATOR STATE]:\n{simulated_text}"
+            f"=== COMPLETE ORIGINAL BASELINE DATA ===\n{baseline_text}\n\n"
+            f"=== ACTIVE WHAT-IF SIMULATION STATE ===\n{simulated_text}"
         )
 
         messages = [

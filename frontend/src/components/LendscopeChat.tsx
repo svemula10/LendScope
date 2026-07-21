@@ -38,7 +38,7 @@ export default function LendScopeChat({ mode, currentContext }: { mode: "borrowe
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8000/api/chat", {
+      const response = await fetch("http://localhost:8000/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
@@ -49,15 +49,52 @@ export default function LendScopeChat({ mode, currentContext }: { mode: "borrowe
         })
       });
       
-      if (!res.ok) throw new Error(`Server returned status ${res.status}`);
+      if (!response.ok) throw new Error(`Server returned status ${response.status}`);
       
-      const data = await res.json();
+      const data = await response.json();
       setMessages([...updatedMessages, { sender: "assistant", text: data.reply, citations: data.citations }]);
-    } catch{
+    } catch {
       setMessages([...updatedMessages, { sender: "assistant", text: "❌ Failed to connect to backend server." }]);
     } finally {
       setLoading(false);
     }
+  };
+
+  // Helper function to turn raw LLM text with \n into clean structured JSX elements
+  const formatMessageText = (text: string) => {
+    return text.split("\n").map((line, index) => {
+      const trimmed = line.trim();
+
+      if (trimmed === "") {
+        return <div key={index} style={{ height: "6px" }} />;
+      }
+
+      // If a line starts with **, it's a bold header/title line (even if text follows on the same line)
+      if (trimmed.startsWith("**")) {
+        const cleanLine = trimmed.replaceAll("**", "");
+        return (
+          <div key={index} style={{ fontWeight: 700, marginTop: "10px", marginBottom: "4px", color: "#0f172a" }}>
+            {cleanLine}
+          </div>
+        );
+      }
+
+      // If it's a bullet point
+      if (trimmed.startsWith("*") || trimmed.startsWith("-")) {
+        return (
+          <div key={index} style={{ marginLeft: "12px", marginBottom: "4px" }}>
+            • {trimmed.replace(/^[*-\s]+/, "").replaceAll("**", "")}
+          </div>
+        );
+      }
+
+      // Standard text line (strips any stray ** just in case)
+      return (
+        <div key={index} style={{ marginBottom: "4px" }}>
+          {line.replaceAll("**", "")}
+        </div>
+      );
+    });
   };
 
   return (
@@ -73,7 +110,7 @@ export default function LendScopeChat({ mode, currentContext }: { mode: "borrowe
       <div className="chat-messages-container">
         {messages.map((m, idx) => (
           <div key={idx} className={`chat-bubble ${m.sender}`}>
-            <p>{m.text}</p>
+            {formatMessageText(m.text)}
             {m.citations && m.citations.length > 0 && (
               <div className="chat-citations">
                 {m.citations.map((c, i) => <small key={i}>📌 {c}</small>)}
