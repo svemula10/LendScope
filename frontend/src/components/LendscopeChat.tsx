@@ -1,6 +1,6 @@
 // src/components/LendScopeChat.tsx
 import { useState, type SyntheticEvent } from "react";
-import "./LendScopeChat.css";
+import "./LendscopeChat.css";
 
 type Message = { sender: "user" | "assistant"; text: string; citations?: string[] };
 
