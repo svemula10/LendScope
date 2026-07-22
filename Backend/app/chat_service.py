@@ -1,7 +1,7 @@
 # backend/app/chat_service.py
 import os
 from dotenv import load_dotenv
-from groq import Groq, GroqError
+from groq import Groq, GroqError, RateLimitError
 
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "..", ".env"))
 
@@ -98,6 +98,8 @@ class ChatOrchestrator:
                 max_completion_tokens=1024
             )
             reply_text = completion.choices[0].message.content
+        except RateLimitError:
+            reply_text = "⏳ **Rate Limit Reached**: You have hit the Groq API usage cap (requests or tokens per minute). Please wait a moment and try your request again."
         except GroqError as ge:
             reply_text = f"Groq API Error: {str(ge)}"
         except Exception as e:

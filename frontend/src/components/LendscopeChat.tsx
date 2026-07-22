@@ -61,15 +61,30 @@ export default function LendScopeChat({ mode, currentContext }: { mode: "borrowe
   };
 
   // Helper function to turn raw LLM text with \n into clean structured JSX elements
+  // Helper function to turn raw LLM text into clean structured JSX elements
   const formatMessageText = (text: string) => {
-    return text.split("\n").map((line, index) => {
+    // 1. Clean up literal backend escape strings if present
+    const cleanedText = (text || "")
+      .replaceAll("\\n\\n", "\n")
+      .replaceAll("\\n", "\n");
+
+    return cleanedText.split("\n").map((line, index) => {
       const trimmed = line.trim();
 
       if (trimmed === "") {
         return <div key={index} style={{ height: "6px" }} />;
       }
 
-      // If a line starts with **, it's a bold header/title line (even if text follows on the same line)
+      // 2. Handle Markdown Headings (e.g., ## Your Current Profile)
+      if (trimmed.startsWith("## ")) {
+        return (
+          <div key={index} style={{ fontWeight: 700, fontSize: "14px", marginTop: "12px", marginBottom: "4px", color: "#0f172a" }}>
+            {trimmed.replace(/^##\s*/, "")}
+          </div>
+        );
+      }
+
+      // If a line starts with **, it's a bold header/title line
       if (trimmed.startsWith("**")) {
         const cleanLine = trimmed.replaceAll("**", "");
         return (
@@ -80,10 +95,10 @@ export default function LendScopeChat({ mode, currentContext }: { mode: "borrowe
       }
 
       // If it's a bullet point
-      if (trimmed.startsWith("*") || trimmed.startsWith("-")) {
+      if (trimmed.startsWith("*") || trimmed.startsWith("-") || trimmed.startsWith("•")) {
         return (
           <div key={index} style={{ marginLeft: "12px", marginBottom: "4px" }}>
-            • {trimmed.replace(/^[*-\s]+/, "").replaceAll("**", "")}
+            • {trimmed.replace(/^[*-\s•]+/, "").replaceAll("**", "")}
           </div>
         );
       }
@@ -96,7 +111,6 @@ export default function LendScopeChat({ mode, currentContext }: { mode: "borrowe
       );
     });
   };
-
   return (
     <div className={`lendscope-chat-panel ${mode}`}>
       <div className="chat-panel-header">
@@ -111,11 +125,6 @@ export default function LendScopeChat({ mode, currentContext }: { mode: "borrowe
         {messages.map((m, idx) => (
           <div key={idx} className={`chat-bubble ${m.sender}`}>
             {formatMessageText(m.text)}
-            {m.citations && m.citations.length > 0 && (
-              <div className="chat-citations">
-                {m.citations.map((c, i) => <small key={i}>📌 {c}</small>)}
-              </div>
-            )}
           </div>
         ))}
         {loading && (
