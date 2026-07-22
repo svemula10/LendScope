@@ -371,8 +371,9 @@ function App() {
     }
 
     try {
-      // Parallel routing logic used inside first-time submissions to speed up dashboard initial load
-      const API_BASE = "http://localhost:8000";
+      // Use dynamic environment variable for production (Vercel -> Render) with local fallback
+      const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
+      
       const [riskResponse, complianceResponse] = await Promise.all([
         fetch(`${API_BASE}/api/predict`, {
           method: "POST",
@@ -406,7 +407,7 @@ function App() {
       setRecommendationSummary(complianceData.recommendation_summary);
       setActiveView("dashboardDetail");
     } catch {
-      setError("Could not connect to the backend. Make sure FastAPI is running on http://localhost:8000.");
+      setError("Could not connect to the backend server. Please verify your connection.");
     } finally {
       setIsLoading(false);
     }
