@@ -17,7 +17,7 @@ backend/.venv/
 # ML/data
 data/
 *.csv
-*.joblib
+#*.joblib
 *.pkl
 
 ml/notebooks/*.ipynb
