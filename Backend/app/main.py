@@ -7,6 +7,8 @@ from app.document_service import DocumentService
 from .compliance_service import compliance_audit_service
 from pydantic import BaseModel
 from .chat_service import chat_orchestrator
+import os
+import uvicorn
 
 app = FastAPI(title="LendScope Borrower Engine", version="1.0.0")
 
@@ -91,3 +93,9 @@ async def chat_endpoint(payload: ChatRequest):
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+if __name__ == "__main__":
+    # This automatically grabs Render's dynamic PORT, or falls back to 8000 locally
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("app.main:app", host="0.0.0.0", port=port)
