@@ -1,4 +1,5 @@
 from pathlib import Path
+from sys import flags
 import joblib
 import pandas as pd
 import shap
@@ -7,60 +8,46 @@ import numpy as np
 
 class ModelService:
     def __init__(self):
-        # Do not load heavy objects here during global import time!
-        self._pipeline = None
-        self._explainer = None
-        print("⏳ LendScope backend service wrapper initialized (lazy-loading enabled).")
+        print("⏳ LendScope backend is loading...")
 
-    def _load_model_assets(self):
-        """Lazy-loads the model and explainer only when first requested."""
-        if self._pipeline is None:
-            print("🚀 Loading XGBoost model and SHAP explainer into memory...")
-            base_dir = Path(__file__).resolve().parent.parent
+        #Get absolute path to backend folder
+        base_dir = Path(__file__).resolve().parent.parent
 
-            model_candidates = [
-                base_dir / "models" / "xgboost_model.joblib",
-                base_dir / "app" / "models" / "xgboost_model.joblib",
-                base_dir.parent / "ml" / "artifacts" / "xgboost_model.joblib",
-            ]
+        #All possible locations where the model might be stored
+        model_candidates = [
+            base_dir / "models" / "xgboost_model.joblib",
+            base_dir / "app" / "models" / "xgboost_model.joblib",
+            base_dir.parent / "ml" / "artifacts" / "xgboost_model.joblib",
+        ]
 
-            model_path = next((path for path in model_candidates if path.exists()), None)
+        #Find the first existing model path from the candidates
+        model_path = next((path for path in model_candidates if path.exists()), None)
 
-            if model_path is None:
-                raise FileNotFoundError(
-                    "Could not find the trained model. Checked: "
-                    + ", ".join(str(path) for path in model_candidates)
-                )
+        #If no model is found, raise an error with the checked paths
+        if model_path is None:
+            raise FileNotFoundError(
+                "Could not find the trained model. Checked: "
+                + ", ".join(str(path) for path in model_candidates)
+            )
 
-            self._pipeline = joblib.load(model_path)
-            self._preprocessor = self._pipeline.named_steps["preprocessor"]
-            self._classifier = self._pipeline.named_steps["classifier"]
-            self._explainer = shap.TreeExplainer(self._classifier)
-
-    @property
-    def pipeline(self):
-        self._load_model_assets()
-        return self._pipeline
-
-    @property
-    def preprocessor(self):
-        self._load_model_assets()
-        return self._preprocessor
-
-    @property
-    def explainer(self):
-        self._load_model_assets()
-        return self._explainer
+        #Load the model and its components
+        self.pipeline = joblib.load(model_path)
+        self.preprocessor = self.pipeline.named_steps["preprocessor"]
+        self.classifier = self.pipeline.named_steps["classifier"]
+        self.explainer = shap.TreeExplainer(self.classifier)
 
     def _prepare_input(self, data: LoanSimulationInput) -> pd.DataFrame:
         raw_df = pd.DataFrame([data.model_dump()])
 
+        # Match the exact category casing used by the training data.
         raw_df["person_gender"] = raw_df["person_gender"].str.lower()
         raw_df["person_home_ownership"] = raw_df["person_home_ownership"].str.upper()
         raw_df["loan_intent"] = raw_df["loan_intent"].str.upper()
 
+        # Dataset uses this engineered feature.
         raw_df["loan_percent_income"] = raw_df["loan_amnt"] / raw_df["person_income"]
 
+        # Avoid extreme values outside the model's likely training range. The np.clip is the range of values allowed
         raw_df["loan_amnt"] = np.clip(raw_df["loan_amnt"], 500, 100000)
         raw_df["loan_percent_income"] = np.clip(raw_df["loan_percent_income"], 0.0, 2.0)
         raw_df["person_income"] = np.clip(raw_df["person_income"], 1000, 500000)
@@ -69,10 +56,12 @@ class ModelService:
         if hasattr(self.pipeline, "feature_names_in_"):
             raw_df = raw_df[self.pipeline.feature_names_in_]
 
+ 
         return raw_df
 
     def _get_policy_flags(self, data: LoanSimulationInput) -> list[str]:
         flags = []
+
         loan_percent_income = data.loan_amnt / data.person_income
 
         if data.credit_score < 580:
@@ -103,6 +92,17 @@ class ModelService:
         approval_probability: float,
         data: LoanSimulationInput,
     ) -> tuple[float, dict]:
+        """
+        Applies business underwriting rules on top of the raw model approval probability.
+
+        Strategy:
+        - Hard caps for severe risk signals.
+        - Combination caps for risky feature interactions.
+        - Soft penalties for moderate risk signals.
+        - Returns both adjusted probability and rule details for debugging/frontend display.
+        """
+    
+        # Defensive guards
         income = max(float(data.person_income), 1.0)
         loan_amnt = max(float(data.loan_amnt), 0.0)
         loan_percent_income = loan_amnt / income
@@ -118,6 +118,12 @@ class ModelService:
 
         caps: list[tuple[str, float]] = []
         penalties: list[tuple[str, float]] = []
+
+
+        
+        # -------------------------------------------------
+        # 1. Hard caps: severe standalone risk signals
+        # -------------------------------------------------
 
         if previous_default:
             if income > 100000:
@@ -136,6 +142,10 @@ class ModelService:
             caps.append(("loan_amount_at_least_80_percent_of_income", 0.20))
         elif loan_percent_income >= 0.60:
             caps.append(("loan_amount_at_least_60_percent_of_income", 0.35))
+
+        # -------------------------------------------------
+        # 2. Combination caps: riskier together than alone
+        # -------------------------------------------------
 
         if previous_default and credit_score < 670:
             caps.append(("previous_default_and_credit_below_670", 0.35))
@@ -161,6 +171,11 @@ class ModelService:
 
         if data.cb_person_cred_hist_length < 2 and credit_score < 670:
             caps.append(("thin_credit_file_and_credit_below_670", 0.45))
+
+
+        # -------------------------------------------------
+        # 3. Soft penalties: moderate risk nudges
+        # -------------------------------------------------
 
         if 670 <= credit_score < 700:
             penalties.append(("credit_score_near_prime", 0.03))
@@ -209,6 +224,8 @@ class ModelService:
         elif loan_intent == "venture":
             penalties.append(("venture_loan_intent", 0.03))
 
+        # Interest-rate penalty should be light if loan_int_rate is excluded from model training.
+        # It still matters as affordability/business logic.
         if data.loan_int_rate >= 20:
             penalties.append(("interest_rate_at_least_20_percent", 0.10))
         elif data.loan_int_rate >= 18:
@@ -216,12 +233,23 @@ class ModelService:
         elif data.loan_int_rate >= 15:
             penalties.append(("interest_rate_at_least_15_percent", 0.05))
 
+
+        # -------------------------------------------------
+        # 4. Apply caps and penalties
+        # -------------------------------------------------
+
         if caps:
             strictest_cap = min(cap_value for _, cap_value in caps)
             adjusted_probability = min(adjusted_probability, strictest_cap)
 
         total_penalty = sum(value for _, value in penalties)
         adjusted_probability = max(0.0, adjusted_probability - total_penalty)
+
+        # -------------------------------------------------
+        # 5. Give back small credit for genuinely strong compensating factors
+        # -------------------------------------------------
+        # This keeps decent applicants from being over-punished by one moderate weakness.
+        # No boost is given if there are severe red flags.
 
         has_severe_red_flag = (
             previous_default
@@ -258,6 +286,8 @@ class ModelService:
 
         total_boost = sum(value for _, value in boosts)
         adjusted_probability = max(0.0, adjusted_probability + total_boost)
+
+        # Final clamp
         adjusted_probability = max(0.0, min(1.0, adjusted_probability))
 
         policy_details = {
@@ -273,6 +303,7 @@ class ModelService:
 
         return adjusted_probability, policy_details
 
+
     def _get_risk_tier(self, approval_probability: float) -> str:
         if approval_probability >= 0.85:
             return "Tier 1 (Strong Approval)"
@@ -284,9 +315,12 @@ class ModelService:
             return "Tier 4 (High Risk)"
         return "Tier 5 (Likely Denial)"
 
+
     def predict_and_explain(self, data: LoanSimulationInput) -> dict:
         raw_df = self._prepare_input(data)
 
+        # Calculate the model's approval probability and statistical probability of default
+        #[[default prob, approval prob]]
         statistical_pd = float(self.pipeline.predict_proba(raw_df)[0][1])
         model_approval_probability = 1.0 - statistical_pd
 
@@ -298,6 +332,9 @@ class ModelService:
         transformed_features = self.preprocessor.transform(raw_df)
         feature_names = self.preprocessor.get_feature_names_out()
 
+        #SHAP values are used to explain the model's predictions by attributing the contribution 
+        #of each feature to the final prediction. 
+        #The explainer computes these values based on the transformed features.
         shap_res = self.explainer.shap_values(transformed_features)
         local_weights = shap_res[0] if not isinstance(shap_res, list) else shap_res[0]
 
@@ -306,6 +343,7 @@ class ModelService:
             for name, weight in zip(feature_names, local_weights)
         }
 
+        #For debugging purposes
         raw_model_approval_probability = 1 - float(self.pipeline.predict_proba(raw_df)[0][1])  
         raw_model_prediction = int(self.pipeline.predict(raw_df)[0])
 
@@ -320,5 +358,6 @@ class ModelService:
             "shap_values": shap_map,
         }
 
-# Instantiate as a safe, lightweight singleton wrapper
+    
+# Instantiate as a persistent singleton wrapper
 model_service = ModelService()
