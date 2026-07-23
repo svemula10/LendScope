@@ -85,7 +85,7 @@ Version 4 (Persona-Driven AI Copilot Chat): Integrated a floating assistant widg
 ### 2: Clone the Repository (if you haven't downloaded from github)
 Open your terminal and clone the repository to your local machine:
 ```text
-git clone https://github.com/svemula10/LendScope.git
+git clone https://github.com/<your-username>/LendScope.git
 cd lendscope
 ```
 
