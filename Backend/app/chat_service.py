@@ -1,15 +1,13 @@
 # backend/app/chat_service.py
 import os
 from dotenv import load_dotenv
-from groq import Groq, GroqError, RateLimitError
 
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "..", ".env"))
 
 class ChatOrchestrator:
     def __init__(self):
-        api_key = os.environ.get("GROQ_API_KEY")
-        self.client = Groq(api_key=api_key) if api_key else None
         self.model_name = "llama-3.3-70b-versatile"
+        self._client = None
         
         self.borrower_system_prompt = (
             "### ROLE & IDENTITY:\n"
@@ -33,7 +31,6 @@ class ChatOrchestrator:
             "3. Separate every section, paragraph, and bullet point with explicit double line breaks (\\n\\n).\n"
             "4. Format lists using clear bullet points with bold sub-labels."
         )
-        
 
         self.underwriter_system_prompt = (
            "### ROLE & IDENTITY:\n"
@@ -56,6 +53,15 @@ class ChatOrchestrator:
             "4. Avoid paragraph text blocks; rely on precise, structured bullet points with bold sub-labels."
         )
 
+    @property
+    def client(self):
+        """Lazy-loads the Groq client only when the first chat request is processed."""
+        if self._client is None:
+            api_key = os.environ.get("GROQ_API_KEY")
+            if api_key:
+                from groq import Groq
+                self._client = Groq(api_key=api_key)
+        return self._client
 
     def generate_response(self, mode: str, message: str, context_data: dict, history: list) -> dict:
         if not self.client:
@@ -67,7 +73,6 @@ class ChatOrchestrator:
         is_borrower = mode.lower() == "borrower"
         system_prompt = self.borrower_system_prompt if is_borrower else self.underwriter_system_prompt
 
-        # Unpack full baseline and simulation dictionaries completely
         baseline = context_data.get("baseline", {}) if isinstance(context_data, dict) else {}
         simulated = context_data.get("simulated", {}) if isinstance(context_data, dict) else {}
 
@@ -91,6 +96,7 @@ class ChatOrchestrator:
         messages.append({"role": "user", "content": message})
 
         try:
+            from groq import GroqError, RateLimitError
             completion = self.client.chat.completions.create(
                 model=self.model_name,
                 messages=messages,
