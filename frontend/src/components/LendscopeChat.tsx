@@ -16,7 +16,7 @@ export default function LendScopeChat({ mode, currentContext }: { mode: "borrowe
   const [underwriterMessages, setUnderwriterMessages] = useState<Message[]>([
     { 
       sender: "assistant", 
-      text: "Underwriter Policy Copilot (Llama 3.3) online. Ready to audit application parameters against lending ceilings." 
+      text: "Underwriter Policy Copilot online. Ready to audit application parameters against lending ceilings." 
     }
   ]);
 
@@ -116,7 +116,7 @@ export default function LendScopeChat({ mode, currentContext }: { mode: "borrowe
       <div className="chat-panel-header">
         <span className="chat-shield-icon">{mode === "borrower" ? "🤖" : "🛡️"}</span>
         <div className="chat-title-group">
-          <h3>{mode === "borrower" ? "Borrower Financial Coach" : "Underwriter Policy Copilot (Llama 3.3)"}</h3>
+          <h3>{mode === "borrower" ? "Borrower Financial Coach" : "Underwriter Policy Copilot"}</h3>
           <p>{mode === "borrower" ? "Plain-English readiness & optimization assistant" : "Audit loan files against institutional compliance rules"}</p>
         </div>
       </div>
@@ -137,7 +137,7 @@ export default function LendScopeChat({ mode, currentContext }: { mode: "borrowe
       <form onSubmit={handleSend} className="chat-input-bar">
         <input 
           type="text" 
-          placeholder={mode === "borrower" ? "Ask about lowering your DTI ratio..." : "Audit application against Reg Z Ability-to-Repay..."} 
+          placeholder={mode === "borrower" ? "Ask about your application..." : "Audit this application..."} 
           value={input}
           onChange={e => setInput(e.target.value)}
         />
