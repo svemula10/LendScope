@@ -1,5 +1,5 @@
 import re
-import pymupdf
+import fitz as pymupdf
 from app.schemas import DocumentExtractionResponse
 
 class DocumentService:
