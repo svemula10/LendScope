@@ -20,7 +20,7 @@ data/
 #*.joblib
 *.pkl
 
-ml/
+ml/notebooks/*.ipynb
 
 # Frontend
 node_modules/
