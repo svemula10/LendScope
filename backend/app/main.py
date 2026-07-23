@@ -11,6 +11,7 @@ import os
 import uvicorn
 
 app = FastAPI(title="LendScope Borrower Engine", version="1.0.0")
+port = int(os.getenv("PORT", 4000))
 
 # Setup safe browser allowances to match Vite development servers
 app.add_middleware(
@@ -26,6 +27,15 @@ class ChatRequest(BaseModel):
     message: str
     context_data: dict = {}
     history: list = []
+
+
+# Define the root route
+@app.get("/")
+def read_root():
+    return {"message": "Hello World!"}
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
 
 @app.get("/health")
 def health_check():
