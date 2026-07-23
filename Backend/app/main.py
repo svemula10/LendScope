@@ -20,7 +20,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+ 
 class ChatRequest(BaseModel):
     mode: str  # "borrower" or "underwriter"
     message: str
