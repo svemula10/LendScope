@@ -1,7 +1,5 @@
 import re
 import pymupdf
-from PIL import Image
-import io
 from app.schemas import DocumentExtractionResponse
 
 class DocumentService:
@@ -10,31 +8,16 @@ class DocumentService:
         extracted_text = ""
         lower_name = filename.lower()
 
+        # Bypassed image OCR parsing to eliminate heavy Tesseract memory bloat on cloud hosts
         if any(lower_name.endswith(ext) for ext in [".png", ".jpg", ".jpeg", ".webp"]):
-            try:
-                import pytesseract
-                image = Image.open(io.BytesIO(file_bytes))
-                extracted_text = pytesseract.image_to_string(image)
-            except Exception as e:
-                print(f"OCR image failure: {e}")
-            return extracted_text
+            print("⚠️ Image OCR parsing is disabled in cloud deployment mode.")
+            return "Image uploads require local OCR binaries. Please upload a PDF or text document."
 
         elif lower_name.endswith(".pdf"):
             try:
                 doc = pymupdf.open(stream=file_bytes, filetype="pdf")
                 for page in doc:
                     text = page.get_text()
-                    if len(text.strip()) < 40:
-                        try:
-                            text = page.get_textpage_ocr(language="eng").extractText()
-                        except Exception:
-                            try:
-                                import pytesseract
-                                pix = page.get_pixmap(dpi=150)
-                                image = Image.open(io.BytesIO(pix.tobytes("png")))
-                                text = pytesseract.image_to_string(image)
-                            except Exception:
-                                pass
                     extracted_text += text + "\n"
             except Exception as e:
                 print(f"PDF structure failure: {e}")
@@ -47,8 +30,8 @@ class DocumentService:
 
     @classmethod
     async def extract_fields_from_text(cls, text: str) -> DocumentExtractionResponse:
-        # Initialize dictionary keys
-        data = {field: None for field in DocumentExtractionResponse.__fields__.keys()}
+        # ✅ Fixed for Pydantic V2: replaced `__fields__` with `model_fields`
+        data = {field: None for field in DocumentExtractionResponse.model_fields.keys()}
         if not text.strip():
             return DocumentExtractionResponse(**data)
 
@@ -69,7 +52,7 @@ class DocumentService:
                 data["applicant_name"] = potential_name.title()
 
         # ==========================================
-        # 2. AGE / DOB EXTRACTION (Fixed for AAMVA "3 DOB" & OCR O/0 Faults)
+        # 2. AGE / DOB EXTRACTION
         # ==========================================
         age_match = re.search(r"\b(?:Age|Current\s+Age)\s*[:|-]?\s*(\d{2,3})\b", text, re.IGNORECASE)
         if age_match:
@@ -88,7 +71,6 @@ class DocumentService:
                 if dob_label_match:
                     start_idx = dob_label_match.end()
                     window = text[start_idx : start_idx + 40]
-                    # Upgraded regex: matches numeric configurations OR full/short month name configurations
                     date_bubble = re.search(r"(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})|((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2}\,\s+\d{4})", window, re.IGNORECASE)
                     if date_bubble:
                         raw_date_str = date_bubble.group(0)
@@ -105,23 +87,20 @@ class DocumentService:
 
             # --- PRECISE UNIVERSAL DATE PARSING ---
             if raw_date_str:
-                # Clean common OCR reading glitches
                 raw_date_str = raw_date_str.replace('O', '0').replace('o', '0').strip()
-                
-                # First, extract any explicit 4-digit year format (e.g., 1974 or 1970)
                 four_digit_year_match = re.search(r"\b(19\d{2}|20[0-2]\d)\b", raw_date_str)
                 
                 if four_digit_year_match:
                     birth_year = int(four_digit_year_match.group(1))
                     data["person_age"] = 2026 - birth_year
                 else:
-                    # Fallback for 2-digit numeric dates (e.g., -85 or /85)
                     clean_numeric_match = re.search(r"(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2})\b", raw_date_str)
                     if clean_numeric_match:
                         year_chunk = clean_numeric_match.group(3)
                         birth_year = int(year_chunk)
                         birth_year += 2000 if birth_year <= 26 else 1900
                         data["person_age"] = 2026 - birth_year
+
         # ==========================================
         # 3. FINANCIAL NUMERICS (INCOME & LOAN AMNT)
         # ==========================================
@@ -145,9 +124,7 @@ class DocumentService:
         if rate_match:
             data["loan_int_rate"] = float(rate_match.group(1))
 
-        # FIXED: Explicitly ignore "EXP:" if it appears directly next to numbers resembling a license expiration date
         if re.search(r"\b(?:EXP)\b\s*:\s*[\d]{2}", text, re.IGNORECASE):
-            # If it's a license expiration date string, skip evaluating simple "EXP" acronym check
             exp_match = re.search(r"(?:Employment\s+Experience|Work\s+History|Years\s+of\s+Experience)\s*:?\s*(\d+)", text, re.IGNORECASE)
         else:
             exp_match = re.search(r"(?:Employment\s+Experience|Work\s+History|Years\s+of\s+Exp|\bExp\b)\s*:?\s*(\d+)", text, re.IGNORECASE)
@@ -162,22 +139,16 @@ class DocumentService:
         # ==========================================
         # 5. CATEGORICAL & DEFAULTS STRUCTURES
         # ==========================================
-        # Education
         for level in ["High School", "Associate", "Bachelor", "Master", "Doctorate"]:
             if re.search(r"\b" + re.escape(level) + r"\b", text, re.IGNORECASE):
                 data["person_education"] = level
                 break
 
-        # Gender
         raw_gender_str = ""
-
-        # Tier 1: Adjacent Context Check (Drops strict word boundaries to allow "15SEX" variants)
         gender_adjacent = re.search(r"(?:Sex|Gender|GEN)[\s*:|\.\,-]*\s*([A-Za-z]+)", text, re.IGNORECASE)
         if gender_adjacent:
             raw_gender_str = gender_adjacent.group(1).strip()
 
-        # Tier 2: Isolated Window Bubble Protection
-        # Choops a narrow snippet right after the label to locate explicit characters or words
         if not raw_gender_str or raw_gender_str.upper() not in ["M", "F", "MALE", "FEMALE"]:
             gender_label_match = re.search(r"(?:Sex|Gender|GEN)", text, re.IGNORECASE)
             if gender_label_match:
@@ -189,12 +160,10 @@ class DocumentService:
                 elif "MALE" in window:
                     raw_gender_str = "Male"
                 else:
-                    # Enforce boundary restrictions on solitary values so we don't accidentally capture words like "MAIN"
                     char_match = re.search(r"\b(F|M)\b", window)
                     if char_match:
                         raw_gender_str = char_match.group(1)
 
-        # Normalize token outputs to match schema requirements
         if raw_gender_str:
             normalized = raw_gender_str.upper()
             if normalized in ["F", "FEMALE", "FEM"]:
@@ -202,35 +171,11 @@ class DocumentService:
             elif normalized in ["M", "MALE", "MAS"]:
                 data["person_gender"] = "Male"
 
-        # --- TIER 3: Universal OCR Character-Swap Corrections ---
-        # If we found a string token, normalize it to the schema display expectations ("Male" or "Female")
-        if raw_gender_str:
-            normalized = raw_gender_str.upper()
-            if normalized in ["F", "FEMALE", "FEM"]:
-                data["person_gender"] = "Female"
-            elif normalized in ["M", "MALE", "MAS"]:
-                data["person_gender"] = "Male"
-        else:
-            # Complete Fallback: Scan the lines array for standard AAMVA pattern "15SEX: [Letter]" 
-            # even if Tesseract completely corrupted the letter 'F' or 'M' into an artifact like 'E', 'l', or '1'
-            for line in lines:
-                if "15" in line and "SEX" in line:
-                    # If it's a female indicator misread as an E or 1
-                    if any(err in line.upper() for err in [" F", " E", " I"]):
-                        data["person_gender"] = "Female"
-                        break
-                    # If it's a male indicator misread as a 1 or vertical pipe
-                    elif any(err in line.upper() for err in [" M", " 1", " |"]):
-                        data["person_gender"] = "Male"
-                        break
-
-        # Home Ownership
         for status in ["Rent", "Own", "Mortgage", "Other"]:
             if re.search(r"\b" + re.escape(status) + r"\b", text, re.IGNORECASE):
                 data["person_home_ownership"] = status
                 break
 
-        # Loan Intent (normalized to the backend schema values)
         intent_patterns = [
             (r"\bpersonal\b", "personal"),
             (r"\beducation\b", "education"),
@@ -246,7 +191,6 @@ class DocumentService:
                 data["loan_intent"] = normalized_value
                 break
 
-        # Historical Defaults & Collections Integration
         default_keywords = r"(?:Historical\s+Defaults|Previous\s+Defaults|Defaults|Collection\s+Account|Bankruptcy|Lien)"
         default_match = re.search(default_keywords + r"\s*:?\s*(Yes|No|Filed)?", text, re.IGNORECASE)
         
