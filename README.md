@@ -125,3 +125,4 @@ npm install
 # Start the Vite development server
 npm run dev
 ```
+Open your browser and navigate to http://localhost:5173 to interact with LendScope
