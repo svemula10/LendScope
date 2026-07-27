@@ -89,7 +89,15 @@ git clone https://github.com/<your-username>/LendScope.git
 cd lendscope
 ```
 
-### 3: Run Frontend and Backend on Two Different Terminals
+### 3: Create .env file and api key
+Create a free API key on https://console.groq.com/home
+
+Create a ```.env ``` file inside the backend folder. Write the following in it:
+```text
+GROQ_API_KEY="your-groq-api-key-here"
+```
+
+### 4: Run Frontend and Backend on Two Different Terminals
 Open two separate terminal windows to run the services concurrently
 
 Terminal 1: Python FastAPI Backend
@@ -103,10 +111,6 @@ python -m venv .venv
 
 # Install Python package dependencies
 pip install -r requirements.txt
-
-# Create a local .env file and add your Groq API key (for chatbot)
-# Create an API key on https://console.groq.com/home
-GROQ_API_KEY="your-groq-api-key-here"
 
 # Seed the local ChromaDB vector compliance database
 python app/seed_policy.py
