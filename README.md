@@ -36,6 +36,8 @@ LendScope/
 │   │   ├── App.css               # Global theme and fluid edge-to-edge layout styling
 │   │   ├── index.css             # Fluid edge-to-edge layout styling
 │   │   └── components/
+│   │       ├── HomeLanding.tsx   # Entry landing page
+│   │       ├── HomeLanding.css   # Scoped styling for the home landing page
 │   │       ├── Sidebar.tsx       # Dual-mode workspace selector toggle
 │   │       ├── LoanForm.tsx      # Comprehensive data entry & dropzone asset
 │   │       ├── MetricGrid.tsx    # Dynamic top-deck analysis scorecards
