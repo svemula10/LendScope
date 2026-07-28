@@ -102,7 +102,7 @@ Open two separate terminal windows to run the services concurrently
 
 Terminal 1: Python FastAPI Backend
 ```text
-cd Backend
+cd backend
 
 # Create and activate your virtual environment
 # Windows PowerShell: .venv\Scripts\Activate.ps1
