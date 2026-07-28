@@ -104,10 +104,12 @@ Terminal 1: Python FastAPI Backend
 ```text
 cd backend
 
-# Create and activate your virtual environment
-# Windows PowerShell: .venv\Scripts\Activate.ps1
-# Mac/Linux: source .venv/bin/activate
+# Create a virtual environment
 python -m venv .venv
+
+# Activate the virtual environment
+- Windows PowerShell: .venv\Scripts\Activate.ps1
+- Mac/Linux: source .venv/bin/activate
 
 # Install Python package dependencies
 pip install -r requirements.txt
