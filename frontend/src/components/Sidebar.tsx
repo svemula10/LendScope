@@ -57,6 +57,16 @@ export default function Sidebar({
       </div>
 
       <nav className="sidebar-nav" aria-label="Main navigation">
+
+        <button 
+          className={`nav-item ${activeView === "home" ? "active" : ""}`}
+          type="button"
+          onClick={() => setActiveView("home")}
+        >
+          Overview / Home
+        </button>
+
+
         <button
           className={`nav-item ${
             activeView === "dashboardList" || activeView === "dashboardDetail" ? "active" : ""
@@ -76,13 +86,6 @@ export default function Sidebar({
         </button>
       </nav>
 
-      <div className="sidebar-footer">
-        <div className="user-dot">{currentMode === "borrower" ? "ME" : "LS"}</div>
-        <div>
-          <strong>Demo Workspace</strong>
-          <span>{currentMode === "borrower" ? "Applicant View" : "Underwriter View"}</span>
-        </div>
-      </div>
     </aside>
   );
 }

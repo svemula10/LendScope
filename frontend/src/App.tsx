@@ -12,8 +12,9 @@ import PolicyGuidelines from "./components/PolicyGuidelines";
 import BorrowerSnapshot from "./components/BorrowerSnapshot";
 import MonthlyRepaymentCalculator from "./components/MonthlyRepaymentCalculator";
 import LendScopeChat from "./components/LendscopeChat";
+import { HomeLanding } from "./components/HomeLanding";
 
-export type View = "application" | "dashboardList" | "dashboardDetail";
+export type View = "home" | "application" | "dashboardList" | "dashboardDetail";
 export type Mode = "borrower" | "underwriter";
 
 export type LoanForm = {
@@ -129,7 +130,7 @@ function formatIntent(value: string) {
 
 function App() {
   const [currentMode, setCurrentMode] = useState<Mode>("borrower");
-  const [activeView, setActiveView] = useState<View>("dashboardList");
+  const [activeView, setActiveView] = useState<View>("home");
   const [formData, setFormData] = useState<LoanForm>(emptyForm);
   const [savedApplications, setSavedApplications] = useState<SavedApplication[]>([]);
   const [selectedApplicationId, setSelectedApplicationId] = useState<number | null>(null);
@@ -483,6 +484,14 @@ function App() {
       />
 
       <main className="main-content">
+        {activeView === "home" && (
+          <HomeLanding 
+            onSelectMode={(mode) => {
+              setCurrentMode(mode);
+              setActiveView("application");
+            }} 
+          />
+        )}
         {activeView === "dashboardList" && (
           <>
             <header className="topbar">

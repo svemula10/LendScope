@@ -1,0 +1,91 @@
+.landing-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 40px 20px;
+}
+
+.landing-hero {
+  max-width: 900px;
+  text-align: center;
+}
+
+.landing-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  background: rgba(75, 111, 255, 0.1);
+  color: #4b6fff;
+  border-radius: 20px;
+  font-weight: 750;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.landing-hero h1 {
+  font-size: 42px;
+  margin: 0 0 16px;
+  color: #172033;
+}
+
+.landing-subtext {
+  font-size: 17px;
+  color: #63708a;
+  line-height: 1.6;
+  max-width: 760px;
+  margin: 0 auto 48px;
+}
+
+.landing-cta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  text-align: left;
+}
+
+.cta-card {
+  background: #ffffff;
+  border: 1px solid #d8e0ed;
+  border-radius: 12px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cta-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(75, 111, 255, 0.08);
+  border-color: #4b6fff;
+}
+
+.card-icon {
+  font-size: 32px;
+  margin-bottom: 16px;
+}
+
+.cta-card h3 {
+  margin: 0 0 10px;
+  font-size: 20px;
+  color: #172033;
+}
+
+.cta-card p {
+  margin: 0 0 24px;
+  color: #6b7891;
+  font-size: 14px;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.cta-card button {
+  width: 100%;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .landing-cta-grid {
+    grid-template-columns: 1fr;
+  }
+}
