@@ -114,7 +114,7 @@ python -m venv .venv
 # Install Python package dependencies
 pip install -r requirements.txt
 
-# Seed the local ChromaDB vector compliance database
+# Seed the local ChromaDB vector compliance database (may take a couple seconds)
 python app/seed_policy.py
 
 # Start the FastAPI server
